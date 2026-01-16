@@ -1,0 +1,332 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Outfit:wght@100;300;400;500;700;900&display=swap');
+
+:root {
+  --cyan: #00f2ff;
+  --neon-blue: #006aff;
+  --deep-dark: #050508;
+  --glass-bg: rgba(10, 12, 18, 0.7);
+  --border-cyan: rgba(0, 242, 255, 0.2);
+  --glow-shadow: 0 0 30px rgba(0, 242, 255, 0.15);
+  --accent-glow: 0 0 15px rgba(0, 242, 255, 0.4);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--deep-dark);
+  color: #fff;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* AI Digital Grid Background */
+.atelier-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(0, 242, 255, 0.05) 0%, transparent 80%),
+    linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 40px 40px, 40px 40px;
+  background-position: center;
+}
+
+.atelier-backdrop::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(5, 5, 8, 1) 0%, transparent 20%, transparent 80%, rgba(5, 5, 8, 1) 100%);
+}
+
+.app-shell {
+  padding: 2rem;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* Typography Headings */
+.title-main {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2.5rem, 8vw, 4rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  margin-bottom: 2rem;
+  background: linear-gradient(to bottom, #fff, rgba(255, 255, 255, 0.4));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.title-sub {
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.title-sub::after {
+  content: '';
+  height: 1px;
+  width: 40px;
+  background: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan);
+}
+
+/* High-Tech Control Panel */
+.studio-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-cyan);
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: var(--glow-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.studio-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 40px;
+  background: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan);
+}
+
+.field-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--cyan);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  opacity: 0.8;
+}
+
+.studio-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1.1rem;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: #fff;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Outfit', sans-serif;
+}
+
+.studio-input:focus {
+  border-color: var(--cyan);
+  background: rgba(0, 242, 255, 0.05);
+  box-shadow: 0 0 20px rgba(0, 242, 255, 0.1);
+}
+
+/* Fix for dropdown (select) options being invisible */
+select.studio-input option {
+  background-color: #1a1b1f;
+  color: #fff;
+}
+
+textarea.studio-input {
+  min-height: 140px;
+  line-height: 1.6;
+}
+
+/* Synthesis Trigger Button */
+.btn-tailor {
+  background: linear-gradient(135deg, var(--neon-blue), #00d2ff);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  width: 100%;
+  padding: 1.4rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  margin-top: 2rem;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 106, 255, 0.3);
+}
+
+.btn-tailor:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(0, 106, 255, 0.4);
+  filter: brightness(1.1);
+  letter-spacing: 0.35em;
+}
+
+.btn-tailor:active {
+  transform: translateY(1px);
+}
+
+.btn-tailor:disabled {
+  background: #1a1b1f;
+  color: rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* Result Data Packets */
+.lookbook-container {
+  margin-top: 4rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+  gap: 3rem;
+}
+
+.lookbook-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-left: 3px solid var(--cyan);
+  padding: 2.5rem;
+  border-radius: 4px;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lookbook-card::before {
+  content: '[ DATA_LINK_STABLE ]';
+  position: absolute;
+  bottom: 1rem;
+  right: 1.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.5rem;
+  font-weight: 700;
+  color: var(--cyan);
+  opacity: 0.5;
+}
+
+.lookbook-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--cyan);
+  box-shadow: var(--glow-shadow);
+}
+
+.archive-desc {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.archive-prompt {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  line-height: 1.9;
+  color: #a0aec0;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 2rem;
+}
+
+/* Synthesis Animation UI */
+.scanning-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  animation: scan 3s linear infinite;
+  z-index: 50;
+  opacity: 0.5;
+}
+
+@keyframes scan {
+  0% {
+    top: 0;
+    opacity: 0;
+  }
+
+  5% {
+    opacity: 1;
+  }
+
+  95% {
+    opacity: 1;
+  }
+
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+.pulse-glow {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
+  }
+
+  50% {
+    box-shadow: 0 0 30px rgba(0, 242, 255, 0.4);
+  }
+
+  100% {
+    box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
+  }
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border-cyan);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--cyan);
+}
+
+@media (max-width: 768px) {
+  .app-shell {
+    padding: 1rem;
+  }
+
+  .studio-panel {
+    padding: 1.5rem;
+  }
+
+  .lookbook-container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}

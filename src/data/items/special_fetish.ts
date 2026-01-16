@@ -1,0 +1,73 @@
+import type { CostumeItem } from '../costumes';
+
+export const SPECIAL_FETISH_ITEMS: CostumeItem[] = [
+    // Fetish / Sexy
+    { jp: 'ラバースーツ(全身)', en: 'shiny full body latex suit', tags: ['rubber', 'tight', 'shiny'] },
+    { jp: 'PVCミニワンピ', en: 'shiny pvc mini dress', tags: ['vinyl', 'sexy', 'black'] },
+    { jp: 'ボンデージ・ハーネス', en: 'leather bondage harness', tags: ['straps', 'punk', 'sexy'] },
+    { jp: 'キャットスーツ(レザー)', en: 'black leather catsuit', tags: ['cool', 'sexy', 'tight'] },
+    { jp: 'ハイネックレオタード', en: 'high-neck shiny leotard', tags: ['tight', 'sexy', 'sporty'] },
+    { jp: 'シースルーのブラウス', en: 'sheer transparent blouse', tags: ['sexy', 'skin', 'erotic'] },
+    { jp: 'シースルーミニワンピ', en: 'see-through mini dress', tags: ['extreme', 'sexy'] },
+    { jp: 'マイクロビキニ(極小)', en: 'tiny micro bikini', tags: ['extreme', 'sexy', 'beach'] },
+    { jp: 'スリングショット・ビキニ', en: 'slingshot bikini', tags: ['extreme', 'sexy'] },
+    { jp: 'モノキニ(カットアウト)', en: 'sexy monokini with cutouts', tags: ['beach', 'sexy', 'modern'] },
+    { jp: '紐ビキニ(金糸)', en: 'gold thread string bikini', tags: ['luxury', 'sexy', 'small'] },
+    { jp: '穴あきレオタード', en: 'cutout leotard sexy', tags: ['tight', 'sexy', 'erotic'] },
+    { jp: 'ボディタイツ(魚網)', en: 'full body fishnet tights', tags: ['sexy', 'tight', 'punk'] },
+    { jp: 'スケスケランジェリー', en: 'sheer lace lingerie set', tags: ['sexy', 'inner'] },
+    { jp: 'ベビードール(透け感)', en: 'sheer baby-doll nightgown', tags: ['cute', 'sexy', 'home'] },
+    { jp: 'テディ(レース)', en: 'sexy lace teddy one-piece', tags: ['sexy', 'inner'] },
+    { jp: '超ミニスカポリス | 警察 警官 婦警', en: 'sexy micro skirt police uniform lady', tags: ['sexy', 'authority', 'fetish', 'uniform'] },
+    { jp: '貝殻ビキニ', en: 'seashell bikini', tags: ['mermaid', 'sexy', 'summer'] },
+    { jp: 'ラッピングリボンのみ', en: 'nude skin dressed only in a large ribbon', tags: ['extreme', 'sexy', 'gift'] },
+    { jp: 'ボディコンワンピ', en: 'tight bodycon mini dress', tags: ['80s', 'sexy', 'nightlife'] },
+    { jp: '濡れた白シャツ', en: 'wet transparent white shirt', tags: ['sexy', 'wet', 'skin'] },
+    { jp: 'ガーターベルト付きストッキング', en: 'thigh-high stockings with garter belt', tags: ['sexy', 'legs', 'classic'] },
+    { jp: 'レザーコルセット', en: 'black leather corset', tags: ['tight', 'sexy', 'waist'] },
+    { jp: '拘束具付きスーツ', en: 'bondage suit with buckles', tags: ['dark', 'fetish', 'straps'] },
+    { jp: '目隠しと口枷の姿', en: 'blindfolded with ball gag', tags: ['extreme', 'bondage'] },
+
+    // Animal / Ear-wear
+    { jp: 'バニーガール(標準)', en: 'classic sexy bunny girl outfit', tags: ['bunny', 'casino', 'sexy'] },
+    { jp: 'バニーガール(ハイレグ)', en: 'high-leg bunny girl suit', tags: ['sexy', 'bunny'] },
+    { jp: '猫耳メイド服', en: 'cat-ear maid outfit', tags: ['nekomimi', 'cute', 'animal'] },
+    { jp: '狐耳の着物', en: 'fox-ear kimono outfit', tags: ['kitsune', 'japanese', 'cute'] },
+    { jp: '狼少女の毛皮装備', en: 'wild wolf girl furs', tags: ['animal', 'feral', 'cool'] },
+    { jp: 'うさ耳パーカー', en: 'bunny-ear hoodie', tags: ['animal', 'cute', 'casual'] },
+    { jp: '牛柄のビキニ', en: 'cow-print bikini', tags: ['animal', 'pattern', 'sexy'] },
+    { jp: 'ヒョウ柄のドレス', en: 'leopard print mini dress', tags: ['animal', 'glam', 'wild'] },
+    { jp: 'アニマル柄レオタード', en: 'animal print leotard', tags: ['animal', 'tight'] },
+    { jp: 'パンダの着ぐるみ', en: 'panda kigurumi onesie', tags: ['animal', 'cute', 'home'] },
+    { jp: 'レッサーパンダ着ぐるみ', en: 'red panda kigurumi', tags: ['animal', 'cute'] },
+    { jp: '柴犬の着ぐるみ', en: 'shiba inu onesie', tags: ['animal', 'cute', 'japanese'] },
+    { jp: '羊のふわふわパジャマ', en: 'fluffy sheep pajamas', tags: ['cute', 'warm', 'soft'] },
+
+    // Horror / Dark
+    { jp: 'ゾンビのボロボロの服', en: 'zombie tattered and bloody clothes', tags: ['horror', 'dark', 'gore'] },
+    { jp: '幽霊の白衣', en: 'japanese yurei white kimono', tags: ['horror', 'japanese', 'ghost'] },
+    { jp: '死神の黒いローブ', en: 'grim reaper hooded robe', tags: ['horror', 'death', 'dark'] },
+    { jp: '血まみれのナース服 | 看護師 看護婦 ゾンビ', en: 'bloody hospital nurse uniform horror medical', tags: ['horror', 'medical', 'blood', 'fetish', 'uniform'] },
+    { jp: '殺人鬼のピエロ服', en: 'horror psycho clown costume', tags: ['horror', 'circus', 'creepy'] },
+    { jp: '包帯だらけのミイラ姿', en: 'mummy bandage wrappings', tags: ['horror', 'undead'] },
+    { jp: '壊れた陶器人形の服', en: 'broken porcelain doll gothic dress', tags: ['horror', 'creepy', 'cute'] },
+    { jp: '血のついたウェディングドレス', en: 'bloody white wedding dress', tags: ['horror', 'bride', 'blood'] },
+    { jp: 'ダーク・ピエロ', en: 'dark sinister circus clown', tags: ['horror', 'creepy'] },
+    { jp: '呪われたゴシックドレス', en: 'cursed gothic doll dress', tags: ['horror', 'gothic'] },
+
+    // Pajamas / Home Wear
+    { jp: 'シルクのパジャマ(上下一式)', en: 'silk pajama set', tags: ['home', 'luxury', 'smooth'] },
+    { jp: 'もこもこルームウェア', en: 'fluffy soft roomwear', tags: ['cute', 'home', 'warm'] },
+    { jp: '特大Tシャツ(彼シャツ風)', en: 'oversized boyfriend t-shirt', tags: ['home', 'sexy', 'casual'] },
+    { jp: 'スウェット上下(部屋着)', en: 'relaxed grey sweatshirt and pants', tags: ['home', 'chill'] },
+    { jp: 'ネグリジェ(透け感)', en: 'sheer lace negligee', tags: ['sexy', 'home', 'nightwear'] },
+    { jp: '腹巻付きパジャマ', en: 'retro pajamas with belly warmer', tags: ['cute', 'home', 'funny'] },
+    { jp: 'バスローブ(白)', en: 'white fluffy bathrobe', tags: ['home', 'luxury', 'bath'] },
+    { jp: 'タオル一枚(バスタオル)', en: 'wrapped only in a bath towel', tags: ['sexy', 'bath', 'steamy'] },
+
+    // Others / Unique
+    { jp: '魔法少女の変身衣装', en: 'magical girl transformation outfit', tags: ['anime', 'magic', 'cute'] },
+    { jp: 'サーカス団長の服', en: 'circus ringmaster jacket', tags: ['show', 'authority', 'red'] },
+    { jp: 'バレリーナのチュチュ', en: 'ballerina white tutu', tags: ['dance', 'elegant', 'white'] },
+    { jp: '段ボール箱(隠れ身)', en: 'hidden inside a cardboard box', tags: ['funny', 'stealth'] },
+];
