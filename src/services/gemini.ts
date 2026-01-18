@@ -38,22 +38,32 @@ export const generateCostumePrompts = async (
     You are an AI expert specializing in crafting visual prompts for Stable Diffusion, Midjourney, and NovelAI.
     Your goal is to describe a character outfit with extreme detail.
     
-    [INPUT SPECIFICATIONS]
+    [PRIMARY CONSTRAINT - MUST FOLLOW]
+    **Sexy Level: ${parts.sexyLevel}/10**
+    This is the MOST IMPORTANT specification. The outfit's coverage and revealingness MUST match this level:
+    ${sexyLevelDescription(parts.sexyLevel)}
+    
+    ⚠️ CRITICAL: The Pose and Expression below are SECONDARY. They describe body position and facial mood, but they MUST NOT change the outfit's coverage level defined above.
+    
+    [SECONDARY SPECIFICATIONS]
     Vision Concept: ${designImage || 'Not specified'}
     Style: ${category}
     Base Costume: ${parts.base}
     Accessories: ${parts.accessories || 'None'}
-    Sexy Level: ${parts.sexyLevel}/10 (${sexyLevelDescription(parts.sexyLevel)})
     Environment: ${parts.background}
-    Pose: ${parts.pose}
+    Pose: ${parts.pose} (This affects body position ONLY, not outfit coverage)
+    Expression: ${parts.expression || 'smile'} (This affects facial expression ONLY, not outfit design)
+    Vision Pose Concept: ${parts.poseDescription || 'Not specified'}
     
     [OUTFIT INSTRUCTION]
-    - Generate tags that describe the clothing, outfit, accessories, environment, and pose.
-    - Strictly follow the "Sexy Level" for outfit coverage and revealingness.
+    1. **PRIORITY 1: Sexy Level** - The outfit coverage MUST strictly match the Sexy Level ${parts.sexyLevel}/10. This is NON-NEGOTIABLE.
+    2. **PRIORITY 2: Costume Design** - Describe the garments, materials, textures, and specific design of the costume.
+    3. **PRIORITY 3: Integration** - Add the Environment, Pose, and Expression as context, but they should NEVER reduce or increase the outfit's revealingness.
+    
+    - DO NOT let the Pose or Expression influence the outfit's coverage. A "conservative pose" does NOT mean conservative clothing if Sexy Level is high.
     - DO NOT include quality tags (e.g., masterpiece, best quality, high quality, realistic, photorealistic, 4k, 8k).
     - DO NOT include art style tags (e.g., anime, illustration, oil painting).
     - If Environment or Pose is "none" or "standing", do not prioritize those specific keywords unless they naturally fit the composition.
-    - Focus on garments, materials, textures, and the specific design of the costume, while integrating the Environment and Pose into the visual scene.
 
     [VARIATION REQUEST]
     - Please provide ${count} distinct versions/variations of the outfit based on the requirements.
@@ -85,9 +95,9 @@ export const generateCostumePrompts = async (
     }).filter(v => v.prompt.length > 0);
 
     return variations;
-  } catch (err: any) {
+  } catch (err) {
     console.error("Gemini API Error:", err);
-    if (err.message?.includes("finishReason: SAFETY")) {
+    if (err instanceof Error && err.message?.includes("finishReason: SAFETY")) {
       throw new Error("プロンプトが制限に抵触しました。表現を少し和らげてみてください。");
     }
     throw err;
@@ -127,7 +137,8 @@ export const generateSexyRangePrompts = async (
     Accessories: ${parts.accessories || 'None'}
     Environment: ${parts.background}
     Pose: ${parts.pose}
-    Vision Concept: ${designImage || 'Not specified'}`}
+    Vision Concept: ${designImage || 'Not specified'}
+    Vision Pose Concept: ${parts.poseDescription || 'Not specified'}`}
 
     [SEXY LEVEL SCALE - PRECISION PROGRESSION]
     Level 1: ORIGINAL DESIGN. The costume as intended, standard full attire, primary motifs intact.
@@ -168,7 +179,7 @@ export const generateSexyRangePrompts = async (
     }).filter(v => v.prompt.length > 0);
 
     return variations;
-  } catch (err: any) {
+  } catch (err) {
     console.error("Sexy Range Error:", err);
     throw err;
   }
