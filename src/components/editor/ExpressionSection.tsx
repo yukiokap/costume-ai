@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Smile, Search, X } from 'lucide-react';
-import { EXPRESSION_CATEGORIES, EXPRESSION_SETTINGS, type ExpressionItem } from '../../constants';
+import { EXPRESSION_CATEGORIES, EXPRESSION_SETTINGS } from '../../constants';
 import { SectionDivider } from '../ui/SectionDivider';
 
 interface ExpressionSectionProps {

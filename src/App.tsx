@@ -1,16 +1,13 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Binary } from 'lucide-react'
 import {
-  FASHION_CATEGORIES,
   COSTUME_LIST,
   BACKGROUND_SETTINGS,
   ACCESSORIES_LIST,
   type CostumeItem,
   type AccessoryItem,
   POSE_SETTINGS,
-  EXPRESSION_SETTINGS,
-  EXPRESSION_CATEGORIES,
-  type ExpressionItem
+  EXPRESSION_SETTINGS
 } from './constants'
 import { generateCostumePrompts, generateSexyRangePrompts } from './services/gemini'
 import { type GeneratedPrompt, type HistoryItem } from './types'
