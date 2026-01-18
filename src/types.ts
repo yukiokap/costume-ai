@@ -1,5 +1,3 @@
-import { type CostumeItem, type AccessoryItem } from './constants'
-
 export interface GeneratedPrompt {
     id?: string;
     description: string;
