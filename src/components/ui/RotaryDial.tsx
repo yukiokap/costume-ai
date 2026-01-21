@@ -182,7 +182,7 @@ export const RotaryDial: React.FC<RotaryDialProps> = ({
 
             {/* INTERACTIVE OUTER RING (Rotates) */}
             <motion.div
-                onMouseDown={(e) => {
+                onMouseDown={() => {
                     if (disabled) return;
                     // Only start drag if not clicking the center (where the button is)
                     // We can rely on z-index, but explicit check is safer if needed.
