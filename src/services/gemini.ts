@@ -407,30 +407,37 @@ export const visualizeCostume = async (
   const cleanApiKey = apiKey.trim();
   const genAI = new GoogleGenerativeAI(cleanApiKey);
 
-  // We use Gemini 3.0 refined prompt logic
   const model = genAI.getGenerativeModel({
     model: "gemini-3-flash-preview",
   });
 
   const refinementPrompt = `
-    Analyze this costume prompt and convert it into a HIGHLY DETAILED, professional artistic masterpiece prompt for an AI image generator.
-    Focus on fabric textures, materials (latex, silk, metal, lace), lighting (volumetric, rim light), and a professional atelier background.
-    Ensure the subject identity is preserved.
+    Task: Convert the following costume prompt into a "Masterpiece Level" prompt for an AI Image Generator (specifically for High-End Japanese Anime style).
     
-    ORIGINAL: ${prompt}
+    GUIDELINES:
+    1. STYLE: Envision a top-tier Japanese anime illustration, visual novel style, high-budget animation movie quality.
+    2. DETAIL: Focus intensely on fabric textures (glossy latex, soft silk, intricate lace, weathered leather, glowing cyber-parts).
+    3. CHARACTER: Ensure the character looks beautiful/cool with expressive eyes and professional hair rendering.
+    4. BACKGROUND: A clean, aesthetic background that complements the outfit (e.g., designer atelier, futuristic city, magical sanctuary).
+    5. COMPOSITION: Professional framing, cinematic lighting, rim light, depth of field.
     
-    OUTPUT: A single dense string of English tags and descriptive phrases (max 200 words). Do not include any other text.
+    ORIGINAL CONCEPT: ${prompt}
+    
+    OUTPUT: A single dense string of English tags and descriptive phrases. Focus exclusively on visual elements. (Max 150 words).
   `;
 
   try {
     const res = await model.generateContent(refinementPrompt);
-    const refinedPrompt = res.response.text().trim();
+    const refined = res.response.text().trim().replace(/^[`\s]*(.*)[`\s]*$/s, '$1'); // Clean up potential markdown
 
-    // Use a high-quality visualization engine for the browser demo
-    // In a full production app, this would call the Imagen 3 API via Vertex
-    // For this atelier experience, we use a fast and reliable endpoint.
-    const encodedPrompt = encodeURIComponent(refinedPrompt);
+    // Fixed High-Quality Anime Prefix
+    const animePrefix = "masterpiece, best quality, ultra-detailed, beautiful anime girl, high-quality anime illustration, vibrant colors, soft cinematic lighting, intricate clothing details, sharp focus, professional digital art, pixiv style, ";
+
+    const finalPrompt = `${animePrefix}${refined}`;
+
+    const encodedPrompt = encodeURIComponent(finalPrompt);
     const seed = Math.floor(Math.random() * 1000000);
+    // Using a more specialized model parameter if possible, otherwise rely on the prompt power
     const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?nologo=true&seed=${seed}&width=1024&height=1024&model=flux`;
 
     return imageUrl;
