@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Gem } from 'lucide-react';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface AccessorySliderProps {
     value: number;
@@ -8,12 +9,14 @@ interface AccessorySliderProps {
 }
 
 export const AccessorySlider: React.FC<AccessorySliderProps> = ({ value, onChange }) => {
+    const { t } = useLanguage();
+
     return (
         <div className="sexy-slider-container">
             <div className="sexy-slider-header">
                 <label className="sexy-slider-label" style={{ color: '#f59e0b' }}>
                     <Gem size={14} className="icon-orange" style={{ color: '#f59e0b' }} />
-                    Decorative Level / 装飾度
+                    Decorative Level / {t('editor.accessory_level')}
                 </label>
                 <div className="sexy-slider-value-group">
                     <span className="sexy-slider-number">
@@ -71,15 +74,15 @@ export const AccessorySlider: React.FC<AccessorySliderProps> = ({ value, onChang
             <div className="sexy-slider-footer">
                 <div className="sexy-slider-hint">
                     <span className="hint-dot" />
-                    <span>L1-3: シンプル・純粋</span>
+                    <span>{t('editor.accessory_hint_low' as any)}</span>
                 </div>
                 <div className="sexy-slider-hint">
                     <span className="hint-dot" style={{ backgroundColor: '#fbbf24' }} />
-                    <span>L4-7: 華やか・装飾的</span>
+                    <span>{t('editor.accessory_hint_mid' as any)}</span>
                 </div>
                 <div className="sexy-slider-hint">
                     <span className="hint-dot" style={{ backgroundColor: '#f59e0b' }} />
-                    <span>L8-10: 豪華・絢爛な装飾</span>
+                    <span>{t('editor.accessory_hint_high' as any)}</span>
                 </div>
             </div>
         </div>

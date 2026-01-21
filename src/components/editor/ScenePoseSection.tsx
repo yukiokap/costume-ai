@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Quote } from 'lucide-react';
 import { POSE_ARCHETYPES } from '../../data/poses';
 import { SectionDivider } from '../ui/SectionDivider';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface ScenePoseSectionProps {
     selectedPose: string;
@@ -17,14 +18,16 @@ export const ScenePoseSection: React.FC<ScenePoseSectionProps> = ({
     poseDescription,
     setPoseDescription
 }) => {
+    const { t } = useLanguage();
+
     return (
         <div className="space-y-8">
-            <SectionDivider label="02: ポーズの設定" color="emerald" />
+            <SectionDivider label={t('editor.section_pose_title')} color="emerald" />
 
             {/* Premium Pose Archetype Selection */}
             <div className="space-y-4 pt-4">
                 <div className="field-label !text-emerald-400">
-                    Preset Motion Concepts / モーションコンセプト
+                    {t('editor.preset_pose_label')}
                 </div>
                 <div className="premium-grid">
                     {POSE_ARCHETYPES.map((pose) => {
@@ -43,7 +46,7 @@ export const ScenePoseSection: React.FC<ScenePoseSectionProps> = ({
                                 </div>
                                 <div className="text-center">
                                     <div className="premium-label !text-[9px]">
-                                        {pose.label}
+                                        {t(`editor.pose_presets.${pose.id}` as any)}
                                     </div>
                                 </div>
                             </motion.button>
@@ -55,11 +58,11 @@ export const ScenePoseSection: React.FC<ScenePoseSectionProps> = ({
             {/* Premium Pose Description (Moved to bottom) */}
             <div className="space-y-4 pt-4">
                 <div className="field-label !text-emerald-400">
-                    <Quote size={12} className="text-emerald-400" /> ポーズ・モーションの詳細記述 (任意)
+                    <Quote size={12} className="text-emerald-400" /> {t('editor.pose_custom_label')}
                 </div>
                 <div className="relative group">
                     <textarea
-                        placeholder="キャラクターにどんなポーズをさせたいか自由に記述してください..."
+                        placeholder={t('editor.pose_custom_placeholder')}
                         value={poseDescription}
                         onChange={(e) => setPoseDescription(e.target.value)}
                         className="premium-textarea focus:border-emerald-500/50"

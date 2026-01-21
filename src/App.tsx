@@ -277,7 +277,7 @@ function App() {
 
       <main className="max-w-4xl mx-auto px-6 grid grid-cols-1 gap-12 relative z-10 items-start">
         <div className="studio-panel space-y-12">
-          <SectionDivider label="01: 衣装の設定" color="cyan" />
+          <SectionDivider label={t('editor.section_costume_title')} color="cyan" />
 
           <div className="space-y-12">
             <ThemeSelector selectedTheme={theme} onChange={setTheme} />
@@ -341,11 +341,11 @@ function App() {
                     letterSpacing: '0.15em',
                     lineHeight: '1.2'
                   }}>
-                    詳細オプション
+                    {t('editor.advanced_options')}
                   </span>
                   {!showAdvanced && (
                     <span style={{ fontSize: '8px', color: 'rgba(34, 211, 238, 0.4)', fontWeight: 600, marginTop: '2px' }}>
-                      ポーズ・表情・フレーミング
+                      {t('editor.advanced_subtitle')}
                     </span>
                   )}
                 </div>

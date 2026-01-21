@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Clock, Heart, Trash2, Copy, Check, ChevronLeft } from 'lucide-react';
 import { type HistoryItem } from '../../types';
+import { useLanguage } from '../../contexts/LanguageContext';
 import './Results.css';
 
 interface HistoryOverlayProps {
@@ -31,6 +32,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
     copyOptions,
     setCopyOptions
 }) => {
+    const { t } = useLanguage();
     const title = mode === 'history' ? 'GENERATE HISTORY' : 'FAVORITE PROMPTS';
     const Icon = mode === 'history' ? Clock : Heart;
 
@@ -121,7 +123,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                 }}
                             >
                                 <ChevronLeft size={18} />
-                                戻る
+                                {t('common.back')}
                             </button>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
                                 <Icon size={28} color={themeColor} />
@@ -138,7 +140,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                         {title}
                                     </h2>
                                     <p style={{ margin: '4px 0 0', fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', fontWeight: 800, letterSpacing: '0.2em' }}>
-                                        {filteredList.length} 件のアイテムが見つかりました
+                                        {filteredList.length}{t('results.items_found_suffix')}
                                     </p>
                                 </div>
                             </div>
@@ -165,7 +167,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                     onChange={() => setCopyOptions(prev => ({ ...prev, costume: !prev.costume }))}
                                     style={{ accentColor: themeColor, width: '14px', height: '14px', cursor: 'pointer' }}
                                 />
-                                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: copyOptions.costume ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>衣装</span>
+                                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: copyOptions.costume ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('common.costume')}</span>
                             </label>
 
                             <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
@@ -175,7 +177,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                     onChange={() => setCopyOptions(prev => ({ ...prev, pose: !prev.pose }))}
                                     style={{ accentColor: themeColor, width: '14px', height: '14px', cursor: 'pointer' }}
                                 />
-                                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: copyOptions.pose ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>ポーズ</span>
+                                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: copyOptions.pose ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('editor.pose')}</span>
                             </label>
 
                             <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
@@ -185,7 +187,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                     onChange={() => setCopyOptions(prev => ({ ...prev, framing: !prev.framing }))}
                                     style={{ accentColor: themeColor, width: '14px', height: '14px', cursor: 'pointer' }}
                                 />
-                                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: copyOptions.framing ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>構図</span>
+                                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: copyOptions.framing ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('editor.framing')}</span>
                             </label>
 
                             <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
@@ -240,7 +242,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                             }}>
                                 <Icon size={100} strokeWidth={1} />
                                 <p style={{ fontSize: '1.25rem', fontWeight: 900, letterSpacing: '0.5em', textTransform: 'uppercase' }}>
-                                    記録がありません
+                                    {t('results.no_records')}
                                 </p>
                             </div>
                         ) : (
@@ -293,7 +295,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                                     }}
                                                 >
                                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" /></svg>
-                                                    <span>派生を作る</span>
+                                                    <span>{t('common.remix')}</span>
                                                 </button>
                                                 <button
                                                     onClick={() => onToggleFavorite(item.id)}

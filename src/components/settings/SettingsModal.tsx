@@ -104,7 +104,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                     00_LANGUAGE_LOCALE
                                 </div>
                                 <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>
-                                    Interface language preference
+                                    {t('settings.language_interface')}
                                 </div>
                             </div>
 
@@ -199,7 +199,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                 className="hover:opacity-100 transition-opacity"
                             >
                                 <ExternalLink size={12} />
-                                Get API Key (Google AI Studio)
+                                {t('settings.get_api_key')}
                             </a>
                         </div>
 

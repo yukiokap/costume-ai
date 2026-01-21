@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Quote } from 'lucide-react';
 import { FRAMING_ARCHETYPES } from '../../data/framing';
 import { SectionDivider } from '../ui/SectionDivider';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface FramingSectionProps {
     selectedFraming: string;
@@ -17,14 +18,16 @@ export const FramingSection: React.FC<FramingSectionProps> = ({
     framingDescription,
     setFramingDescription
 }) => {
+    const { t } = useLanguage();
+
     return (
         <div className="space-y-8">
-            <SectionDivider label="04: 構図の設定" color="violet" />
+            <SectionDivider label={t('editor.section_framing_title')} color="violet" />
 
             {/* Premium Framing Archetype Selection */}
             <div className="space-y-4 pt-4">
                 <div className="field-label !text-violet-400">
-                    Framing Concepts / 構図・カメラアングル
+                    {t('editor.preset_framing_label')}
                 </div>
                 {/* Reusing expression-compact-grid for similar layout, or we can define framing-compact-grid in CSS if size differs.
                     For now, reusing the class or styling inline if needed.
@@ -47,7 +50,7 @@ export const FramingSection: React.FC<FramingSectionProps> = ({
                                 </div>
                                 <div className="text-center">
                                     <div className="premium-label !text-[9px]">
-                                        {item.label}
+                                        {t(`editor.framing_presets.${item.id}` as any)}
                                     </div>
                                 </div>
                             </motion.button>
@@ -59,11 +62,11 @@ export const FramingSection: React.FC<FramingSectionProps> = ({
             {/* Premium Framing Description */}
             <div className="space-y-4 pt-4">
                 <div className="field-label !text-violet-400">
-                    <Quote size={12} className="text-violet-400" /> 構図の詳細記述 (任意)
+                    <Quote size={12} className="text-violet-400" /> {t('editor.framing_custom_label')}
                 </div>
                 <div className="relative group">
                     <textarea
-                        placeholder="カメラのアングルや距離感について自由に記述してください (例: 靴を強調したアングル、真上からの視点...)"
+                        placeholder={t('editor.framing_custom_placeholder')}
                         value={framingDescription}
                         onChange={(e) => setFramingDescription(e.target.value)}
                         className="premium-textarea focus:border-violet-500/50"

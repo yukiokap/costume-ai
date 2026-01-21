@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Quote } from 'lucide-react';
 import { EXPRESSION_ARCHETYPES } from '../../data/expressions';
 import { SectionDivider } from '../ui/SectionDivider';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface ExpressionSectionProps {
     selectedExpression: string;
@@ -17,14 +18,16 @@ export const ExpressionSection: React.FC<ExpressionSectionProps> = ({
     expressionDescription,
     setExpressionDescription
 }) => {
+    const { t } = useLanguage();
+
     return (
         <div className="space-y-8">
-            <SectionDivider label="03: 表情の設定" color="orange" />
+            <SectionDivider label={t('editor.section_expression_title')} color="orange" />
 
             {/* Premium Expression Archetype Selection */}
             <div className="space-y-4 pt-4">
                 <div className="field-label !text-orange-400">
-                    Emotion Concepts / 表情・感情コンセプト
+                    {t('editor.preset_expression_label')}
                 </div>
                 <div className="expression-compact-grid">
                     {EXPRESSION_ARCHETYPES.map((expr) => {
@@ -43,7 +46,7 @@ export const ExpressionSection: React.FC<ExpressionSectionProps> = ({
                                 </div>
                                 <div className="text-center">
                                     <div className="premium-label !text-[9px]">
-                                        {expr.label}
+                                        {t(`editor.expression_presets.${expr.id}` as any)}
                                     </div>
                                 </div>
                             </motion.button>
@@ -55,11 +58,11 @@ export const ExpressionSection: React.FC<ExpressionSectionProps> = ({
             {/* Premium Expression Description (Moved to bottom) */}
             <div className="space-y-4 pt-4">
                 <div className="field-label !text-orange-400">
-                    <Quote size={12} className="text-orange-400" /> 表情・感情の詳細記述 (任意)
+                    <Quote size={12} className="text-orange-400" /> {t('editor.expression_custom_label')}
                 </div>
                 <div className="relative group">
                     <textarea
-                        placeholder="どんな表情をさせたいか、あるいはどんな感情を表現したいか自由に記述してください..."
+                        placeholder={t('editor.expression_custom_placeholder')}
                         value={expressionDescription}
                         onChange={(e) => setExpressionDescription(e.target.value)}
                         className="premium-textarea focus:border-orange-500/50"
