@@ -180,90 +180,100 @@ export const RotaryDial: React.FC<RotaryDialProps> = ({
                 );
             })}
 
-            {/* Central Dial Disc (Draggable or Container for Children) */}
+            {/* INTERACTIVE OUTER RING (Rotates) */}
             <motion.div
-                onMouseDown={() => !disabled && setIsDragging(true)}
+                onMouseDown={(e) => {
+                    if (disabled) return;
+                    // Only start drag if not clicking the center (where the button is)
+                    // We can rely on z-index, but explicit check is safer if needed.
+                    setIsDragging(true);
+                }}
                 onTouchStart={() => !disabled && setIsDragging(true)}
                 animate={{ rotate: (value * (360 / max)) }}
-                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                transition={{ type: 'spring', damping: 20, stiffness: 150 }}
+                style={{
+                    position: 'absolute',
+                    inset: 0,
+                    borderRadius: '50%',
+                    cursor: disabled ? 'not-allowed' : isDragging ? 'grabbing' : 'grab',
+                    zIndex: 25 // Below the center button
+                }}
+            >
+                {/* Visual Ring Track */}
+                <div style={{
+                    position: 'absolute',
+                    inset: '40px', // Creates the ring width
+                    borderRadius: '50%',
+                    border: '1px solid rgba(0, 242, 255, 0.3)',
+                    borderTopColor: 'rgba(0, 242, 255, 0.8)', // Highlight top
+                    boxShadow: isDragging ? '0 0 30px rgba(0, 242, 255, 0.15)' : 'none',
+                    transition: 'box-shadow 0.3s'
+                }} />
+
+                {/* Finger Hole / Indicator - Positioned on the ring */}
+                <div style={{
+                    position: 'absolute',
+                    top: '24px', // Position inside the inset
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    background: isDragging ? 'rgba(0, 242, 255, 1)' : 'rgba(0, 10, 20, 0.9)',
+                    boxShadow: '0 0 15px rgba(0, 242, 255, 0.6), inset 0 0 10px rgba(0, 242, 255, 0.2)',
+                    border: '2px solid rgba(0, 242, 255, 1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 40
+                }}>
+                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#fff' }} />
+                </div>
+            </motion.div>
+
+
+            {/* STATIC CENTER (For Button / Children) */}
+            <div
                 style={{
                     width: size - 140,
                     height: size - 140,
                     borderRadius: '50%',
-                    background: children ? 'transparent' : 'rgba(0, 10, 20, 0.8)',
-                    border: children ? 'none' : '2px solid rgba(0, 242, 255, 0.2)',
-                    boxShadow: !children && isDragging ? '0 0 40px rgba(0, 242, 255, 0.2), inset 0 0 20px rgba(0, 242, 255, 0.1)' : 'none',
-                    cursor: disabled ? 'not-allowed' : isDragging ? 'grabbing' : 'grab',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     position: 'relative',
-                    zIndex: 30,
-                    backdropFilter: !children ? 'blur(10px)' : 'none'
+                    zIndex: 50, // Above the ring
+                    pointerEvents: 'auto' // Ensure buttons inside work
                 }}
+                onMouseDown={(e) => e.stopPropagation()} // Prevent drag triggering
+                onTouchStart={(e) => e.stopPropagation()}
             >
-                {/* Finger Hole (Cyber Style) */}
-                <div style={{
-                    position: 'absolute',
-                    top: '12px',
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '50%',
-                    background: isDragging ? 'rgba(0, 242, 255, 0.4)' : 'rgba(0, 242, 255, 0.1)',
-                    boxShadow: '0 0 15px rgba(0, 242, 255, 0.4)',
-                    border: '2px solid rgba(0, 242, 255, 0.6)',
-                    zIndex: 40
-                }} />
-
-                {/* Display Current Value in center if no children */}
-                {!children && (
-                    <motion.div
-                        animate={{ rotate: -(value * (360 / max)) }} // Counter-rotate text to keep it upright
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}
-                    >
-                        <span style={{
-                            fontSize: '32px',
-                            fontWeight: 900,
-                            color: '#fff',
-                            textShadow: '0 0 10px rgba(0, 242, 255, 0.5)'
-                        }}>
-                            {value}
-                        </span>
-                        <span style={{
-                            fontSize: '8px',
-                            fontWeight: 900,
-                            color: 'rgba(0, 242, 255, 0.6)',
-                            letterSpacing: '0.1em'
-                        }}>
-                            COUNT
-                        </span>
-                    </motion.div>
+                {/* If children exist, just render them static */}
+                {children ? (
+                    children
+                ) : (
+                    /* Fallback Default Display */
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#fff'
+                    }}>
+                        <span style={{ fontSize: '32px', fontWeight: 900 }}>{value}</span>
+                    </div>
                 )}
+            </div>
 
-                {/* If children exist (like Generate button), wrap and counter-rotate */}
-                {children && (
-                    <motion.div
-                        animate={{ rotate: -(value * (360 / max)) }}
-                        style={{ pointerEvents: 'auto' }}
-                    >
-                        {children}
-                    </motion.div>
-                )}
-            </motion.div>
-
-            {/* Outer Decorative Ring */}
+            {/* Outer Decorative Glow/Spin */}
             <div style={{
                 position: 'absolute',
-                inset: 0,
+                inset: -20,
                 borderRadius: '50%',
                 border: '1px dashed rgba(255, 255, 255, 0.05)',
                 pointerEvents: 'none',
-                animation: 'spin 60s linear infinite'
+                animation: 'spin 60s linear infinite',
+                zIndex: 0
             }} />
         </div>
     );
