@@ -242,11 +242,15 @@ export const generateCostumePrompts = async (
       4. GAZE:
         - FORBIDDEN: NEVER use the word 'camera'. Use 'looking at viewer', 'eye contact', or 'gaze'.
 
+      5. TEXT LANGUAGE:
+        - ABSOLUTE PROHIBITION: DO NOT output Japanese text in [[POSE]] or [[EXPRESSION]].
+        - AUTOMATIC TRANSLATION: If [Custom Pose Request] is in Japanese (e.g. "キリッとメガネ"), YOU MUST TRANSLATE IT to English tags (e.g. "adjusting glasses, sharp gaze, confident expression").
+
       [OUTPUT FORMAT]
       Return exactly ${costumes.length} items separated by "[[SPLIT]]":
       [[ID]] Index (0 to ${costumes.length - 1})
-      [[POSE]] Pose tags only. (e.g. "standing, hand on hip" or "wariza, sitting on floor")
-      [[EXPRESSION]] Facial expression tags only.
+      [[POSE]] English Pose tags only. ABSOLUTELY NO JAPANESE TEXT. (e.g. "standing, hand on hip", "adjusting glasses")
+      [[EXPRESSION]] English Facial expression tags only. ABSOLUTELY NO JAPANESE TEXT.
       [[FRAMING]] Angle tags only.
       [[SCENE]] Environment/Lighting tags only.
       [[SPLIT]]
