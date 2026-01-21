@@ -77,7 +77,7 @@ export const FooterControls: React.FC<FooterControlsProps> = ({
                                 width: '140px',
                                 height: '140px',
                                 borderRadius: '50%',
-                                backgroundColor: isGenerating ? 'rgba(0, 242, 255, 0.1)' : 'rgba(0, 10, 20, 0.9)',
+                                backgroundColor: isGenerating ? 'rgba(0, 242, 255, 0.1)' : 'rgba(0, 242, 255, 0.15)',
                                 border: '2px solid #00f2ff',
                                 boxShadow: isGenerating
                                     ? '0 0 30px rgba(0, 242, 255, 0.4)'
@@ -112,10 +112,11 @@ export const FooterControls: React.FC<FooterControlsProps> = ({
                                 <Sparkles size={18} color="#00f2ff" style={{ filter: 'drop-shadow(0 0 8px #00f2ff)' }} />
                             )}
                             <span style={{
-                                fontSize: '9px',
+                                fontSize: '11px',
                                 fontWeight: 900,
                                 letterSpacing: '0.1em',
-                                color: 'rgba(255, 255, 255, 0.6)',
+                                color: '#00f2ff',
+                                textShadow: '0 0 8px rgba(0, 242, 255, 0.6)',
                                 textTransform: 'uppercase'
                             }}>
                                 {isGenerating ? 'GEN...' : t('common.generate')}
