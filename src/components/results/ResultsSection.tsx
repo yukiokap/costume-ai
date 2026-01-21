@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Copy, Check, Sparkles, Heart } from 'lucide-react';
 import { type GeneratedPrompt, type HistoryItem } from '../../types';
+import { useLanguage } from '../../contexts/LanguageContext';
 import './Results.css';
 
 interface ResultsSectionProps {
@@ -33,6 +34,7 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
     copyOptions,
     setCopyOptions
 }) => {
+    const { t } = useLanguage();
 
     const handleSingleCopy = (item: GeneratedPrompt, index: number) => {
         const parts = [];
@@ -88,6 +90,10 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                 borderRadius: '12px',
                                 border: '1px solid rgba(255, 255, 255, 0.05)'
                             }}>
+                                <span style={{ fontSize: '0.65rem', fontWeight: 900, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', marginRight: '0.2rem' }}>
+                                    {t('results.copy_settings_label')}
+                                </span>
+
                                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
                                     <input
                                         type="checkbox"
@@ -95,7 +101,7 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                         onChange={() => setCopyOptions(prev => ({ ...prev, costume: !prev.costume }))}
                                         style={{ accentColor: '#f97316', width: '14px', height: '14px', cursor: 'pointer' }}
                                     />
-                                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: copyOptions.costume ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>衣装</span>
+                                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: copyOptions.costume ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('common.costume')}</span>
                                 </label>
 
                                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
@@ -105,7 +111,7 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                         onChange={() => setCopyOptions(prev => ({ ...prev, pose: !prev.pose }))}
                                         style={{ accentColor: '#f97316', width: '14px', height: '14px', cursor: 'pointer' }}
                                     />
-                                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: copyOptions.pose ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>ポーズ</span>
+                                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: copyOptions.pose ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('editor.pose')}</span>
                                 </label>
 
                                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
@@ -115,7 +121,7 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                         onChange={() => setCopyOptions(prev => ({ ...prev, framing: !prev.framing }))}
                                         style={{ accentColor: '#f97316', width: '14px', height: '14px', cursor: 'pointer' }}
                                     />
-                                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: copyOptions.framing ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>構図</span>
+                                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: copyOptions.framing ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('editor.framing')}</span>
                                 </label>
 
                                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>

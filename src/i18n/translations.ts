@@ -112,6 +112,7 @@ export const translations = {
             recent_results: '最新の生成結果',
             items_found_suffix: ' 件のアイテムが見つかりました',
             no_records: '記録がありません',
+            copy_settings_label: 'コピー設定:',
         }
     },
     en: {
@@ -225,6 +226,7 @@ export const translations = {
             recent_results: 'Recent Results',
             items_found_suffix: ' items found',
             no_records: 'No records found',
+            copy_settings_label: 'COPY SETTINGS:',
         }
     }
 };

@@ -158,7 +158,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                             border: '1px solid rgba(255, 255, 255, 0.05)',
                             backdropFilter: 'blur(10px)'
                         }}>
-                            <span style={{ fontSize: '0.65rem', fontWeight: 900, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', marginRight: '0.5rem' }}>COPY SETTINGS:</span>
+                            <span style={{ fontSize: '0.65rem', fontWeight: 900, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', marginRight: '0.5rem' }}>{t('results.copy_settings_label')}</span>
 
                             <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
                                 <input
