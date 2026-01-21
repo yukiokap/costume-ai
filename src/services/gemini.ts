@@ -435,7 +435,10 @@ export const visualizeCostume = async (
     const refined = response.text().trim().replace(/^[`\s]*(.*)[`\s]*$/s, '$1');
     const encodedPrompt = encodeURIComponent(refined || finalInput);
     const seed = Math.floor(Math.random() * 1000000);
-    return `https://image.pollinations.ai/prompt/${encodedPrompt}?nologo=true&seed=${seed}&width=1024&height=1024&model=flux`;
+
+    // Using a more stable and high-quality default path
+    // Removed 'model=flux' as it was causing the 'WE HAVE MOVED' error image.
+    return `https://image.pollinations.ai/prompt/${encodedPrompt}?nologo=true&seed=${seed}&width=1024&height=1024`;
   } catch (err) {
     console.error("Visualization Error:", err);
     throw err;
