@@ -205,42 +205,50 @@ export const generateCostumePrompts = async (
     // --- STAGE 2: INDEPENDENT DIRECTOR ---
     const stage2Prompt = `
       [STAGE 2: CINEMATIC DIRECTOR]
-      Task: Generate ${costumes.length} sets of cinematic atmospheric settings.
+      Task: Generate ${costumes.length} sets of cinematic atmospheric settings and pose details.
       
       [CONTEXT]
       - Theme: "${parts.theme.toUpperCase()}"
       - Concept Vibe: ${parts.concept || 'NONE'}
-      - Expression: ${parts.expression ? parts.expression.toUpperCase() : 'RANDOM'} (${EXPRESSION_GUIDES[parts.expression || 'random']})
       - Background Mode: ${parts.useWhiteBackground ? 'FORCED WHITE' : 'DYNAMIC SCENE'}
       - Lighting Mode: ${parts.enableLighting ? 'ON' : 'OFF'}
+      
+      [USER CUSTOM REQUESTS (HIGHEST PRIORITY)]
+      - Custom Pose Request: ${parts.poseDescription ? `"${parts.poseDescription}" (MUST FOLLOW THIS)` : 'None'}
+      - Custom Expression Request: ${parts.expressionDescription ? `"${parts.expressionDescription}"` : 'None'}
+      - Custom Framing Request: ${parts.framingDescription ? `"${parts.framingDescription}"` : 'None'}
+
+      [GUIDES (Use only if no custom request)]
+      - Expression Style: ${parts.expression ? parts.expression.toUpperCase() : 'RANDOM'} (${EXPRESSION_GUIDES[parts.expression || 'random']})
+      - Pose Style: ${parts.pose ? parts.pose.toUpperCase() : 'RANDOM'} (${POSE_GUIDES[parts.pose || 'random']})
       
       [COSTUME CONTEXT]
       ${costumes.map((c, i) => `Costume ${i}: ${c.name} (${c.desc})`).join('\n')}
 
       [INSTRUCTIONS]
-      1. SCENE:
+      1. POSE & EXPRESSION:
+        - IF [Custom Pose Request] is present: IGNORE all preset styles. Generate precise tags for "${parts.poseDescription}".
+        - IF [Custom Expression Request] is present: IGNORE preset styles. Generate tags for "${parts.expressionDescription}".
+        - OTHERWISE: Follow the GUIDES.
+
+      2. SCENE:
         - If Background is WHITE: Use "simple background, white background".
         - If Background is DYNAMIC: Analyze the costume + theme. Create a PERFECTLY FITTING background.
-          - Example: Cool + Swimsuit -> "Night pool, cyber beach, luxury resort at night"
-          - Example: Cute + Swimsuit -> "Tropical beach, sunny water park, pastel pool"
-          - Example: Cool + Maid -> "Cyberpunk alley, neon cafe, metal room"
       
-      2. LIGHTING:
+      3. LIGHTING:
         - If Mode ON: Use "cinematic lighting, dramatic shadows, volumetric lighting, rim light".
-        - If Mode OFF: FORBIDDEN to use any lighting tags. NO "cinematic", NO "shadows", NO "volumetric". Keep it FLAT and NATURAL.
+        - If Mode OFF: FORBIDDEN to use any lighting tags. Keep it FLAT and NATURAL.
 
-      3. GAZE:
-        - FORBIDDEN: NEVER use the word 'camera' to describe eyes or looking direction.
-        - RECOMMENDED: Use 'looking at viewer', 'eye contact', or 'gaze' instead.
-
-      ${parts.pose !== 'model' ? `- Pose: ${parts.pose ? parts.pose.toUpperCase() : 'RANDOM'} (${POSE_GUIDES[parts.pose || 'random']})` : '- Body Pose will be handled as fixed standing. EXCLUSIVELY focus on facial expression and hand gestures.'}
+      4. GAZE:
+        - FORBIDDEN: NEVER use the word 'camera'. Use 'looking at viewer', 'eye contact', or 'gaze'.
 
       [OUTPUT FORMAT]
       Return exactly ${costumes.length} items separated by "[[SPLIT]]":
       [[ID]] Index (0 to ${costumes.length - 1})
-      [[EXPRESSION]] Detailed facial expression tags only.
-      [[FRAMING]] Angle tags only (if random).
-      [[SCENE]] Environment/Lighting tags only (if not forced white).
+      [[POSE]] Pose tags only. (e.g. "standing, hand on hip" or "wariza, sitting on floor")
+      [[EXPRESSION]] Facial expression tags only.
+      [[FRAMING]] Angle tags only.
+      [[SCENE]] Environment/Lighting tags only.
       [[SPLIT]]
     `;
 
@@ -253,6 +261,7 @@ export const generateCostumePrompts = async (
       const idx = parseInt(idMatch[1]);
       return {
         idx,
+        pose: (v.match(/\[\[POSE\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim(),
         expression: (v.match(/\[\[EXPRESSION\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim(),
         framing: (v.match(/\[\[FRAMING\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim(),
         scene: (v.match(/\[\[SCENE\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim(),
@@ -260,44 +269,58 @@ export const generateCostumePrompts = async (
     }).filter(v => v !== null);
 
     return costumes.map((baseCostume, i) => {
-      const director = stage2Results.find(r => r.idx === i) || stage2Results[i] || { expression: '', framing: '', scene: '' };
+      const director = stage2Results.find(r => r.idx === i) || stage2Results[i] || { pose: '', expression: '', framing: '', scene: '' };
 
-      // 1. POSE & EXPRESSION (FIXED SELECTION FOR MODEL STANDING)
-      let finalPose = '';
-      if (parts.pose === 'model') {
+      // 1. POSE LOGIC
+      // If user provided a custom description, ALWAYS use the director's generation (which followed the custom request).
+      // Only use the "Model Preset" logic if NO custom description exists AND the user selected 'model'.
+      let finalPoseTags = '';
+
+      if (!parts.poseDescription && parts.pose === 'model') {
+        // Fallback to random model poses ONLY if no custom description
         const randomPose = MODEL_STAND_POSES[Math.floor(Math.random() * MODEL_STAND_POSES.length)];
-        const randomExp = MODEL_EXPRESSIONS[Math.floor(Math.random() * MODEL_EXPRESSIONS.length)];
-        finalPose = `${randomPose}, ${randomExp}`;
+        finalPoseTags = randomPose;
       } else {
-        finalPose = director.expression;
+        // Use AI generated pose (which respects custom input or theme)
+        finalPoseTags = director.pose;
       }
 
-      // 2. FRAMING OVERRIDE (FIXED)
+      // 2. EXPRESSION LOGIC
+      let finalExpressionTags = director.expression;
+      if (!parts.expressionDescription && parts.pose === 'model') {
+        // Add model expression flavor if model preset and no custom expression
+        const randomExp = MODEL_EXPRESSIONS[Math.floor(Math.random() * MODEL_EXPRESSIONS.length)];
+        finalExpressionTags = `${finalExpressionTags}, ${randomExp}`;
+      }
+
+      const finalPoseAndExp = `${finalPoseTags}, ${finalExpressionTags}`;
+
+      // 3. FRAMING OVERRIDE
       let finalFraming = director.framing;
-      if (parts.framing && FRAMING_GUIDES[parts.framing]) {
+      if (parts.framingDescription) {
+        // Implicitly trusted via Stage 2 generation, but we can verify
+      } else if (parts.framing && FRAMING_GUIDES[parts.framing]) {
         finalFraming = FRAMING_GUIDES[parts.framing];
       } else if (!finalFraming) {
         finalFraming = FRAMING_GUIDES.model;
       }
 
-      // 3. SCENE OVERRIDE (FIXED)
+      // 4. SCENE OVERRIDE
       let finalScene = '';
       if (parts.useWhiteBackground) {
         finalScene = WHITE_BACKGROUND_PROMPT;
       } else {
-        console.log(`Director Scene for ${i}:`, director.scene);
         if (parts.enableLighting) {
           finalScene = director.scene;
         } else {
-          // FORCE REMOVE lighting tags if user wanted OFF
           finalScene = director.scene
             .replace(/(studio lighting|cinematic lighting|volumetric lighting|dramatic shadows|rim lighting|depth of field|bokeh|soft lighting|hard lighting)/gi, '')
-            .replace(/,\s*,/g, ',') // cleanup double commas
+            .replace(/,\s*,/g, ',')
             .trim();
         }
       }
 
-      const promptParts = [baseCostume.tags, finalPose, finalFraming, finalScene].filter(p => p && p.length > 0);
+      const promptParts = [baseCostume.tags, finalPoseAndExp, finalFraming, finalScene].filter(p => p && p.length > 0);
       const fullPrompt = promptParts.join(', ');
 
       return {
@@ -305,7 +328,7 @@ export const generateCostumePrompts = async (
         description: baseCostume.name || baseCostume.desc,
         prompt: fullPrompt,
         costume: baseCostume.tags,
-        composition: finalPose,
+        composition: finalPoseAndExp,
         framing: finalFraming,
         scene: finalScene,
         sexyLevel: parts.sexyLevel,
