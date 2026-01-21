@@ -114,14 +114,16 @@ export const FooterControls: React.FC<FooterControlsProps> = ({
                                 <Sparkles size={20} color="#000" />
                             )}
                             <span style={{
-                                fontSize: '12px',
+                                fontSize: '16px',
                                 fontWeight: 900,
-                                letterSpacing: '0.1em',
-                                color: isGenerating ? '#00f2ff' : '#000',
-                                textShadow: isGenerating ? '0 0 8px rgba(0, 242, 255, 0.6)' : 'none',
+                                letterSpacing: '0.15em',
+                                color: isGenerating ? '#00f2ff' : '#ffffff',
+                                textShadow: isGenerating
+                                    ? '0 0 8px rgba(0, 242, 255, 0.6)'
+                                    : '0 2px 4px rgba(0, 0, 0, 0.4)',
                                 textTransform: 'uppercase'
                             }}>
-                                {isGenerating ? 'GEN...' : t('common.generate')}
+                                {isGenerating ? 'WAIT' : 'TAP!'}
                             </span>
                         </motion.button>
                     </RotaryDial>
