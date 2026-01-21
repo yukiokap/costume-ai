@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ChevronDown, Settings2 } from 'lucide-react'
-import { generateCostumePrompts, generateSexyRangePrompts, visualizeCostume } from './services/gemini'
+import { generateCostumePrompts, generateSexyRangePrompts } from './services/gemini'
 import { type GeneratedPrompt, type HistoryItem } from './types'
 import { Header } from './components/layout/Header'
 import { ThemeSelector } from './components/editor/ThemeSelector'
@@ -15,7 +15,6 @@ import { SectionDivider } from './components/ui/SectionDivider'
 import { SettingsModal } from './components/settings/SettingsModal';
 import { FooterControls } from './components/layout/FooterControls';
 import { HistoryOverlay } from './components/results/HistoryOverlay';
-import { VisualizerModal } from './components/results/VisualizerModal';
 import { motion, AnimatePresence } from 'framer-motion'
 
 import { useLanguage } from './contexts/LanguageContext'
@@ -73,8 +72,6 @@ function App() {
   const [showOverlay, setShowOverlay] = useState<'none' | 'history' | 'favorites'>('none')
   const [remixBase, setRemixBase] = useState<HistoryItem | null>(null)
 
-  const [visualizerPrompt, setVisualizerPrompt] = useState<string | null>(null);
-  const [showVisualizer, setShowVisualizer] = useState(false);
 
   const handleSetCopyOptions = (action: any) => {
     if (typeof action === 'function') {
@@ -439,10 +436,6 @@ function App() {
           onDelete={removeFromHistory}
           onCopy={handleCopy}
           onRemix={handleRemix}
-          onGenerateImage={(p) => {
-            setVisualizerPrompt(p);
-            setShowVisualizer(true);
-          }}
           isCopied={isCopied}
           copyOptions={copyOptions}
           setCopyOptions={handleSetCopyOptions}
@@ -460,20 +453,10 @@ function App() {
           onToggleFavorite={toggleFavorite}
           onGenerateRange={handleGenerateRange}
           onRemix={handleRemix}
-          onGenerateImage={(p) => {
-            setVisualizerPrompt(p);
-            setShowVisualizer(true);
-          }}
           copyOptions={copyOptions}
           setCopyOptions={handleSetCopyOptions}
         />
 
-        <VisualizerModal
-          isOpen={showVisualizer}
-          onClose={() => setShowVisualizer(false)}
-          prompt={visualizerPrompt || ''}
-          onGenerate={(p: string) => visualizeCostume(apiKey, p)}
-        />
 
       </main >
 
