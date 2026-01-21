@@ -18,6 +18,7 @@ export const translations = {
             back: '戻る',
         },
         editor: {
+            concept_label: '衣装コンセプト (任意)',
             concept_placeholder: 'キャラクターのコンセプトを入力 (例: 清楚な和服の美少女, 歴戦の女勇者)',
             theme_label: 'テーマを選択',
             sexy_level: 'セクシー度',
@@ -77,6 +78,7 @@ export const translations = {
             back: 'Back',
         },
         editor: {
+            concept_label: 'Costume Concept (Optional)',
             concept_placeholder: 'Enter character concept (e.g. elegant girl in kimono, battle-worn warrior)',
             theme_label: 'Select Theme',
             sexy_level: 'Sexy Level',
