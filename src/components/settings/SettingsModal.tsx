@@ -300,7 +300,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                 }}
                             >
                                 <Check size={18} />
-                                {isSaving ? 'CONFIG_UPDATING...' : t('common.close')}
+                                {isSaving ? 'CONFIG_UPDATING...' : t('common.save_close')}
                             </button>
                         </div>
 
