@@ -450,14 +450,6 @@ function App() {
               scale: 1,
               y: 0,
               x: '-50%',
-              transition: {
-                y: {
-                  duration: 2,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                  ease: "easeInOut"
-                }
-              }
             }}
             exit={{ opacity: 0, scale: 0.9, y: 50, x: '-50%' }}
             style={{
