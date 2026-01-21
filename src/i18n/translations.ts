@@ -113,6 +113,13 @@ export const translations = {
             items_found_suffix: ' 件のアイテムが見つかりました',
             no_records: '記録がありません',
             copy_settings_label: 'コピー設定:',
+            errors: {
+                api_key_invalid: 'APIキーが無効です。設定を確認してください。',
+                quota_exceeded: 'API利用制限に達しました。しばらく待ってからお試しください。',
+                safety_block: 'コンテンツ安全フィルターにより生成がブロックされました。ConceptやSexy Levelを調整してください。',
+                network_error: 'ネットワーク接続エラーが発生しました。',
+                unknown: '予期せぬエラーが発生しました: '
+            }
         }
     },
     en: {
@@ -227,6 +234,13 @@ export const translations = {
             items_found_suffix: ' items found',
             no_records: 'No records found',
             copy_settings_label: 'COPY SETTINGS:',
+            errors: {
+                api_key_invalid: 'Invalid API Key. Please check your settings.',
+                quota_exceeded: 'API quota exceeded. Please try again later.',
+                safety_block: 'Generation blocked by safety filters. Please adjust Concept or Sexy Level.',
+                network_error: 'Network connection error.',
+                unknown: 'An unexpected error occurred: '
+            }
         }
     }
 };

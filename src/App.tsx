@@ -20,6 +20,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useLanguage } from './contexts/LanguageContext'
 import { useHistory } from './contexts/HistoryContext'
 import { useSettings } from './contexts/SettingsContext'
+import { getErrorMessage } from './utils/errorHandler';
 
 // Fallback ID generator if crypto.randomUUID is missing
 const generateId = () => {
@@ -135,7 +136,8 @@ function App() {
       }, 500)
     } catch (error) {
       console.error(error);
-      alert(`Error Transmitting: ${error instanceof Error ? error.message : 'An unknown error occurred'}`);
+      const msg = getErrorMessage(error, t);
+      alert(msg);
     } finally {
       setIsGenerating(false)
       setShowCompletion(true)
@@ -192,7 +194,8 @@ function App() {
       }, 500)
     } catch (error) {
       console.error(error);
-      alert(`Error Range Transmitting: ${error instanceof Error ? error.message : 'An unknown error occurred'}`)
+      const msg = getErrorMessage(error, t);
+      alert(msg);
     } finally {
       setIsGenerating(false)
       setShowCompletion(true)
