@@ -530,9 +530,7 @@ function App() {
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
             style={{
               position: 'fixed',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
+              inset: 0,
               zIndex: 10000,
               pointerEvents: 'none',
               display: 'flex',
