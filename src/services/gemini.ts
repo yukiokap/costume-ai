@@ -179,6 +179,7 @@ export const generateCostumePrompts = async (
     - Names must be descriptive (e.g. 'エレガント・女勇者', 'セクシー・歴戦の女勇者', 'デザイナーズ・スクール水着').
     - Output ONLY the specified tags.
     - FORBIDDEN TAGS: No environment, lighting, or camera tags in [[COSTUME]]. Focus ONLY on the character.
+    - ABSOLUTELY NO JAPANESE TEXT in [[COSTUME]]. All tags must be English.
     ${parts.sexyLevel >= 9 ? "- Level 10 means pasties or creative covers. Use 'pasties', 'heart-shaped pasties', 'metallic covers'." : ""}
   `;
 
@@ -242,17 +243,22 @@ export const generateCostumePrompts = async (
       4. GAZE:
         - FORBIDDEN: NEVER use the word 'camera'. Use 'looking at viewer', 'eye contact', or 'gaze'.
 
-      5. TEXT LANGUAGE:
-        - ABSOLUTE PROHIBITION: DO NOT output Japanese text in [[POSE]] or [[EXPRESSION]].
-        - AUTOMATIC TRANSLATION: If [Custom Pose Request] is in Japanese (e.g. "キリッとメガネ"), YOU MUST TRANSLATE IT to English tags (e.g. "adjusting glasses, sharp gaze, confident expression").
+      5. CUSTOM INPUT HANDLING & LANGUAGE:
+        - ABSOLUTE PROHIBITION: DO NOT output Japanese text in ANY tags ([[POSE]], [[EXPRESSION]], [[FRAMING]], [[SCENE]]).
+        - INTERPRETATION: If a custom request is provided (Japanese or English):
+          1. Analyze the core intent and visual nuance.
+          2. Convert it into effective English image generation tags.
+          3. DO NOT just translate literally; EXPAND into descriptive visual tags.
+          (e.g. "Wariza" -> "wariza, w-sitting, sitting on floor, knees bent")
+          (e.g. "キリッと" -> "sharp gaze, fierce expression, confident, serious")
 
       [OUTPUT FORMAT]
       Return exactly ${costumes.length} items separated by "[[SPLIT]]":
       [[ID]] Index (0 to ${costumes.length - 1})
-      [[POSE]] English Pose tags only. ABSOLUTELY NO JAPANESE TEXT. (e.g. "standing, hand on hip", "adjusting glasses")
+      [[POSE]] English Pose tags only. ABSOLUTELY NO JAPANESE TEXT.
       [[EXPRESSION]] English Facial expression tags only. ABSOLUTELY NO JAPANESE TEXT.
-      [[FRAMING]] Angle tags only.
-      [[SCENE]] Environment/Lighting tags only.
+      [[FRAMING]] Angle/Framing tags only. ABSOLUTELY NO JAPANESE TEXT.
+      [[SCENE]] Environment/Lighting tags only. ABSOLUTELY NO JAPANESE TEXT.
       [[SPLIT]]
     `;
 
