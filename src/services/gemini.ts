@@ -40,14 +40,28 @@ const sexyLevelDescription = (level: number) => {
   return "PHASE 5: EXTREME/MICRO (Destruction & Reconstruction). Almost naked, nearly bare skin focus. Outfit is torn or micro-sized. Nipples MUST be covered by pasties, band-aids, or creative elements. (Keywords: 'micro-bikini, pasties, heart-shaped pasties, star-shaped nipple covers, metallic covers, body piercings, band-aids as nipple covers, cross-shaped bandages, extreme high-cut, torn clothes, string-only, barely covering'). MAINTAIN ZERO NUDITY but maximize intensity and VARIETY of covers.";
 };
 
-const POSE_GUIDES: Record<string, string> = {
-  model: "Focus on professional standing postures.",
-  cool: "Focus on confidence and strength. Creative Examples: Arms crossed, hand in pocket, leaning against wall, looking down at viewer, dynamic fighting stance, sharp side profile, wind blowing hair, intense gaze, walking towards viewer, adjusting sunglasses.",
-  cute: "Focus on charm and innocence. Creative Examples: Peace sign, hands on cheeks, tilting head, jumping, sitting and hugging knees, winking, holding an object close, pigeon-toed stance, cat paw pose, looking up at viewer.",
-  sexy: "Focus on allure and body curves. Creative Examples: Arched back, looking over shoulder, biting lip, lying on side, pulling strap, S-curve standing, highlighting legs or cleavage, sultry expression, kneeling.",
-  elegant: "Focus on grace and sophistication. Creative Examples: Curtsy, slow walking, hand on chest, looking up at moon, sitting with crossed legs, holding wine glass (if appropriate), soft flowing movements, turning gently.",
-  natural: "Focus on candid and relaxed moments. Creative Examples: Stretching, fixing hair, yawning, laughing, walking, reading a book, sitting on a bench, candid snapshot style, looking away naturally, holding a drink.",
-  random: "Creative, experimental, and unpredictable poses that fit the outfit."
+const POSE_MOOD_GUIDES: Record<string, string> = {
+  random: "Creative, experimental mood fitting the costume.",
+  energetic: "High energy, bright, lively, jumping, running, big gestures.",
+  cool: "Sharp, confident, stylish, calm, aloof.",
+  cute: "Adorable, sweet, charming, playful, innocent.",
+  sexy: "Alluring, provocative, seductive, bold.",
+  natural: "Relaxed, casual, candid, effortless.",
+  elegant: "Graceful, sophisticated, mature, noble.",
+  shy: "Bashful, timid, slightly embarrassed, sweet.",
+  heroic: "Dignified, strong, powerful, fearless, heroic stance."
+};
+
+const POSE_STANCE_GUIDES: Record<string, string> = {
+  random: "Best stance to showcase the outfit.",
+  standing: "Basic upright standing position.",
+  sitting: "Sitting on a chair, stool, or the floor.",
+  kneeling: "Kneeling on the ground or a surface.",
+  lying: "Lying down, reclining, or flat position.",
+  active: "Dynamic movement, running, jumping, action shot.",
+  looking_back: "Looking back over the shoulder, turned torso.",
+  squatting: "Crouching or squatting position, low center of gravity.",
+  model: "Professional fashion model studio pose, elegant and balanced."
 };
 
 const EXPRESSION_GUIDES: Record<string, string> = {
@@ -222,7 +236,8 @@ export const generateCostumePrompts = async (
 
       [GUIDES (Use only if no custom request)]
       - Expression Style: ${parts.expression ? parts.expression.toUpperCase() : 'RANDOM'} (${EXPRESSION_GUIDES[parts.expression || 'random']})
-      - Pose Style: ${parts.pose ? parts.pose.toUpperCase() : 'RANDOM'} (${POSE_GUIDES[parts.pose || 'random']})
+      - Pose Mood: ${parts.poseMood ? parts.poseMood.toUpperCase() : 'RANDOM'} (${POSE_MOOD_GUIDES[parts.poseMood || 'random']})
+      - Pose Stance: ${parts.poseStance ? parts.poseStance.toUpperCase() : 'RANDOM'} (${POSE_STANCE_GUIDES[parts.poseStance || 'random']})
       
       [COSTUME CONTEXT]
       ${costumes.map((c, i) => `Costume ${i}: ${c.name} (${c.desc})`).join('\n')}
@@ -287,18 +302,18 @@ export const generateCostumePrompts = async (
       // Only use the "Model Preset" logic if NO custom description exists AND the user selected 'model'.
       let finalPoseTags = '';
 
-      if (!parts.poseDescription && parts.pose === 'model') {
+      if (!parts.poseDescription && parts.poseStance === 'model') {
         // Fallback to random model poses ONLY if no custom description
         const randomPose = MODEL_STAND_POSES[Math.floor(Math.random() * MODEL_STAND_POSES.length)];
         finalPoseTags = randomPose;
       } else {
-        // Use AI generated pose (which respects custom input or theme)
+        // Use AI generated pose (which respects custom input or theme/mood)
         finalPoseTags = director.pose;
       }
 
       // 2. EXPRESSION LOGIC
       let finalExpressionTags = director.expression;
-      if (!parts.expressionDescription && parts.pose === 'model') {
+      if (!parts.expressionDescription && parts.poseStance === 'model') {
         // Add model expression flavor if model preset and no custom expression
         const randomExp = MODEL_EXPRESSIONS[Math.floor(Math.random() * MODEL_EXPRESSIONS.length)];
         finalExpressionTags = `${finalExpressionTags}, ${randomExp}`;
@@ -345,7 +360,9 @@ export const generateCostumePrompts = async (
         sexyLevel: parts.sexyLevel,
         accessoryLevel: parts.accessoryLevel,
         originalConcept: parts.concept,
-        originalTheme: parts.theme
+        originalTheme: parts.theme,
+        originalPoseMood: parts.poseMood,
+        originalPoseStance: parts.poseStance
       };
     }).filter(v => v.costume);
 
@@ -357,8 +374,7 @@ export const generateCostumePrompts = async (
 
 export const generateSexyRangePrompts = async (
   apiKey: string,
-  category: string,
-  parts: Record<string, string>,
+  parts: Record<string, any>,
   referencePrompt?: string,
   language: 'ja' | 'en' = 'ja'
 ) => {
@@ -377,7 +393,7 @@ export const generateSexyRangePrompts = async (
 
   const prompt = `
     Generate 10 prompts for the same concept with INCREASING Sexy Level (1 to 10).
-    ${referencePrompt ? `Base: ${referencePrompt}` : `Concept: ${parts.base} | Style: ${category}`}
+    ${referencePrompt ? `Base: ${referencePrompt}` : `Concept: ${parts.concept || parts.base} | Theme: ${parts.theme} | Pose: ${parts.poseMood} ${parts.poseStance}`}
     
     Format: Level [N]: [[DESC]] ${language === 'en' ? 'English' : 'Japanese'} [[PROMPT]] English
     Separate with [[SPLIT]]

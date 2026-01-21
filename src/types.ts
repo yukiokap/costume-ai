@@ -10,6 +10,8 @@ export interface GeneratedPrompt {
     accessoryLevel?: number;
     originalConcept?: string;
     originalTheme?: string;
+    originalPoseMood?: string;
+    originalPoseStance?: string;
 }
 
 export interface HistoryItem extends GeneratedPrompt {
@@ -24,6 +26,8 @@ export interface DesignParts {
     sexyLevel: number;
     accessoryLevel: number;
     pose?: string;
+    poseMood?: string;
+    poseStance?: string;
     poseDescription?: string;
     expression?: string;
     expressionDescription?: string;

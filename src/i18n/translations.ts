@@ -38,7 +38,8 @@ export const translations = {
             section_pose_title: '02: ポーズの設定',
             section_expression_title: '03: 表情の設定',
             section_framing_title: '04: 構図の設定',
-            preset_pose_label: 'プリセットモーション / Motion Concepts',
+            pose_mood_label: 'ポーズの雰囲気 / Mood Concepts',
+            pose_stance_label: '具体的な姿勢 / Stance Concepts',
             pose_custom_label: 'ポーズ・モーションの詳細記述 (任意)',
             pose_custom_placeholder: 'キャラクターにどんなポーズをさせたいか自由に記述してください...',
             preset_expression_label: '表情・感情コンセプト / Emotion Concepts',
@@ -55,14 +56,27 @@ export const translations = {
                 sexy: 'セクシー',
                 natural: 'ナチュラル'
             },
-            pose_presets: {
-                model: 'モデル立ち',
+            pose_mood_presets: {
                 random: 'おまかせ',
+                energetic: '元気',
                 cool: 'クール',
                 cute: 'キュート',
-                elegant: 'エレガント',
                 sexy: 'セクシー',
-                natural: 'ナチュラル'
+                natural: 'ナチュラル',
+                elegant: '上品',
+                shy: 'シャイ',
+                heroic: '威厳'
+            },
+            pose_stance_presets: {
+                random: 'おまかせ',
+                standing: '立ち',
+                sitting: '座り',
+                kneeling: '膝立ち',
+                lying: '寝そべり',
+                active: 'アクティブ',
+                looking_back: '見返り',
+                squatting: 'しゃがみ',
+                model: 'モデル立ち'
             },
             expression_presets: {
                 model: 'モデル表情',
@@ -159,7 +173,8 @@ export const translations = {
             section_pose_title: '02: Pose Settings',
             section_expression_title: '03: Expression Settings',
             section_framing_title: '04: Framing Settings',
-            preset_pose_label: 'Preset Motion Concepts',
+            pose_mood_label: 'Pose Mood Concepts',
+            pose_stance_label: 'Pose Stance Concepts',
             pose_custom_label: 'Detailed Pose Description (Optional)',
             pose_custom_placeholder: 'Describe the pose you want freely...',
             preset_expression_label: 'Emotion Concepts',
@@ -176,14 +191,27 @@ export const translations = {
                 sexy: 'Sexy',
                 natural: 'Natural'
             },
-            pose_presets: {
-                model: 'Model',
+            pose_mood_presets: {
                 random: 'Random',
+                energetic: 'Energetic',
                 cool: 'Cool',
                 cute: 'Cute',
-                elegant: 'Elegant',
                 sexy: 'Sexy',
-                natural: 'Natural'
+                natural: 'Natural',
+                elegant: 'Elegant',
+                shy: 'Shy',
+                heroic: 'Heroic'
+            },
+            pose_stance_presets: {
+                random: 'Random',
+                standing: 'Standing',
+                sitting: 'Sitting',
+                kneeling: 'Kneeling',
+                lying: 'Lying',
+                active: 'Active',
+                looking_back: 'Looking Back',
+                squatting: 'Squatting',
+                model: 'Model'
             },
             expression_presets: {
                 model: 'Model',

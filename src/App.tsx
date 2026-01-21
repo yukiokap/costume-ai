@@ -52,7 +52,8 @@ function App() {
   const [concept, setConcept] = useState('')
   const [sexyLevel, setSexyLevel] = useState(5)
   const [accessoryLevel, setAccessoryLevel] = useState<number>(5)
-  const [selectedPose, setSelectedPose] = useState('model')
+  const [selectedPoseMood, setSelectedPoseMood] = useState('random')
+  const [selectedPoseStance, setSelectedPoseStance] = useState('model')
   const [poseDescription, setPoseDescription] = useState('')
   const [selectedExpression, setSelectedExpression] = useState('model')
   const [expressionDescription, setExpressionDescription] = useState('')
@@ -107,7 +108,8 @@ function App() {
       const parts = {
         theme,
         concept,
-        pose: selectedPose,
+        poseMood: selectedPoseMood,
+        poseStance: selectedPoseStance,
         expression: selectedExpression,
         framing: selectedFraming,
         poseDescription: poseDescription,
@@ -166,7 +168,8 @@ function App() {
       const parts = {
         theme,
         concept,
-        pose: selectedPose,
+        poseMood: selectedPoseMood,
+        poseStance: selectedPoseStance,
         expression: selectedExpression,
         framing: selectedFraming,
         poseDescription: poseDescription,
@@ -178,7 +181,7 @@ function App() {
         useWhiteBackground: useWhiteBackground,
         remixBaseDesign: remixBase?.costume
       }
-      const results = await generateSexyRangePrompts(apiKey, 'any', parts as any, referencePrompt, language)
+      const results = await generateSexyRangePrompts(apiKey, parts, referencePrompt, language)
 
       const newHistoryItems: HistoryItem[] = results.map(r => ({
         ...r,
@@ -208,6 +211,8 @@ function App() {
     // Restore states
     if (item.originalTheme) setTheme(item.originalTheme);
     if (item.originalConcept) setConcept(item.originalConcept);
+    if (item.originalPoseMood) setSelectedPoseMood(item.originalPoseMood);
+    if (item.originalPoseStance) setSelectedPoseStance(item.originalPoseStance);
     if (item.sexyLevel !== undefined) setSexyLevel(item.sexyLevel);
     if (item.accessoryLevel !== undefined) setAccessoryLevel(item.accessoryLevel);
 
@@ -383,8 +388,10 @@ function App() {
                   className="overflow-hidden space-y-12 mt-8"
                 >
                   <ScenePoseSection
-                    selectedPose={selectedPose}
-                    setSelectedPose={setSelectedPose}
+                    selectedPoseMood={selectedPoseMood}
+                    setSelectedPoseMood={setSelectedPoseMood}
+                    selectedPoseStance={selectedPoseStance}
+                    setSelectedPoseStance={setSelectedPoseStance}
                     poseDescription={poseDescription}
                     setPoseDescription={setPoseDescription}
                   />
