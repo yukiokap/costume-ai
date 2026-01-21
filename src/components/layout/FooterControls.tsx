@@ -77,11 +77,13 @@ export const FooterControls: React.FC<FooterControlsProps> = ({
                                 width: '140px',
                                 height: '140px',
                                 borderRadius: '50%',
-                                backgroundColor: isGenerating ? 'rgba(0, 242, 255, 0.1)' : 'rgba(0, 242, 255, 0.15)',
+                                background: isGenerating
+                                    ? 'rgba(0, 242, 255, 0.1)'
+                                    : 'linear-gradient(135deg, rgba(0, 242, 255, 0.8), rgba(0, 106, 255, 0.8))',
                                 border: '2px solid #00f2ff',
                                 boxShadow: isGenerating
                                     ? '0 0 30px rgba(0, 242, 255, 0.4)'
-                                    : '0 0 20px rgba(0, 242, 255, 0.2), inset 0 0 15px rgba(0, 242, 255, 0.1)',
+                                    : '0 0 30px rgba(0, 242, 255, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.5)',
                                 cursor: isGenerating ? 'not-allowed' : 'pointer',
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -93,10 +95,10 @@ export const FooterControls: React.FC<FooterControlsProps> = ({
                             }}
                         >
                             <span style={{
-                                fontSize: '28px',
+                                fontSize: '32px',
                                 fontWeight: 900,
-                                color: '#fff',
-                                textShadow: '0 0 10px rgba(0, 242, 255, 0.5)',
+                                color: isGenerating ? '#fff' : '#000',
+                                textShadow: isGenerating ? '0 0 10px rgba(0, 242, 255, 0.5)' : 'none',
                                 lineHeight: 1
                             }}>
                                 {numPrompts}
@@ -106,17 +108,17 @@ export const FooterControls: React.FC<FooterControlsProps> = ({
                                     animate={{ rotate: 360 }}
                                     transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                                 >
-                                    <Sparkles size={18} color="#00f2ff" />
+                                    <Sparkles size={20} color="#00f2ff" />
                                 </motion.div>
                             ) : (
-                                <Sparkles size={18} color="#00f2ff" style={{ filter: 'drop-shadow(0 0 8px #00f2ff)' }} />
+                                <Sparkles size={20} color="#000" />
                             )}
                             <span style={{
-                                fontSize: '11px',
+                                fontSize: '12px',
                                 fontWeight: 900,
                                 letterSpacing: '0.1em',
-                                color: '#00f2ff',
-                                textShadow: '0 0 8px rgba(0, 242, 255, 0.6)',
+                                color: isGenerating ? '#00f2ff' : '#000',
+                                textShadow: isGenerating ? '0 0 8px rgba(0, 242, 255, 0.6)' : 'none',
                                 textTransform: 'uppercase'
                             }}>
                                 {isGenerating ? 'GEN...' : t('common.generate')}
