@@ -407,9 +407,9 @@ export const visualizeCostume = async (
   const cleanApiKey = apiKey.trim();
   const genAI = new GoogleGenerativeAI(cleanApiKey);
 
-  // We use Gemini 3.0 Pro to refine the prompt into a high-quality image generation prompt
+  // We use Gemini 3.0 refined prompt logic
   const model = genAI.getGenerativeModel({
-    model: "gemini-3.0-pro",
+    model: "gemini-3-flash-preview",
   });
 
   const refinementPrompt = `
