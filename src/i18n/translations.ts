@@ -119,6 +119,14 @@ export const translations = {
                 safety_block: 'コンテンツ安全フィルターにより生成がブロックされました。ConceptやSexy Levelを調整してください。',
                 network_error: 'ネットワーク接続エラーが発生しました。',
                 unknown: '予期せぬエラーが発生しました: '
+            },
+            image_gen: {
+                button: 'ビジュアル化',
+                confirm_title: 'AI画像生成を実行しますか？',
+                confirm_desc: 'この機能は最新のAIモデルを使用して、プロンプトを視覚化します。生成には10〜30秒ほど時間がかかり、APIの利用枠を消費します。よろしいですか？',
+                confirm_ok: '生成を開始',
+                generating: 'イメージを練り上げています...',
+                error: '画像の生成に失敗しました。'
             }
         }
     },
@@ -240,6 +248,14 @@ export const translations = {
                 safety_block: 'Generation blocked by safety filters. Please adjust Concept or Sexy Level.',
                 network_error: 'Network connection error.',
                 unknown: 'An unexpected error occurred: '
+            },
+            image_gen: {
+                button: 'VISUALIZE',
+                confirm_title: 'Execute AI Image Generation?',
+                confirm_desc: 'This feature uses latest AI models to visualize the prompt. It takes 10-30s and consumes API quota. Proceed?',
+                confirm_ok: 'Start Generation',
+                generating: 'Synthesizing Image...',
+                error: 'Failed to generate image.'
             }
         }
     }

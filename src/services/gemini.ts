@@ -400,3 +400,42 @@ export const generateSexyRangePrompts = async (
     throw err;
   }
 };
+export const visualizeCostume = async (
+  apiKey: string,
+  prompt: string
+): Promise<string> => {
+  const cleanApiKey = apiKey.trim();
+  const genAI = new GoogleGenerativeAI(cleanApiKey);
+
+  // We use Gemini 3.0 Pro to refine the prompt into a high-quality image generation prompt
+  const model = genAI.getGenerativeModel({
+    model: "gemini-3.0-pro",
+  });
+
+  const refinementPrompt = `
+    Analyze this costume prompt and convert it into a HIGHLY DETAILED, professional artistic masterpiece prompt for an AI image generator.
+    Focus on fabric textures, materials (latex, silk, metal, lace), lighting (volumetric, rim light), and a professional atelier background.
+    Ensure the subject identity is preserved.
+    
+    ORIGINAL: ${prompt}
+    
+    OUTPUT: A single dense string of English tags and descriptive phrases (max 200 words). Do not include any other text.
+  `;
+
+  try {
+    const res = await model.generateContent(refinementPrompt);
+    const refinedPrompt = res.response.text().trim();
+
+    // Use a high-quality visualization engine for the browser demo
+    // In a full production app, this would call the Imagen 3 API via Vertex
+    // For this atelier experience, we use a fast and reliable endpoint.
+    const encodedPrompt = encodeURIComponent(refinedPrompt);
+    const seed = Math.floor(Math.random() * 1000000);
+    const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?nologo=true&seed=${seed}&width=1024&height=1024&model=flux`;
+
+    return imageUrl;
+  } catch (err) {
+    console.error("Visualization Error:", err);
+    throw err;
+  }
+};

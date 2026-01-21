@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Clock, Heart, Trash2, Copy, Check, ChevronLeft } from 'lucide-react';
+import { X, Clock, Heart, Trash2, Copy, Check, ChevronLeft, Image } from 'lucide-react';
 import { type HistoryItem } from '../../types';
 import { useLanguage } from '../../contexts/LanguageContext';
 import './Results.css';
@@ -14,6 +14,7 @@ interface HistoryOverlayProps {
     onDelete: (id: string) => void;
     onCopy: (text: string, index: number) => void;
     onRemix: (item: HistoryItem) => void;
+    onGenerateImage: (prompt: string) => void;
     isCopied: number | null;
     copyOptions: { costume: boolean; pose: boolean; framing: boolean; scene: boolean };
     setCopyOptions: React.Dispatch<React.SetStateAction<{ costume: boolean; pose: boolean; framing: boolean; scene: boolean }>>;
@@ -28,6 +29,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
     onDelete,
     onCopy,
     onRemix,
+    onGenerateImage,
     isCopied,
     copyOptions,
     setCopyOptions
@@ -315,6 +317,26 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                                     }}
                                                 >
                                                     <Heart size={16} fill={item.isFavorite ? 'currentColor' : 'none'} />
+                                                </button>
+                                                <button
+                                                    onClick={() => onGenerateImage(item.prompt)}
+                                                    style={{
+                                                        background: 'rgba(139, 92, 246, 0.12)',
+                                                        border: '1px solid rgba(139, 92, 246, 0.3)',
+                                                        borderRadius: '8px',
+                                                        width: '34px',
+                                                        height: '34px',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        cursor: 'pointer',
+                                                        color: '#a78bfa',
+                                                        transition: 'all 0.2s',
+                                                        backdropFilter: 'blur(4px)'
+                                                    }}
+                                                    title={t('results.image_gen.button')}
+                                                >
+                                                    <Image size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => onDelete(item.id)}

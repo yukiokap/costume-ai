@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Copy, Check, Sparkles, Heart } from 'lucide-react';
+import { Copy, Check, Sparkles, Heart, Image } from 'lucide-react';
 import { type GeneratedPrompt, type HistoryItem } from '../../types';
 import { useLanguage } from '../../contexts/LanguageContext';
 import './Results.css';
@@ -17,6 +17,7 @@ interface ResultsSectionProps {
     onToggleFavorite: (id: string) => void;
     onGenerateRange: (referencePrompt: string) => void;
     onRemix: (item: HistoryItem) => void;
+    onGenerateImage: (prompt: string) => void;
     copyOptions: { costume: boolean; pose: boolean; framing: boolean; scene: boolean };
     setCopyOptions: React.Dispatch<React.SetStateAction<{ costume: boolean; pose: boolean; framing: boolean; scene: boolean }>>;
 }
@@ -31,6 +32,7 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
     history,
     onToggleFavorite,
     onRemix,
+    onGenerateImage,
     copyOptions,
     setCopyOptions
 }) => {
@@ -222,6 +224,29 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                                     }}
                                                 >
                                                     <Heart size={20} fill={isFavorite ? 'currentColor' : 'none'} />
+                                                </button>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        onGenerateImage(item.prompt);
+                                                    }}
+                                                    style={{
+                                                        background: 'rgba(139, 92, 246, 0.12)',
+                                                        border: '1px solid rgba(139, 92, 246, 0.3)',
+                                                        borderRadius: '10px',
+                                                        width: '38px',
+                                                        height: '38px',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        cursor: 'pointer',
+                                                        color: '#a78bfa',
+                                                        transition: 'all 0.2s ease',
+                                                        backdropFilter: 'blur(8px)'
+                                                    }}
+                                                    title={t('results.image_gen.button')}
+                                                >
+                                                    <Image size={20} />
                                                 </button>
                                             </div>
 
