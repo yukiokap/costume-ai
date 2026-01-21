@@ -407,40 +407,35 @@ export const visualizeCostume = async (
   const cleanApiKey = apiKey.trim();
   const genAI = new GoogleGenerativeAI(cleanApiKey);
 
+  // Model specifically for image generation as requested
   const model = genAI.getGenerativeModel({
-    model: "gemini-3-flash-preview",
+    model: "gemini-3-pro-image-preview",
   });
 
-  const refinementPrompt = `
-    Task: Convert the following costume prompt into a "Masterpiece Level" prompt for an AI Image Generator (specifically for High-End Japanese Anime style).
-    
-    GUIDELINES:
-    1. STYLE: Envision a top-tier Japanese anime illustration, visual novel style, high-budget animation movie quality.
-    2. DETAIL: Focus intensely on fabric textures (glossy latex, soft silk, intricate lace, weathered leather, glowing cyber-parts).
-    3. CHARACTER: Ensure the character looks beautiful/cool with expressive eyes and professional hair rendering.
-    4. BACKGROUND: A clean, aesthetic background that complements the outfit (e.g., designer atelier, futuristic city, magical sanctuary).
-    5. COMPOSITION: Professional framing, cinematic lighting, rim light, depth of field.
-    
-    ORIGINAL CONCEPT: ${prompt}
-    
-    OUTPUT: A single dense string of English tags and descriptive phrases. Focus exclusively on visual elements. (Max 150 words).
-  `;
+  const animePrefix = "masterpiece, best quality, ultra-detailed, beautiful anime girl, high-quality anime illustration, vibrant colors, soft cinematic lighting, intricate clothing details, sharp focus, professional digital art, pixiv style, ";
+  const finalInput = `${animePrefix}${prompt}`;
 
   try {
-    const res = await model.generateContent(refinementPrompt);
-    const refined = res.response.text().trim().replace(/^[`\s]*(.*)[`\s]*$/s, '$1'); // Clean up potential markdown
+    const result = await model.generateContent(finalInput);
+    const response = await result.response;
 
-    // Fixed High-Quality Anime Prefix
-    const animePrefix = "masterpiece, best quality, ultra-detailed, beautiful anime girl, high-quality anime illustration, vibrant colors, soft cinematic lighting, intricate clothing details, sharp focus, professional digital art, pixiv style, ";
+    // Attempt to extract generated image data from the prompt
+    // Multimodal models can return inlineData parts with mimeTypes like 'image/png'
+    const candidates = response.candidates;
+    if (candidates && candidates[0]?.content?.parts) {
+      const imagePart = candidates[0].content.parts.find(part =>
+        part.inlineData && part.inlineData.mimeType.startsWith('image/')
+      );
+      if (imagePart && imagePart.inlineData) {
+        return `data:${imagePart.inlineData.mimeType};base64,${imagePart.inlineData.data}`;
+      }
+    }
 
-    const finalPrompt = `${animePrefix}${refined}`;
-
-    const encodedPrompt = encodeURIComponent(finalPrompt);
+    // Fallback if the response is text-based (e.g. if used as a refiner)
+    const refined = response.text().trim().replace(/^[`\s]*(.*)[`\s]*$/s, '$1');
+    const encodedPrompt = encodeURIComponent(refined || finalInput);
     const seed = Math.floor(Math.random() * 1000000);
-    // Using a more specialized model parameter if possible, otherwise rely on the prompt power
-    const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?nologo=true&seed=${seed}&width=1024&height=1024&model=flux`;
-
-    return imageUrl;
+    return `https://image.pollinations.ai/prompt/${encodedPrompt}?nologo=true&seed=${seed}&width=1024&height=1024&model=flux`;
   } catch (err) {
     console.error("Visualization Error:", err);
     throw err;
