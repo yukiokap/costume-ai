@@ -58,6 +58,7 @@ function App() {
   const [framingDescription, setFramingDescription] = useState<string>('')
   const [numPrompts, setNumPrompts] = useState(5)
   const [showAdvanced, setShowAdvanced] = useState(false)
+  const [showCompletion, setShowCompletion] = useState(false) // New state for completion notification
 
   const [synthesisLogs, setSynthesisLogs] = useState<string[]>([])
 
@@ -128,6 +129,8 @@ function App() {
       alert(`Error Transmitting: ${error instanceof Error ? error.message : 'An unknown error occurred'}`);
     } finally {
       setIsGenerating(false)
+      setShowCompletion(true)
+      setTimeout(() => setShowCompletion(false), 3000)
     }
   }
 
@@ -183,6 +186,8 @@ function App() {
       alert(`Error Range Transmitting: ${error instanceof Error ? error.message : 'An unknown error occurred'}`)
     } finally {
       setIsGenerating(false)
+      setShowCompletion(true)
+      setTimeout(() => setShowCompletion(false), 3000)
     }
   }
 
@@ -513,6 +518,61 @@ function App() {
             >
               {t('common.cancel')}
             </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showCompletion && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: -20 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            style={{
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 10000,
+              pointerEvents: 'none',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <div style={{
+              background: 'rgba(0, 242, 255, 0.15)',
+              border: '2px solid #00f2ff',
+              borderRadius: '20px',
+              padding: '40px 80px',
+              backdropFilter: 'blur(12px)',
+              boxShadow: '0 0 50px rgba(0, 242, 255, 0.4), inset 0 0 30px rgba(0, 242, 255, 0.2)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '16px'
+            }}>
+              <motion.div
+                initial={{ scale: 0, rotate: -45 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: "spring", delay: 0.1 }}
+              >
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#00f2ff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 0 10px #00f2ff)' }}><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </motion.div>
+              <h2 style={{
+                fontSize: '32px',
+                fontWeight: 900,
+                color: '#fff',
+                letterSpacing: '0.2em',
+                textShadow: '0 0 20px rgba(0, 242, 255, 0.6)',
+                margin: 0,
+                textTransform: 'uppercase'
+              }}>
+                COMPLETED
+              </h2>
+              <div style={{ width: '100%', height: '2px', background: 'linear-gradient(90deg, transparent, #00f2ff, transparent)', opacity: 0.5 }} />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
