@@ -30,7 +30,7 @@ const generateId = () => {
 };
 
 function App() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const {
     history,
     addToHistory,
@@ -40,6 +40,7 @@ function App() {
   const {
     apiKey,
     copyOptions,
+    setCopyOptions,
     enableLighting,
     setEnableLighting,
     useWhiteBackground,
@@ -69,6 +70,14 @@ function App() {
   const [showSettings, setShowSettings] = useState(false)
   const [showOverlay, setShowOverlay] = useState<'none' | 'history' | 'favorites'>('none')
   const [remixBase, setRemixBase] = useState<HistoryItem | null>(null)
+
+  const handleSetCopyOptions = (action: any) => {
+    if (typeof action === 'function') {
+      setCopyOptions(action(copyOptions));
+    } else {
+      setCopyOptions(action);
+    }
+  };
 
   const handleGenerate = async () => {
     const currentKey = apiKey || localStorage.getItem('gemini_api_key')
@@ -108,7 +117,7 @@ function App() {
         useWhiteBackground: useWhiteBackground,
         remixBaseDesign: remixBase?.costume
       }
-      const results = await generateCostumePrompts(apiKey, parts, numPrompts)
+      const results = await generateCostumePrompts(apiKey, parts, numPrompts, language)
 
       const newHistoryItems: HistoryItem[] = results.map(r => ({
         ...r,
@@ -166,7 +175,7 @@ function App() {
         useWhiteBackground: useWhiteBackground,
         remixBaseDesign: remixBase?.costume
       }
-      const results = await generateSexyRangePrompts(apiKey, 'any', parts as any, referencePrompt)
+      const results = await generateSexyRangePrompts(apiKey, 'any', parts as any, referencePrompt, language)
 
       const newHistoryItems: HistoryItem[] = results.map(r => ({
         ...r,
@@ -425,7 +434,7 @@ function App() {
           onRemix={handleRemix}
           isCopied={isCopied}
           copyOptions={copyOptions}
-          setCopyOptions={() => { }} // Placeholder or remove if using hook inside
+          setCopyOptions={handleSetCopyOptions}
         />
 
         <ResultsSection
@@ -441,7 +450,7 @@ function App() {
           onGenerateRange={handleGenerateRange}
           onRemix={handleRemix}
           copyOptions={copyOptions}
-          setCopyOptions={() => { }} // Placeholder
+          setCopyOptions={handleSetCopyOptions}
         />
 
       </main >

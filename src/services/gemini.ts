@@ -75,7 +75,8 @@ const FRAMING_GUIDES: Record<string, string> = {
 export const generateCostumePrompts = async (
   apiKey: string,
   parts: DesignParts,
-  count: number = 1
+  count: number = 1,
+  language: 'ja' | 'en' = 'ja'
 ) => {
   const cleanApiKey = apiKey.trim();
   const genAI = new GoogleGenerativeAI(cleanApiKey);
@@ -169,14 +170,14 @@ export const generateCostumePrompts = async (
     [OUTPUT FORMAT]
     Provide ${count} variations separated by "[[SPLIT]]". 
     Each item MUST follow this format exactly:
-    [[NAME]] Professional name (Equation: [Style Keyword] + [Japanese Character Archetype]). 
-    [[DESC]] Brief Japanese summary (one line)
+    [[NAME]] Professional name (${language === 'en' ? 'Equation: [Style Keyword] + [English Character Archetype]' : 'Equation: [Style Keyword] + [Japanese Character Archetype]'}). 
+    [[DESC]] Brief ${language === 'en' ? 'English' : 'Japanese'} summary (one line)
     [[COSTUME]] English tags ONLY for outfit/accessories. Include high-weight tags for character identity first.
     [[SPLIT]]
     
     *RULES*: 
     - POETIC OR VAGUE NAMES ARE FORBIDDEN.
-    - Names must be descriptive (e.g. 'エレガント・女勇者', 'セクシー・歴戦の女勇者', 'デザイナーズ・スクール水着').
+    - Names must be descriptive (e.g. ${language === 'en' ? "'Elegant Warrior', 'Sexy Battle-Worn Warrior'" : "'エレガント・女勇者', 'セクシー・歴戦の女勇者'"}).
     - Output ONLY the specified tags.
     - FORBIDDEN TAGS: No environment, lighting, or camera tags in [[COSTUME]]. Focus ONLY on the character.
     - ABSOLUTELY NO JAPANESE TEXT in [[COSTUME]]. All tags must be English.
@@ -358,7 +359,8 @@ export const generateSexyRangePrompts = async (
   apiKey: string,
   category: string,
   parts: Record<string, string>,
-  referencePrompt?: string
+  referencePrompt?: string,
+  language: 'ja' | 'en' = 'ja'
 ) => {
   const cleanApiKey = apiKey.trim();
   const genAI = new GoogleGenerativeAI(cleanApiKey);
@@ -377,7 +379,7 @@ export const generateSexyRangePrompts = async (
     Generate 10 prompts for the same concept with INCREASING Sexy Level (1 to 10).
     ${referencePrompt ? `Base: ${referencePrompt}` : `Concept: ${parts.base} | Style: ${category}`}
     
-    Format: Level [N]: [[DESC]] Japanese [[PROMPT]] English
+    Format: Level [N]: [[DESC]] ${language === 'en' ? 'English' : 'Japanese'} [[PROMPT]] English
     Separate with [[SPLIT]]
   `;
 
