@@ -8,7 +8,7 @@ import { BULK_ITEMS } from './items/bulk_expansion';
 import { MEGA_ITEMS } from './items/mega_expansion';
 import { ACCESSORIES_LIST, ACCESSORY_CATEGORIES, type AccessoryItem } from './items/accessories';
 import { ALL_BACKGROUNDS, BACKGROUND_CATEGORIES } from './backgrounds';
-import { ALL_POSES, POSE_CATEGORIES } from './poses';
+import { POSE_ARCHETYPES } from './poses';
 
 export interface CostumeItem {
     jp: string;
@@ -17,28 +17,15 @@ export interface CostumeItem {
 }
 
 export const FASHION_CATEGORIES = [
-    { id: 'all', label: '-- すべて --' },
-    { id: 'casual', label: 'カジュアル・日常着' },
-    { id: 'uniform', label: '制服・ユニフォーム' },
-    { id: 'fantasy', label: 'ファンタジー・RPG' },
-    { id: 'traditional', label: '和風・伝統衣装' },
-    { id: 'scifi', label: 'SF・近未来・メカ' },
-    { id: 'gothic', label: 'ゴシック・ロリータ' },
-    { id: 'formal', label: 'フォーマル・ドレス' },
-    { id: 'sportswear', label: 'スポーツ・アクティブ' },
-    { id: 'swimwear', label: '水着・インナー' },
-    { id: 'subculture', label: 'サブカル・地雷・量産' },
-    { id: 'horror', label: 'ホラー・ダーク' },
-    { id: 'animal', label: 'アニマル・耳付き' },
-    { id: 'fantasy_jobs', label: '職業・ファンタジー' },
-    { id: 'ethnic', label: '民族衣装・世界' },
-    { id: 'stage', label: 'ステージ・アイドル' },
-    { id: 'pajamas', label: 'パジャマ・ルームウェア' },
-    { id: 'fetish', label: 'フェティッシュ・挑発的' },
-    { id: 'other', label: 'その他' },
+    { id: 'random', label: 'おまかせ (Random)' },
+    { id: 'cool', label: 'クール (Cool)' },
+    { id: 'cute', label: 'キュート (Cute)' },
+    { id: 'sexy', label: 'セクシー (Sexy)' },
+    { id: 'elegant', label: 'エレガント (Elegant)' },
+    { id: 'natural', label: 'ナチュラル (Natural)' },
 ];
 
-export { ACCESSORIES_LIST, ACCESSORY_CATEGORIES, type AccessoryItem, ALL_BACKGROUNDS as BACKGROUND_SETTINGS, BACKGROUND_CATEGORIES, ALL_POSES as POSE_SETTINGS, POSE_CATEGORIES };
+export { ACCESSORIES_LIST, ACCESSORY_CATEGORIES, type AccessoryItem, ALL_BACKGROUNDS as BACKGROUND_SETTINGS, BACKGROUND_CATEGORIES, POSE_ARCHETYPES as POSE_SETTINGS };
 
 // Helper to filter items by tag or presence in specific lists
 const ALL_ITEMS = [

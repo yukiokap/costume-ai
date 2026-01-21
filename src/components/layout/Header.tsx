@@ -1,111 +1,79 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Cpu, ChevronDown, Zap, ExternalLink, Activity, Star } from 'lucide-react';
+import { Settings as SettingsIcon, Terminal } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface HeaderProps {
-    apiKey: string;
-    saveApiKey: (key: string) => void;
     showSettings: boolean;
     setShowSettings: (show: boolean) => void;
-    onNavigateHistory: (filter: 'all' | 'favorites') => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
-    apiKey,
-    saveApiKey,
     showSettings,
-    setShowSettings,
-    onNavigateHistory
+    setShowSettings
 }) => {
+    const { t, language } = useLanguage();
+
     return (
-        <header className="flex justify-between items-baseline mb-20 relative z-[60]">
-            <div className="text-white">
-                <span className="title-sub">AI COSTUME GENERATOR</span>
-                <h1 className="title-main">costumeAI</h1>
+        <header className="flex justify-between items-center mb-16 relative z-[60]">
+            <div className="group cursor-default">
+                <div className="title-sub" style={{ marginBottom: '4px' }}>
+                    <Terminal size={10} className="text-cyan-400" />
+                    NEURAL PROTOCOL v0.8.2 [{language.toUpperCase()}]
+                </div>
+                <h1 className="title-main" style={{ fontSize: '3rem', lineHeight: '1', paddingBottom: '4px' }}>
+                    costume<span style={{ color: 'var(--cyan)', filter: 'drop-shadow(0 0 10px rgba(0, 242, 255, 0.5))' }}>AI</span>
+                </h1>
             </div>
 
             <div className="flex gap-4 items-center">
-                <div className="relative">
-                    <button
-                        onClick={() => setShowSettings(!showSettings)}
-                        className={`flex items-center gap-2 px-6 py-2 border text-[10px] font-black uppercase tracking-[0.4em] transition-all ${showSettings ? 'bg-cyan-600 border-cyan-400 text-black shadow-[0_0_20px_rgba(0,242,255,0.4)]' : 'text-cyan-400/50 border-cyan-400/20 hover:border-cyan-400/40 hover:text-cyan-400'
-                            }`}
-                    >
-                        <Cpu size={12} />
-                        設定
-                        <ChevronDown size={12} className={`transition-transform ${showSettings ? 'rotate-180' : ''}`} />
-                    </button>
+                <button
+                    onClick={() => setShowSettings(!showSettings)}
+                    className="relative px-6 py-3 transition-all duration-300 group overflow-hidden"
+                    style={{
+                        background: showSettings ? 'rgba(0, 242, 255, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+                        border: showSettings ? '1px solid var(--cyan)' : '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '8px',
+                        backdropFilter: 'blur(10px)',
+                        boxShadow: showSettings ? '0 0 20px rgba(0, 242, 255, 0.2)' : 'none'
+                    }}
+                >
+                    {/* Top Glow Edge */}
+                    <div
+                        className="absolute inset-x-0 top-0 h-[1px] bg-cyan-400 opacity-50 group-hover:opacity-100 transition-opacity"
+                    />
 
-                    <AnimatePresence>
-                        {showSettings && (
+                    <div className="flex items-center gap-3 relative z-10">
+                        <motion.div
+                            animate={showSettings ? { rotate: 90 } : {}}
+                            transition={{ duration: 0.4 }}
+                        >
+                            <SettingsIcon
+                                size={16}
+                                style={{ color: showSettings ? 'var(--cyan)' : '#fff' }}
+                                className="transition-colors group-hover:text-cyan-400"
+                            />
+                        </motion.div>
+                        <span
+                            style={{ color: '#fff' }}
+                            className={`text-[11px] font-black uppercase tracking-[0.3em] group-hover:text-cyan-300 transition-colors`}
+                        >
+                            {showSettings ? 'SYSTEM_ON' : t('common.settings')}
+                        </span>
+
+                        {/* Status Light */}
+                        <div className="flex items-center gap-1.5 ml-1">
                             <motion.div
-                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                className="absolute right-0 mt-4 w-[400px] studio-panel border-amber-600/50 shadow-2xl z-[70] p-6 space-y-6"
-                            >
-                                <div className="flex items-center gap-3 text-cyan-400 mb-2">
-                                    <Zap size={18} />
-                                    <span className="text-[11px] font-black uppercase tracking-widest">はじめるための準備</span>
-                                </div>
+                                animate={{ opacity: [0.4, 1, 0.4] }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                                className={`w-1.5 h-1.5 rounded-full ${showSettings ? 'bg-cyan-400 shadow-[0_0_8px_var(--cyan)]' : 'bg-slate-500'}`}
+                            />
+                        </div>
+                    </div>
 
-                                <p className="text-[11px] text-slate-400 leading-relaxed">
-                                    このアプリは、Googleの人工知能（Gemini AI）を使って衣装のアイデアを考えます。
-                                    使うためには、自分専用の<strong>「カギ（APIキー）」</strong>を1つ作る必要があります。
-                                </p>
-
-                                <div className="space-y-4">
-                                    <div className="bg-white/5 p-4 rounded-lg border border-white/10">
-                                        <p className="text-[10px] font-bold text-white mb-2">💡 取得のステップ：</p>
-                                        <ol className="text-[9px] text-slate-400 space-y-1 list-decimal list-inside">
-                                            <li>下のボタンからGoogleのサイトへ行く</li>
-                                            <li>「Create API key」という青いボタンを押す</li>
-                                            <li>出てきた長い英数字をコピーして、ここにはる！</li>
-                                        </ol>
-                                    </div>
-
-                                    <a
-                                        href="https://aistudio.google.com/app/apikey"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex items-center justify-between w-full p-3 bg-cyan-600/10 border border-cyan-400/50 hover:bg-cyan-600 hover:text-black transition-all group rounded-lg"
-                                    >
-                                        <span className="text-[9px] font-black uppercase tracking-widest">カギを作りに行く（無料・約3分）</span>
-                                        <ExternalLink size={12} className="group-hover:scale-110 transition-transform" />
-                                    </a>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <div className="field-label m-0 text-[10px]">ここに貼り付けてね（APIキー）</div>
-                                    <input
-                                        type="password" value={apiKey} placeholder="例: AIzaSyA..."
-                                        onChange={(e) => saveApiKey(e.target.value)}
-                                        className="studio-input text-sm p-3 font-mono tracking-widest"
-                                    />
-                                </div>
-
-                                <div className="flex gap-3">
-                                    <button onClick={() => setShowSettings(false)} className="btn-tailor py-3 text-[10px]">保存して完了！</button>
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
-
-                <button
-                    onClick={() => onNavigateHistory('all')}
-                    className="flex items-center gap-2 px-4 py-2 text-cyan-400/50 hover:text-cyan-400 transition-colors text-[10px] font-black uppercase tracking-[0.4em]"
-                >
-                    <Activity size={16} />
-                    履歴
-                </button>
-
-                <button
-                    onClick={() => onNavigateHistory('favorites')}
-                    className="flex items-center gap-2 px-6 py-2 bg-cyan-600/10 border border-cyan-400/20 text-cyan-400 hover:bg-cyan-600 hover:text-black transition-all text-[10px] font-black uppercase tracking-[0.4em] rounded-full shadow-[0_0_15px_rgba(0,242,255,0.1)]"
-                >
-                    <Star size={16} fill="currentColor" />
-                    お気に入り
+                    {/* Corner Accents */}
+                    <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-cyan-400/30 group-hover:border-cyan-400 transition-colors" />
+                    <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-cyan-400/30 group-hover:border-cyan-400 transition-colors" />
                 </button>
             </div>
         </header>
