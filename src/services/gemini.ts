@@ -436,9 +436,8 @@ export const visualizeCostume = async (
     const encodedPrompt = encodeURIComponent(refined || finalInput);
     const seed = Math.floor(Math.random() * 1000000);
 
-    // Using a more stable and high-quality default path
-    // Removed 'model=flux' as it was causing the 'WE HAVE MOVED' error image.
-    return `https://image.pollinations.ai/prompt/${encodedPrompt}?nologo=true&seed=${seed}&width=1024&height=1024`;
+    // Using 'nanobanana' model as specified for the best AI anime results
+    return `https://image.pollinations.ai/prompt/${encodedPrompt}?nologo=true&seed=${seed}&width=1024&height=1024&model=nanobanana`;
   } catch (err) {
     console.error("Visualization Error:", err);
     throw err;
