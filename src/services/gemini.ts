@@ -82,7 +82,7 @@ export const generateCostumePrompts = async (
   const genAI = new GoogleGenerativeAI(cleanApiKey);
 
   const model = genAI.getGenerativeModel({
-    model: "gemini-3.0-pro",
+    model: "gemini-2.0-flash-exp",
     safetySettings: [
       { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
       { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
@@ -366,7 +366,7 @@ export const generateSexyRangePrompts = async (
   const genAI = new GoogleGenerativeAI(cleanApiKey);
 
   const model = genAI.getGenerativeModel({
-    model: "gemini-3.0-pro",
+    model: "gemini-2.0-flash-exp",
     safetySettings: [
       { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
       { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
