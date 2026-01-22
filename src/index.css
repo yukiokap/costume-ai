@@ -177,32 +177,26 @@ body {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Premium Theme Selector */
-/* Standard Premium Grid for all selection sections */
-.premium-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+.premium-grid,
+.expression-compact-grid,
+.framing-grid {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  gap: 0.75rem;
   width: 100%;
+  padding-bottom: 0.5rem;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-@media (min-width: 480px) {
-  .premium-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+.premium-grid::-webkit-scrollbar,
+.expression-compact-grid::-webkit-scrollbar,
+.framing-grid::-webkit-scrollbar {
+  display: none;
 }
 
-@media (min-width: 768px) {
-  .premium-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .premium-grid {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
+/* Reverted list grid */
 
 /* Consolidated Premium Cards (Theme, Pose, Expression) */
 .theme-card,
@@ -210,10 +204,13 @@ body {
 .pose-card,
 .expression-card,
 .framing-card {
-  width: 100%;
+  flex: 0 0 auto;
+  /* Prevent shrinking in horizontal row */
+  width: 140px;
+  /* Fixed width for horizontal row items */
   aspect-ratio: auto;
   min-height: 90px;
-  padding: 1rem 0.75rem;
+  padding: 1rem 0.5rem;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 16px;
@@ -234,43 +231,9 @@ body {
   min-height: 84px;
 }
 
-.expression-compact-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.5rem;
-  width: 100%;
-}
+/* Compact grids are also converted to lists as per '1st column' request */
 
-@media (min-width: 1024px) {
-  .expression-compact-grid {
-    grid-template-columns: repeat(9, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .expression-compact-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.framing-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.5rem;
-  width: 100%;
-}
-
-@media (min-width: 1024px) {
-  .framing-grid {
-    grid-template-columns: repeat(9, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .framing-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
+/* Framing grid is also converted to list */
 
 .theme-card:active,
 .pose-card:active,
