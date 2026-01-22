@@ -1,6 +1,6 @@
 import {
     User, Zap, Heart, Star, Flame, Coffee, Camera,
-    Smile, Shield, ArrowDown, RotateCcw,
+    Smile, Shield, RotateCcw,
     Wind, UserPlus, Sofa, Ghost
 } from 'lucide-react';
 
@@ -95,10 +95,10 @@ export const POSE_STANCES: PoseArchetype[] = [
     },
     {
         id: 'sitting',
-        label: '座り',
-        description: 'Sitting on chair or ground',
+        label: '座り / しゃがみ',
+        description: 'Sitting or crouching',
         icon: Sofa,
-        prompt: 'sitting pose, relaxed sitting posture'
+        prompt: 'sitting or crouching pose, relaxed sitting posture or ground-level crouch'
     },
     {
         id: 'kneeling',
@@ -128,13 +128,7 @@ export const POSE_STANCES: PoseArchetype[] = [
         icon: RotateCcw,
         prompt: 'looking back over shoulder pose, turned torso'
     },
-    {
-        id: 'squatting',
-        label: 'しゃがみ',
-        description: 'Crouching or squatting',
-        icon: ArrowDown,
-        prompt: 'squatting pose, crouching position, low center of gravity'
-    },
+
     {
         id: 'model',
         label: 'モデル立ち',

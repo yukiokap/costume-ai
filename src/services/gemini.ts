@@ -55,12 +55,11 @@ const POSE_MOOD_GUIDES: Record<string, string> = {
 const POSE_STANCE_GUIDES: Record<string, string> = {
   random: "Best stance to showcase the outfit.",
   standing: "Basic upright standing position.",
-  sitting: "Sitting on a chair, stool, or the floor.",
-  kneeling: "Kneeling on the ground or a surface.",
-  lying: "Lying down, reclining, or flat position.",
+  sitting: "Sitting or crouching. Can be sitting on a chair, stool, sofa, or the floor, or crouching/squatting (yankee-sit). Focus on low-posture variations.",
+  kneeling: "Kneeling on the ground or a surface. Lower angle often works best.",
+  lying: "Lying down, reclining, or flat position. Use wide or top-down angles.",
   active: "Dynamic movement, running, jumping, action shot.",
-  looking_back: "Looking back over the shoulder, turned torso.",
-  squatting: "Crouching or squatting position, low center of gravity.",
+  looking_back: "Looking back over the shoulder. MUST use 'view from behind' or 'from back' to see the twist.",
   model: "Professional fashion model studio pose, elegant and balanced."
 };
 
@@ -157,6 +156,14 @@ export const generateCostumePrompts = async (
     
     [CORE HIERARCHY]
     1. PRIMARY SUBJECT: ${parts.concept || 'None (Follow Theme instead)'}
+    
+    ${parts.concept && parts.concept.includes('[DIVERSE_REQUEST:') ? `
+    [NOTE: DIVERSE_REQUEST DETECTED]
+    The user provided a list of multiple different concepts.
+    You MUST assign one unique concept from the provided list to each of the ${count} variations in order.
+    Do NOT repeat the same concept across variations. Use the list as the foundation for each slot.
+    ` : ''}
+    
     2. STYLE FILTER (Theme): "${parts.theme.toUpperCase()}" (${currentThemeAdj})
     ${sanitizedBaseDesign ? `3. MANDATORY BASE DESIGN (Tags): "${sanitizedBaseDesign}"` : ''}
     
@@ -191,7 +198,7 @@ export const generateCostumePrompts = async (
     
     *RULES*: 
     - POETIC OR VAGUE NAMES ARE FORBIDDEN.
-    - Names must be descriptive (e.g. ${language === 'en' ? "'Elegant Warrior', 'Sexy Battle-Worn Warrior'" : "'エレガント・女勇者', 'セクシー・歴戦の女勇者'"}).
+    - Names must be descriptive (e.g. ${language === 'en' ? "'Elegant Cafe Maid', 'Cool Cybernetic Bodysuit', 'Cute Summer Sundress'" : "'エレガント・カフェメイド', 'クール・サイバーボディースーツ', 'キュート・サマーワンピース'"}).
     - Output ONLY the specified tags.
     - FORBIDDEN TAGS: No environment, lighting, or camera tags in [[COSTUME]]. Focus ONLY on the character.
     - ABSOLUTELY NO JAPANESE TEXT in [[COSTUME]]. All tags must be English.
@@ -235,9 +242,10 @@ export const generateCostumePrompts = async (
       - Custom Framing Request: ${parts.framingDescription ? `"${parts.framingDescription}"` : 'None'}
 
       [GUIDES (Use only if no custom request)]
-      - Expression Style: ${parts.expression ? parts.expression.toUpperCase() : 'RANDOM'} (${EXPRESSION_GUIDES[parts.expression || 'random']})
-      - Pose Mood: ${parts.poseMood ? parts.poseMood.toUpperCase() : 'RANDOM'} (${POSE_MOOD_GUIDES[parts.poseMood || 'random']})
-      - Pose Stance: ${parts.poseStance ? parts.poseStance.toUpperCase() : 'RANDOM'} (${POSE_STANCE_GUIDES[parts.poseStance || 'random']})
+      - Expression Style: ${parts.expression ? parts.expression.toUpperCase() : 'RANDOM'} (${EXPRESSION_GUIDES[parts.expression || ''] || 'Apply this specific expression'})
+      - Pose Mood: ${parts.poseMood ? parts.poseMood.toUpperCase() : 'RANDOM'} (${POSE_MOOD_GUIDES[parts.poseMood || ''] || 'Apply this specific pose mood'})
+      - Pose Stance: ${parts.poseStance ? parts.poseStance.toUpperCase() : 'RANDOM'} (${POSE_STANCE_GUIDES[parts.poseStance || ''] || 'Take this specific stance'})
+      - Framing Style: ${parts.framing ? parts.framing.toUpperCase() : 'RANDOM'} (${FRAMING_GUIDES[parts.framing || ''] || 'Use this specific camera framing'})
       
       [COSTUME CONTEXT]
       ${costumes.map((c, i) => `Costume ${i}: ${c.name} (${c.desc})`).join('\n')}
@@ -267,6 +275,12 @@ export const generateCostumePrompts = async (
           3. DO NOT just translate literally; EXPAND into descriptive visual tags.
           (e.g. "Wariza" -> "wariza, w-sitting, sitting on floor, knees bent")
           (e.g. "キリッと" -> "sharp gaze, fierce expression, confident, serious")
+
+      6. LOGICAL CONSISTENCY (STRICT RULE):
+        - If Pose Stance is "LOOKING_BACK" (見返り), ABSOLUTELY FORBIDDEN to use "from front" or "frontal view".
+        - In this case, FORCE Framing to be "view from behind, looking back over shoulder, side view".
+        - If Pose Stance is "SITTING" or "SQUATTING", prefer "low angle" or "from below".
+        - The Stance's physical requirement ALWAYS overrides the preset Framing Style if they conflict.
 
       [OUTPUT FORMAT]
       Return exactly ${costumes.length} items separated by "[[SPLIT]]":
@@ -324,9 +338,10 @@ export const generateCostumePrompts = async (
       // 3. FRAMING OVERRIDE
       let finalFraming = director.framing;
       if (parts.framingDescription) {
-        // Implicitly trusted via Stage 2 generation, but we can verify
-      } else if (parts.framing && FRAMING_GUIDES[parts.framing]) {
-        finalFraming = FRAMING_GUIDES[parts.framing];
+        // AI already handled it in director.framing
+      } else if (parts.framing) {
+        // If it's a guide key, use the guide. Otherwise, use the tag string itself.
+        finalFraming = FRAMING_GUIDES[parts.framing] || parts.framing;
       } else if (!finalFraming) {
         finalFraming = FRAMING_GUIDES.model;
       }

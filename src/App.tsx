@@ -12,6 +12,10 @@ import { ExpressionSection } from './components/editor/ExpressionSection'
 import { FramingSection } from './components/editor/FramingSection';
 import { ResultsSection } from './components/results/ResultsSection'
 import { SectionDivider } from './components/ui/SectionDivider'
+import { ALL_ITEMS } from './data/costumes'
+import { EXPRESSION_DATA } from './data/expressions_data'
+import { POSE_STANCE_DATA, POSE_MOOD_DATA } from './data/poses_data'
+import { FRAMING_DATA } from './data/framing_data'
 import { SettingsModal } from './components/settings/SettingsModal';
 import { FooterControls } from './components/layout/FooterControls';
 import { HistoryOverlay } from './components/results/HistoryOverlay';
@@ -105,13 +109,52 @@ function App() {
     })
 
     try {
+      const getEffectiveConcept = (isRange: boolean = false) => {
+        if (concept.trim()) return concept;
+
+        let pool = ALL_ITEMS;
+        if (theme !== 'random') {
+          // Try to filter by theme tag
+          const filtered = ALL_ITEMS.filter(item => item.tags.includes(theme));
+          if (filtered.length > 20) { // Ensure enough variety in the filtered pool
+            pool = filtered;
+          }
+        }
+
+        if (isRange) {
+          // For range generation, we need ONE base concept to evolve
+          const randomItem = pool[Math.floor(Math.random() * pool.length)];
+          return randomItem ? `${randomItem.jp} (${randomItem.en})` : '';
+        } else {
+          // For standard generation, pick N different concepts
+          const selected = [];
+          const tempPool = [...pool];
+          for (let i = 0; i < numPrompts; i++) {
+            if (tempPool.length === 0) break;
+            const idx = Math.floor(Math.random() * tempPool.length);
+            const item = tempPool[idx];
+            selected.push(`${item.jp} (${item.en})`);
+            // Remove to prevent duplicates within the same batch
+            tempPool.splice(idx, 1);
+          }
+          return `[DIVERSE_REQUEST: ${selected.join(' | ')}]`;
+        }
+      };
+
+      const getEffectiveValue = (val: string, data: Record<string, string[]>) => {
+        if (!val || val === 'random') return val;
+        const list = data[val];
+        if (!list || list.length === 0) return val;
+        return list[Math.floor(Math.random() * list.length)];
+      };
+
       const parts = {
         theme,
-        concept,
-        poseMood: selectedPoseMood,
-        poseStance: selectedPoseStance,
-        expression: selectedExpression,
-        framing: selectedFraming,
+        concept: getEffectiveConcept(false),
+        poseMood: getEffectiveValue(selectedPoseMood, POSE_MOOD_DATA),
+        poseStance: getEffectiveValue(selectedPoseStance, POSE_STANCE_DATA),
+        expression: getEffectiveValue(selectedExpression, EXPRESSION_DATA),
+        framing: getEffectiveValue(selectedFraming, FRAMING_DATA),
         poseDescription: poseDescription,
         expressionDescription: expressionDescription,
         framingDescription: framingDescription,
@@ -165,13 +208,52 @@ function App() {
     })
 
     try {
+      const getEffectiveConcept = (isRange: boolean = false) => {
+        if (concept.trim()) return concept;
+
+        let pool = ALL_ITEMS;
+        if (theme !== 'random') {
+          // Try to filter by theme tag
+          const filtered = ALL_ITEMS.filter(item => item.tags.includes(theme));
+          if (filtered.length > 20) { // Ensure enough variety in the filtered pool
+            pool = filtered;
+          }
+        }
+
+        if (isRange) {
+          // For range generation, we need ONE base concept to evolve
+          const randomItem = pool[Math.floor(Math.random() * pool.length)];
+          return randomItem ? `${randomItem.jp} (${randomItem.en})` : '';
+        } else {
+          // For standard generation, pick N different concepts
+          const selected = [];
+          const tempPool = [...pool];
+          for (let i = 0; i < numPrompts; i++) {
+            if (tempPool.length === 0) break;
+            const idx = Math.floor(Math.random() * tempPool.length);
+            const item = tempPool[idx];
+            selected.push(`${item.jp} (${item.en})`);
+            // Remove to prevent duplicates within the same batch
+            tempPool.splice(idx, 1);
+          }
+          return `[DIVERSE_REQUEST: ${selected.join(' | ')}]`;
+        }
+      };
+
+      const getEffectiveValue = (val: string, data: Record<string, string[]>) => {
+        if (!val || val === 'random') return val;
+        const list = data[val];
+        if (!list || list.length === 0) return val;
+        return list[Math.floor(Math.random() * list.length)];
+      };
+
       const parts = {
         theme,
-        concept,
-        poseMood: selectedPoseMood,
-        poseStance: selectedPoseStance,
-        expression: selectedExpression,
-        framing: selectedFraming,
+        concept: getEffectiveConcept(true),
+        poseMood: getEffectiveValue(selectedPoseMood, POSE_MOOD_DATA),
+        poseStance: getEffectiveValue(selectedPoseStance, POSE_STANCE_DATA),
+        expression: getEffectiveValue(selectedExpression, EXPRESSION_DATA),
+        framing: getEffectiveValue(selectedFraming, FRAMING_DATA),
         poseDescription: poseDescription,
         expressionDescription: expressionDescription,
         framingDescription: framingDescription,

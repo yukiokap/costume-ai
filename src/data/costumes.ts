@@ -28,7 +28,7 @@ export const FASHION_CATEGORIES = [
 export { ACCESSORIES_LIST, ACCESSORY_CATEGORIES, type AccessoryItem, ALL_BACKGROUNDS as BACKGROUND_SETTINGS, BACKGROUND_CATEGORIES, POSE_ARCHETYPES as POSE_SETTINGS };
 
 // Helper to filter items by tag or presence in specific lists
-const ALL_ITEMS = [
+export const ALL_ITEMS = [
     ...CASUAL_ITEMS,
     ...UNIFORM_ITEMS,
     ...FANTASY_TRADITIONAL_ITEMS,

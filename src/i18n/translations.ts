@@ -70,12 +70,11 @@ export const translations = {
             pose_stance_presets: {
                 random: 'おまかせ',
                 standing: '立ち',
-                sitting: '座り',
+                sitting: '座り / しゃがみ',
                 kneeling: '膝立ち',
                 lying: '寝そべり',
                 active: 'アクティブ',
                 looking_back: '見返り',
-                squatting: 'しゃがみ',
                 model: 'モデル立ち'
             },
             expression_presets: {
@@ -205,12 +204,11 @@ export const translations = {
             pose_stance_presets: {
                 random: 'Random',
                 standing: 'Standing',
-                sitting: 'Sitting',
+                sitting: 'Sitting / Crouching',
                 kneeling: 'Kneeling',
                 lying: 'Lying',
                 active: 'Active',
                 looking_back: 'Looking Back',
-                squatting: 'Squatting',
                 model: 'Model'
             },
             expression_presets: {
