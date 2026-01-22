@@ -105,7 +105,7 @@ export const POSE_STANCE_DATA: Record<string, string[]> = {
     kneeling: [
         "kneeling on one knee, knight's pledge",
         "kneeling on both knees, hands in lap",
-        "kneeling while leaning back, arched spine",
+        "kneeling while leaning back, arched back",
         "kneeling in water, looking down",
         "kneeling on a bed, soft lighting",
         "kneeling while reaching out",

@@ -264,8 +264,10 @@ export const generateCostumePrompts = async (
         - If Mode ON: Use "cinematic lighting, dramatic shadows, volumetric lighting, rim light".
         - If Mode OFF: FORBIDDEN to use any lighting tags. Keep it FLAT and NATURAL.
 
-      4. GAZE:
-        - FORBIDDEN: NEVER use the word 'camera'. Use 'looking at viewer', 'eye contact', or 'gaze'.
+      4. FORBIDDEN WORDS:
+        - NEVER use the word 'camera'. Use 'looking at viewer', 'eye contact', or 'gaze'.
+        - ABSOLUTELY FORBIDDEN: NEVER use the word 'bone' or 'spine' (except for 'collarbone'). Using these words results in anatomical/skeletal/internal-view artifacts in images.
+        - Use 'arched back' instead of 'arched spine'.
 
       5. CUSTOM INPUT HANDLING & LANGUAGE:
         - ABSOLUTE PROHIBITION: DO NOT output Japanese text in ANY tags ([[POSE]], [[EXPRESSION]], [[FRAMING]], [[SCENE]]).
@@ -412,6 +414,10 @@ export const generateSexyRangePrompts = async (
     
     Format: Level [N]: [[DESC]] ${language === 'en' ? 'English' : 'Japanese'} [[PROMPT]] English
     Separate with [[SPLIT]]
+    
+    *STRICT RULE*: 
+    - NEVER use the word 'bone' or 'spine' (except for 'collarbone'). 
+    - This is to avoid skeletal/anatomical artifacts. Use 'arched back' instead of 'arched spine'.
   `;
 
   try {
