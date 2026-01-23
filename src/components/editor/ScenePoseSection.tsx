@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Quote, User, ChevronLeft, ChevronRight, Edit3, LayoutGrid, Zap, Smile, Heart, Flame, Coffee, Star, Ghost, Shield, Sparkles, type LucideIcon } from 'lucide-react';
+import { Quote, User, ChevronLeft, ChevronRight, Edit3, LayoutGrid } from 'lucide-react';
 import { POSE_STANCES } from '../../data/poses';
 import { SectionDivider } from '../ui/SectionDivider';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -8,52 +8,31 @@ import { useLanguage } from '../../contexts/LanguageContext';
 interface ScenePoseSectionProps {
     selectedPoseStance: string;
     setSelectedPoseStance: (val: string) => void;
-    selectedPoseMood: string;
-    setSelectedPoseMood: (val: string) => void;
     poseDescription: string;
     setPoseDescription: (val: string) => void;
 }
 
-const MOOD_ICONS: Record<string, LucideIcon> = {
-    random: Zap,
-    energetic: Sparkles,
-    cool: Ghost,
-    cute: Heart,
-    sexy: Flame,
-    natural: Coffee,
-    elegant: Star,
-    shy: Smile,
-    heroic: Shield
-};
-
 export const ScenePoseSection: React.FC<ScenePoseSectionProps> = ({
     selectedPoseStance,
     setSelectedPoseStance,
-    selectedPoseMood,
-    setSelectedPoseMood,
     poseDescription,
     setPoseDescription
 }) => {
     const { t } = useLanguage();
     const stanceRef = React.useRef<HTMLDivElement>(null);
-    const moodRef = React.useRef<HTMLDivElement>(null);
     const [inputMode, setInputMode] = React.useState<'card' | 'text'>('card');
     const [draftText, setDraftText] = React.useState(poseDescription || '');
     const [draftStance, setDraftStance] = React.useState(selectedPoseStance);
-    const [draftMood, setDraftMood] = React.useState(selectedPoseMood);
 
     const handleToggleMode = () => {
         if (inputMode === 'text') {
             setDraftText(poseDescription);
             setPoseDescription('');
             setSelectedPoseStance(draftStance);
-            setSelectedPoseMood(draftMood);
             setInputMode('card');
         } else {
             setDraftStance(selectedPoseStance);
-            setDraftMood(selectedPoseMood);
             setSelectedPoseStance('random');
-            setSelectedPoseMood('random');
             setPoseDescription(draftText);
             setInputMode('text');
         }
@@ -65,8 +44,6 @@ export const ScenePoseSection: React.FC<ScenePoseSectionProps> = ({
             ref.current.scrollBy({ left: amount, behavior: 'smooth' });
         }
     };
-
-    const poseMoods = ['random', 'energetic', 'cool', 'cute', 'sexy', 'natural', 'elegant', 'shy', 'heroic'];
 
     return (
         <div className="space-y-8">
@@ -106,51 +83,8 @@ export const ScenePoseSection: React.FC<ScenePoseSectionProps> = ({
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="space-y-10 pt-2"
+                    className="space-y-6 pt-2"
                 >
-                    {/* Pose Mood Section */}
-                    <div className="space-y-4">
-                        <div className="flex items-center gap-2 field-label !text-emerald-400">
-                            <Zap size={14} />
-                            {t('editor.pose_mood_label')}
-                        </div>
-                        <div className="scroll-nav-container">
-                            <button className="scroll-arrow scroll-arrow-left" onClick={() => scroll(moodRef, 'left')}>
-                                <ChevronLeft size={16} />
-                            </button>
-                            <div className="premium-grid" ref={moodRef}>
-                                {poseMoods.map((mood) => {
-                                    const Icon = MOOD_ICONS[mood] || Zap;
-                                    const isSelected = selectedPoseMood === mood;
-                                    return (
-                                        <motion.button
-                                            key={mood}
-                                            whileHover={{ scale: 1.05 }}
-                                            whileTap={{ scale: 0.95 }}
-                                            onClick={() => {
-                                                setSelectedPoseMood(mood);
-                                                setDraftMood(mood);
-                                            }}
-                                            className={`pose-card mood-${mood} ${isSelected ? 'selected' : ''}`}
-                                        >
-                                            <div className="premium-icon-box !p-2">
-                                                <Icon size={18} />
-                                            </div>
-                                            <div className="text-center">
-                                                <div className="premium-label !text-[9px]">
-                                                    {t(`editor.pose_mood_presets.${mood}`)}
-                                                </div>
-                                            </div>
-                                        </motion.button>
-                                    );
-                                })}
-                            </div>
-                            <button className="scroll-arrow scroll-arrow-right" onClick={() => scroll(moodRef, 'right')}>
-                                <ChevronRight size={16} />
-                            </button>
-                        </div>
-                    </div>
-
                     {/* Pose Stance Section */}
                     <div className="space-y-4">
                         <div className="flex items-center gap-2 field-label !text-emerald-400">

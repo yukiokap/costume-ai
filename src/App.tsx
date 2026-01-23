@@ -556,8 +556,6 @@ function App() {
                   <ScenePoseSection
                     selectedPoseStance={selectedPoseStance}
                     setSelectedPoseStance={setSelectedPoseStance}
-                    selectedPoseMood={selectedPoseMood}
-                    setSelectedPoseMood={setSelectedPoseMood}
                     poseDescription={poseDescription}
                     setPoseDescription={setPoseDescription}
                   />
@@ -565,6 +563,8 @@ function App() {
                   <div style={{ height: '3px', width: '100%', background: 'linear-gradient(90deg, rgba(16,185,129,0.5), rgba(249,115,22,0.5))', margin: '3rem 0', borderRadius: '2px', boxShadow: '0 0 15px rgba(249,115,22,0.3)' }} />
 
                   <ExpressionSection
+                    selectedPoseMood={selectedPoseMood}
+                    setSelectedPoseMood={setSelectedPoseMood}
                     selectedExpression={selectedExpression}
                     setSelectedExpression={setSelectedExpression}
                     expressionDescription={expressionDescription}

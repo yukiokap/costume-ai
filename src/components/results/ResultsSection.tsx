@@ -23,8 +23,8 @@ interface ResultsSectionProps {
 
 const DETAIL_LABELS: Record<string, string> = {
     c01: '01: 衣装の設定 / COSTUME',
-    c02: '02: ポーズの設定 / POSE',
-    c03: '03: 表情の設定 / EXPRESSION',
+    c02: '02: 具体的な姿勢 / POSE STANCE',
+    c03: '03: 表情・感情の設定 / EXPRESSION',
     c04: '04: 構図の設定 / FRAMING',
 };
 
@@ -449,7 +449,6 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                                                     {
                                                                         section: 'c02',
                                                                         items: [
-                                                                            { label: '雰囲気', val: item.originalPoseMood, type: 'mood' },
                                                                             { label: '姿勢', val: item.originalPoseStance, type: 'stance' },
                                                                             { label: '自由記述', val: item.originalPoseDescription, type: 'text' }
                                                                         ]
@@ -457,6 +456,7 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                                                     {
                                                                         section: 'c03',
                                                                         items: [
+                                                                            { label: '雰囲気', val: item.originalPoseMood, type: 'mood' },
                                                                             { label: '感情', val: item.originalExpression, type: 'expression' },
                                                                             { label: '自由記述', val: item.originalExpressionDescription, type: 'text' }
                                                                         ]
