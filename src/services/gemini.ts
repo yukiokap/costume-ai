@@ -139,7 +139,7 @@ export const generateCostumePrompts = async (
       [POSE & FRAMING REQUIREMENTS]
       - Shot Type/Distance: ${parts.shotType || 'Autofill based on context/theme'}
       - Shot Angle: ${parts.shotAngle || 'Autofill based on context/theme'}
-      - Pose Stance (MANDATORY): ${(!parts.poseStance || parts.poseStance === 'random') ? 'Autofill based on context/theme' : parts.poseStance.toUpperCase()}
+      - Pose Stance: ${(!parts.poseStance || parts.poseStance === 'random') ? 'Autofill based on context/theme' : parts.poseStance.toUpperCase()}
       - Expression: ${(!parts.expression || parts.expression === 'random') ? 'Autofill based on context/theme' : parts.expression.toUpperCase()}
 
       [CUSTOM OVERRIDES (ABSOLUTE HIGHEST PRIORITY)]
@@ -147,6 +147,14 @@ export const generateCostumePrompts = async (
       - CUSTOM EXPRESSION: ${parts.expressionDescription ? `"${parts.expressionDescription}"` : 'None'}
       - CUSTOM FRAMING: ${parts.framingDescription ? `"${parts.framingDescription}"` : 'None'}
   
+      [LOGIC FOR DIVERSITY & INDIVIDUALITY (CRITICAL)]
+      1. You are generating ${count} UNIQUE items.
+      2. If a requirement is wrapped in [DIVERSE_REQUEST: item1 | item2 | ...], assign item 0 to item1, item 1 to item2, etc.
+      3. EVEN IF a requirement is a single string or custom input, YOU MUST VARY THE EXECUTION for each of the ${count} items.
+         - Example: If "KNEELING" is requested, generate 5 DIFFERENT kneeling poses (one knee down, both knees down, kneeling while leaning back, etc.).
+         - NEVER output identical pose or camera tags for any two items in this batch.
+         - For CUSTOM POSE/EXPRESSION, maintain the core meaning but vary the artistic interpretation for each item.
+
       [LOGIC FOR POSE & EXPRESSION (CRITICAL TRANSLATION)]
       1. IF CUSTOM POSE/EXPRESSION is provided (even in Japanese):
          - YOU MUST TRANSLATE IT TO ACCURATE ENGLISH TAGS.

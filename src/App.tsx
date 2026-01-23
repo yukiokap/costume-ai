@@ -35,11 +35,20 @@ const generateId = () => {
 };
 
 // --- Helper moved to top level to ensure scope clarity and prevent runtime ReferenceErrors ---
-const getEffectiveValue = (val: string, data: Record<string, string[]>) => {
+const getDiverseValues = (val: string, data: Record<string, string[]>, count: number) => {
   if (!val || val === 'random') return val;
   const list = data[val];
   if (!list || list.length === 0) return val;
-  return list[Math.floor(Math.random() * list.length)];
+
+  const selected = [];
+  const tempPool = [...list];
+  for (let i = 0; i < count; i++) {
+    if (tempPool.length === 0) tempPool.push(...list);
+    const idx = Math.floor(Math.random() * tempPool.length);
+    selected.push(tempPool[idx]);
+    tempPool.splice(idx, 1);
+  }
+  return `[DIVERSE_REQUEST: ${selected.join(' | ')}]`;
 };
 
 function App() {
@@ -176,11 +185,11 @@ function App() {
         theme,
         concept: getEffectiveConcept(false),
         poseStanceId: selectedPoseStance,
-        poseStance: getEffectiveValue(selectedPoseStance, POSE_STANCE_DATA),
+        poseStance: getDiverseValues(selectedPoseStance, POSE_STANCE_DATA, numPrompts),
         expressionId: selectedExpression,
-        expression: getEffectiveValue(selectedExpression, EXPRESSION_DATA),
-        shotType: getEffectiveValue(selectedShotType, FRAMING_DATA),
-        shotAngle: getEffectiveValue(selectedShotAngle, FRAMING_DATA),
+        expression: getDiverseValues(selectedExpression, EXPRESSION_DATA, numPrompts),
+        shotType: getDiverseValues(selectedShotType, FRAMING_DATA, numPrompts),
+        shotAngle: getDiverseValues(selectedShotAngle, FRAMING_DATA, numPrompts),
         poseDescription: poseDescription,
         expressionDescription: expressionDescription,
         framingDescription: framingDescription,
@@ -287,11 +296,11 @@ function App() {
         theme,
         concept: getEffectiveConcept(true),
         poseStanceId: selectedPoseStance,
-        poseStance: getEffectiveValue(selectedPoseStance, POSE_STANCE_DATA),
+        poseStance: getDiverseValues(selectedPoseStance, POSE_STANCE_DATA, 10),
         expressionId: selectedExpression,
-        expression: getEffectiveValue(selectedExpression, EXPRESSION_DATA),
-        shotType: getEffectiveValue(selectedShotType, FRAMING_DATA),
-        shotAngle: getEffectiveValue(selectedShotAngle, FRAMING_DATA),
+        expression: getDiverseValues(selectedExpression, EXPRESSION_DATA, 10),
+        shotType: getDiverseValues(selectedShotType, FRAMING_DATA, 10),
+        shotAngle: getDiverseValues(selectedShotAngle, FRAMING_DATA, 10),
         poseDescription: poseDescription,
         expressionDescription: expressionDescription,
         framingDescription: framingDescription,
