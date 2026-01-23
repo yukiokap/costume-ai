@@ -35,20 +35,11 @@ const generateId = () => {
 };
 
 // --- Helper moved to top level to ensure scope clarity and prevent runtime ReferenceErrors ---
-const getDiverseValues = (val: string, data: Record<string, string[]>, count: number) => {
-  if (!val || val === 'random') return val;
+const getOptionPool = (val: string, data: Record<string, string[]>) => {
+  if (!val || val === 'random') return 'randomly varied';
   const list = data[val];
   if (!list || list.length === 0) return val;
-
-  const selected = [];
-  const tempPool = [...list];
-  for (let i = 0; i < count; i++) {
-    if (tempPool.length === 0) tempPool.push(...list);
-    const idx = Math.floor(Math.random() * tempPool.length);
-    selected.push(tempPool[idx]);
-    tempPool.splice(idx, 1);
-  }
-  return `[DIVERSE_REQUEST: ${selected.join(' | ')}]`;
+  return list.join(' | ');
 };
 
 function App() {
@@ -185,11 +176,11 @@ function App() {
         theme,
         concept: getEffectiveConcept(false),
         poseStanceId: selectedPoseStance,
-        poseStance: getDiverseValues(selectedPoseStance, POSE_STANCE_DATA, numPrompts),
+        poseStance: getOptionPool(selectedPoseStance, POSE_STANCE_DATA),
         expressionId: selectedExpression,
-        expression: getDiverseValues(selectedExpression, EXPRESSION_DATA, numPrompts),
-        shotType: getDiverseValues(selectedShotType, FRAMING_DATA, numPrompts),
-        shotAngle: getDiverseValues(selectedShotAngle, FRAMING_DATA, numPrompts),
+        expression: getOptionPool(selectedExpression, EXPRESSION_DATA),
+        shotType: getOptionPool(selectedShotType, FRAMING_DATA),
+        shotAngle: getOptionPool(selectedShotAngle, FRAMING_DATA),
         poseDescription: poseDescription,
         expressionDescription: expressionDescription,
         framingDescription: framingDescription,
@@ -296,11 +287,11 @@ function App() {
         theme,
         concept: getEffectiveConcept(true),
         poseStanceId: selectedPoseStance,
-        poseStance: getDiverseValues(selectedPoseStance, POSE_STANCE_DATA, 10),
+        poseStance: getOptionPool(selectedPoseStance, POSE_STANCE_DATA),
         expressionId: selectedExpression,
-        expression: getDiverseValues(selectedExpression, EXPRESSION_DATA, 10),
-        shotType: getDiverseValues(selectedShotType, FRAMING_DATA, 10),
-        shotAngle: getDiverseValues(selectedShotAngle, FRAMING_DATA, 10),
+        expression: getOptionPool(selectedExpression, EXPRESSION_DATA),
+        shotType: getOptionPool(selectedShotType, FRAMING_DATA),
+        shotAngle: getOptionPool(selectedShotAngle, FRAMING_DATA),
         poseDescription: poseDescription,
         expressionDescription: expressionDescription,
         framingDescription: framingDescription,

@@ -114,7 +114,7 @@ export const generateCostumePrompts = async (
   // --- STAGE 1: THE ARCHITECT (COMBINED DESIGN & DIRECTION) ---
   const architectPrompt = `
       [STAGE 1: THE ARCHITECT]
-      Task: Simultaneously design ${count} unique outfits and their cinematic pose/settings.
+      Task: Simultaneously design ${count} unique outfits and their cinematic cinematic settings.
   
       [USER REQUIREMENTS (IMMUTABLE)]
       - Primary Subject/Concept: ${parts.concept || 'None'}
@@ -136,59 +136,28 @@ export const generateCostumePrompts = async (
       - ${sexyLevelDescription(parts.sexyLevel)}
       `}
       
-      [POSE & FRAMING REQUIREMENTS]
-      - Shot Type/Distance: ${parts.shotType || 'Autofill based on context/theme'}
-      - Shot Angle: ${parts.shotAngle || 'Autofill based on context/theme'}
-      - Pose Stance: ${(!parts.poseStance || parts.poseStance === 'random') ? 'Autofill based on context/theme' : parts.poseStance.toUpperCase()}
-      - Expression: ${(!parts.expression || parts.expression === 'random') ? 'Autofill based on context/theme' : parts.expression.toUpperCase()}
+      [CINEMATIC DIRECTION & DIVERSITY RULES (CRITICAL)]
+      1. You are producing ${count} DISTINCT concepts. 
+      2. For each concept, you MUST use a different pose, expression, and camera angle/shot-type.
+      3. POSE REQUIREMENT: ${parts.poseDescription ? `User request is "${parts.poseDescription}". Generate ${count} DIFFERENT artistic interpretations of this.` : `Pool: ${parts.poseStance}`}
+      4. EXPRESSION REQUIREMENT: ${parts.expressionDescription ? `User request is "${parts.expressionDescription}". Generate ${count} DIFFERENT facial expressions following this.` : `Pool: ${parts.expression}`}
+      5. FRAMING REQUIREMENT: ${parts.framingDescription ? `User request is "${parts.framingDescription}". Interpret this technically for each item.` : `Pool: ${parts.shotType}, ${parts.shotAngle}`}
+      *CRITICAL*: Never use identical [[FRAMING]] or [[POSE]] tags for multiple items. Even with the same requirement, vary the execution.
 
-      [CUSTOM OVERRIDES (ABSOLUTE HIGHEST PRIORITY)]
-      - CUSTOM POSE: ${parts.poseDescription ? `"${parts.poseDescription}"` : 'None'}
-      - CUSTOM EXPRESSION: ${parts.expressionDescription ? `"${parts.expressionDescription}"` : 'None'}
-      - CUSTOM FRAMING: ${parts.framingDescription ? `"${parts.framingDescription}"` : 'None'}
-  
-      [LOGIC FOR DIVERSITY & INDIVIDUALITY (CRITICAL)]
-      1. You are generating ${count} UNIQUE items.
-      2. If a requirement is wrapped in [DIVERSE_REQUEST: item1 | item2 | ...], assign item 0 to item1, item 1 to item2, etc.
-      3. EVEN IF a requirement is a single string or custom input, YOU MUST VARY THE EXECUTION for each of the ${count} items.
-         - Example: If "KNEELING" is requested, generate 5 DIFFERENT kneeling poses (one knee down, both knees down, kneeling while leaning back, etc.).
-         - NEVER output identical pose or camera tags for any two items in this batch.
-         - For CUSTOM POSE/EXPRESSION, maintain the core meaning but vary the artistic interpretation for each item.
+      [LOGIC FOR TRANSLATION]
+      - Translate all Japanese user input into technical English tags.
+      - Do NOT output Japanese in tags.
 
-      [LOGIC FOR POSE & EXPRESSION (CRITICAL TRANSLATION)]
-      1. IF CUSTOM POSE/EXPRESSION is provided (even in Japanese):
-         - YOU MUST TRANSLATE IT TO ACCURATE ENGLISH TAGS.
-         - "M字開脚" -> "spread legs, m-style legs"
-         - "恥ずかしい" -> "embarrassed, shy, blushing"
-         - "マンコ見せ" -> "spread legs, exposing crotch, presenting"
-         - DO NOT OUTPUT JAPANESE. TRANSLATE THE *MEANING*.
-
-      2. ELSE IF "Pose Stance" is specified (e.g., "LYING", "SITTING", "KNEELING"):
-         - YOU MUST USE IT. Do not default to standing.
-         - 'LYING' -> "lying on back", "lying on side", "reclining", "on bed/floor".
-         - 'SITTING' -> "sitting", "knees up", "crossed legs", "on chair/sofa".
-         - 'KNEELING' -> "kneeling", "on all fours".
-         - 'LOOKING_BACK' -> "looking back", "from behind".
-
-      [LOGIC FOR FRAMING (SHOT/ANGLE) - CRITICAL]
-      1. IF CUSTOM FRAMING is provided (e.g., "あおり", "pussyアップ", "マンコドアップ"):
-         - YOU MUST TRANSLATE SLANG TO TECHNICAL ENGLISH TAGS.
-         - "あおり" -> "low angle, from below"
-         - "pussyアップ" / "マンコドアップ" -> "close-up of crotch, focus on hips, crotch shot, genital focus"
-         - "顔アップ" -> "face focus, portrait, close-up"
-         - "足舐め" -> "focus on feet, foot focus"
-         - DO NOT IGNORE INPUT. TRANSLATE IT.
-      2. OTHERWISE use the specified Shot Type and Angle tags.
-  
       [OUTPUT FORMAT]
       Provide ${count} items separated by "[[SPLIT]]". 
       Each item MUST follow this format exactly:
       [[ID]] Index (0 to ${count - 1})
       [[NAME]] Professional Name (Costume Name) - Japanese OK
       [[DESC]] Brief summary (${language}) - Japanese OK
-      [[COSTUME]] English costume tags ONLY. (NO Japanese - used in prompt).
-      [[POSE]] English pose & expression tags ONLY. (Translate custom input. NO Japanese - used in prompt).
-      [[SCENE]] Background & lighting tags ONLY. (English tags ONLY. NO Japanese - used in prompt).
+      [[COSTUME]] English costume tags ONLY.
+      [[POSE]] English pose & expression tags ONLY.
+      [[FRAMING]] English camera tags ONLY (e.g., "low angle, full body shot").
+      [[SCENE]] Background & lighting tags ONLY.
       [[SPLIT]]
     `;
 
@@ -205,6 +174,7 @@ export const generateCostumePrompts = async (
         .replace(/,\s*,/g, ',').trim();
       const pose = (v.match(/\[\[POSE\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim();
       const scene = (v.match(/\[\[SCENE\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim();
+      const framing = (v.match(/\[\[FRAMING\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim();
 
       // Lighting/Atmosphere Filter (if disabled)
       const filterLighting = (text: string) => {
@@ -215,10 +185,8 @@ export const generateCostumePrompts = async (
       };
 
       const finalPose = filterLighting(pose);
+      const finalFraming = filterLighting(framing);
       const finalSceneRaw = filterLighting(scene);
-
-      // Build finalFraming from inputs
-      const finalFraming = sanitizePrompt(`${parts.shotAngle || ''}, ${parts.shotType || ''}`);
 
       // White Background Hardware Force
       const finalScene = parts.useWhiteBackground ? WHITE_BACKGROUND_PROMPT : sanitizePrompt(finalSceneRaw);
@@ -246,7 +214,7 @@ export const generateCostumePrompts = async (
         originalExpressionDescription: parts.expressionDescription,
         originalFramingDescription: parts.framingDescription,
 
-        prompt: sanitizePrompt(`${finalFraming}, ${costume}, ${pose}, ${finalScene}`)
+        prompt: sanitizePrompt(`${finalFraming}, ${costume}, ${finalPose}, ${finalScene}`)
       };
     }).filter((r: GeneratedPrompt) => r.costume);
 
