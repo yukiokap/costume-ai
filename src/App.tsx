@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ChevronDown, Settings2 } from 'lucide-react'
 import { generateCostumePrompts, generateSexyRangePrompts } from './services/gemini'
 import { type GeneratedPrompt, type HistoryItem } from './types'
@@ -34,6 +34,14 @@ const generateId = () => {
   return Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
 };
 
+// --- Helper moved to top level to ensure scope clarity and prevent runtime ReferenceErrors ---
+const getEffectiveValue = (val: string, data: Record<string, string[]>) => {
+  if (!val || val === 'random') return val;
+  const list = data[val];
+  if (!list || list.length === 0) return val;
+  return list[Math.floor(Math.random() * list.length)];
+};
+
 function App() {
   const { t, language } = useLanguage();
   const {
@@ -56,18 +64,28 @@ function App() {
   const [concept, setConcept] = useState('')
   const [sexyLevel, setSexyLevel] = useState(5)
   const [accessoryLevel, setAccessoryLevel] = useState<number>(5)
-  const [selectedPoseMood, setSelectedPoseMood] = useState('random')
   const [selectedPoseStance, setSelectedPoseStance] = useState('model')
+  const [selectedPoseMood, setSelectedPoseMood] = useState('random')
   const [poseDescription, setPoseDescription] = useState('')
   const [selectedExpression, setSelectedExpression] = useState('model')
   const [expressionDescription, setExpressionDescription] = useState('')
-  const [selectedFraming, setSelectedFraming] = useState<string>('model')
+  const [selectedShotType, setSelectedShotType] = useState<string>('full_body')
+  const [selectedShotAngle, setSelectedShotAngle] = useState<string>('front')
   const [framingDescription, setFramingDescription] = useState<string>('')
   const [numPrompts, setNumPrompts] = useState(5)
   const [showAdvanced, setShowAdvanced] = useState(false)
-  const [showCompletion, setShowCompletion] = useState(false) // New state for completion notification
+  const [showCompletion, setShowCompletion] = useState(false)
+  const [isR18Mode, setIsR18Mode] = useState(false);
 
   const [synthesisLogs, setSynthesisLogs] = useState<string[]>([])
+
+  useEffect(() => {
+    if (isR18Mode) {
+      document.documentElement.classList.add('r18-mode');
+    } else {
+      document.documentElement.classList.remove('r18-mode');
+    }
+  }, [isR18Mode]);
 
   const [generatedPrompts, setGeneratedPrompts] = useState<GeneratedPrompt[]>([])
   const [isGenerating, setIsGenerating] = useState(false)
@@ -78,9 +96,15 @@ function App() {
   const [remixBase, setRemixBase] = useState<HistoryItem | null>(null)
 
 
-  const handleSetCopyOptions = (action: any) => {
+  const handleSetCopyOptions = (action: React.SetStateAction<{
+    costume: boolean;
+    pose: boolean;
+    framing: boolean;
+    scene: boolean;
+  }>) => {
     if (typeof action === 'function') {
-      setCopyOptions(action(copyOptions));
+      const next = action(copyOptions);
+      setCopyOptions(next);
     } else {
       setCopyOptions(action);
     }
@@ -100,12 +124,20 @@ function App() {
       "NEURAL_LINK: ESTABLISHED",
       "DATA_POOL: CALIBRATING...",
       "SYNTHESIZING: STYLISTIC_WEIGHTS",
+      "MAPPING: AESTHETIC_COORDINATES",
+      "UPDATING: TEXTURE_LAYERS",
+      "ANALYZING: POSING_MATRICES",
+      "EXTRACTING: DESIGN_VIBES",
+      "INJECTING: FASHION_DNA",
+      "REFINING: ACCESSORY_NODES",
       "RANDOMIZING: OUTFIT_VARIATIONS",
+      "VALIDATING: DESIGN_INTEGRITY",
+      "FINALIZING: PROMPT_STRUCTURE",
       "OUTPUT_STREAM: OPENING"
     ]
     setSynthesisLogs([])
     logs.forEach((log, i) => {
-      setTimeout(() => setSynthesisLogs(prev => [...prev, log]), i * 800)
+      setTimeout(() => setSynthesisLogs(prev => [...prev, log]), i * 450)
     })
 
     try {
@@ -141,20 +173,17 @@ function App() {
         }
       };
 
-      const getEffectiveValue = (val: string, data: Record<string, string[]>) => {
-        if (!val || val === 'random') return val;
-        const list = data[val];
-        if (!list || list.length === 0) return val;
-        return list[Math.floor(Math.random() * list.length)];
-      };
-
       const parts = {
         theme,
         concept: getEffectiveConcept(false),
-        poseMood: getEffectiveValue(selectedPoseMood, POSE_MOOD_DATA),
+        poseStanceId: selectedPoseStance,
         poseStance: getEffectiveValue(selectedPoseStance, POSE_STANCE_DATA),
+        poseMoodId: selectedPoseMood,
+        poseMood: getEffectiveValue(selectedPoseMood, POSE_MOOD_DATA),
+        expressionId: selectedExpression,
         expression: getEffectiveValue(selectedExpression, EXPRESSION_DATA),
-        framing: getEffectiveValue(selectedFraming, FRAMING_DATA),
+        shotType: getEffectiveValue(selectedShotType, FRAMING_DATA),
+        shotAngle: getEffectiveValue(selectedShotAngle, FRAMING_DATA),
         poseDescription: poseDescription,
         expressionDescription: expressionDescription,
         framingDescription: framingDescription,
@@ -162,7 +191,11 @@ function App() {
         accessoryLevel: accessoryLevel,
         enableLighting: enableLighting,
         useWhiteBackground: useWhiteBackground,
-        remixBaseDesign: remixBase?.costume
+        remixBaseDesign: remixBase?.costume,
+        isR18Mode: isR18Mode,
+        // For history tracking
+        originalShotType: selectedShotType,
+        originalShotAngle: selectedShotAngle,
       }
       const results = await generateCostumePrompts(apiKey, parts, numPrompts, language)
 
@@ -201,10 +234,21 @@ function App() {
     setIsGenerating(true)
     setGeneratedPrompts([])
 
-    const logs = ["INITIALIZING", "MAPPING_SPECTRUM", "GENERATING_EVOLUTION", "OUTPUT_STREAM"]
+    const logs = [
+      "INITIALIZING: EVOLUTION_ENGINE",
+      "MAPPING: ATTRIBUTE_GRADIENTS",
+      "SEQ_START: PROPERTY_SHIFT",
+      "ANALYZING: BASE_ARCHETYPE",
+      "CALIBRATING: EXPOSURE_LAYERS",
+      "REFINING: CLOTHING_GEOMETRY",
+      "SYNTHESIZING: STAGE_PROGRESSION",
+      "GENERATING: 10_POINT_SPECTRUM",
+      "VALIDATING: MORPH_INTEGRITY",
+      "OUTPUT_STREAM: OPENING"
+    ]
     setSynthesisLogs([])
     logs.forEach((log, i) => {
-      setTimeout(() => setSynthesisLogs(prev => [...prev, log]), i * 800)
+      setTimeout(() => setSynthesisLogs(prev => [...prev, log]), i * 450)
     })
 
     try {
@@ -240,20 +284,19 @@ function App() {
         }
       };
 
-      const getEffectiveValue = (val: string, data: Record<string, string[]>) => {
-        if (!val || val === 'random') return val;
-        const list = data[val];
-        if (!list || list.length === 0) return val;
-        return list[Math.floor(Math.random() * list.length)];
-      };
+      // getEffectiveValue moved outside component
 
       const parts = {
         theme,
         concept: getEffectiveConcept(true),
-        poseMood: getEffectiveValue(selectedPoseMood, POSE_MOOD_DATA),
+        poseStanceId: selectedPoseStance,
         poseStance: getEffectiveValue(selectedPoseStance, POSE_STANCE_DATA),
+        poseMoodId: selectedPoseMood,
+        poseMood: getEffectiveValue(selectedPoseMood, POSE_MOOD_DATA),
+        expressionId: selectedExpression,
         expression: getEffectiveValue(selectedExpression, EXPRESSION_DATA),
-        framing: getEffectiveValue(selectedFraming, FRAMING_DATA),
+        shotType: getEffectiveValue(selectedShotType, FRAMING_DATA),
+        shotAngle: getEffectiveValue(selectedShotAngle, FRAMING_DATA),
         poseDescription: poseDescription,
         expressionDescription: expressionDescription,
         framingDescription: framingDescription,
@@ -261,7 +304,11 @@ function App() {
         accessoryLevel: accessoryLevel,
         enableLighting: enableLighting,
         useWhiteBackground: useWhiteBackground,
-        remixBaseDesign: remixBase?.costume
+        remixBaseDesign: remixBase?.costume,
+        isR18Mode: isR18Mode,
+        // For history tracking
+        originalShotType: selectedShotType,
+        originalShotAngle: selectedShotAngle,
       }
       const results = await generateSexyRangePrompts(apiKey, parts, referencePrompt, language)
 
@@ -293,8 +340,14 @@ function App() {
     // Restore states
     if (item.originalTheme) setTheme(item.originalTheme);
     if (item.originalConcept) setConcept(item.originalConcept);
-    if (item.originalPoseMood) setSelectedPoseMood(item.originalPoseMood);
     if (item.originalPoseStance) setSelectedPoseStance(item.originalPoseStance);
+    if (item.originalPoseMood) setSelectedPoseMood(item.originalPoseMood);
+    if (item.originalPoseDescription) setPoseDescription(item.originalPoseDescription);
+    if (item.originalExpression) setSelectedExpression(item.originalExpression);
+    if (item.originalExpressionDescription) setExpressionDescription(item.originalExpressionDescription);
+    if (item.originalShotType) setSelectedShotType(item.originalShotType);
+    if (item.originalShotAngle) setSelectedShotAngle(item.originalShotAngle);
+    if (item.originalFramingDescription) setFramingDescription(item.originalFramingDescription);
     if (item.sexyLevel !== undefined) setSexyLevel(item.sexyLevel);
     if (item.accessoryLevel !== undefined) setAccessoryLevel(item.accessoryLevel);
 
@@ -307,6 +360,32 @@ function App() {
 
   const cancelRemix = () => {
     setRemixBase(null);
+  };
+
+  const handleReset = () => {
+    // 01: Basics
+    setTheme('random');
+    setConcept('');
+    setSexyLevel(5);
+    setAccessoryLevel(5);
+    setIsR18Mode(false);
+
+    // 02: Advanced - Pose
+    setSelectedPoseStance('model');
+    setSelectedPoseMood('random');
+    setPoseDescription('');
+
+    // 03: Advanced - Expression
+    setSelectedExpression('model');
+    setExpressionDescription('');
+
+    // 04: Advanced - Framing
+    setSelectedShotType('full_body');
+    setSelectedShotAngle('front');
+    setFramingDescription('');
+
+    setRemixBase(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
 
@@ -386,7 +465,12 @@ function App() {
           </div>
 
           <div className="pt-4 border-t border-white/5">
-            <SexySlider value={sexyLevel} onChange={setSexyLevel} />
+            <SexySlider
+              value={sexyLevel}
+              onChange={setSexyLevel}
+              isR18Mode={isR18Mode}
+              onR18Change={setIsR18Mode}
+            />
           </div>
 
           <div className="pt-4 border-t border-white/5">
@@ -470,10 +554,10 @@ function App() {
                   className="overflow-hidden space-y-12 mt-8"
                 >
                   <ScenePoseSection
-                    selectedPoseMood={selectedPoseMood}
-                    setSelectedPoseMood={setSelectedPoseMood}
                     selectedPoseStance={selectedPoseStance}
                     setSelectedPoseStance={setSelectedPoseStance}
+                    selectedPoseMood={selectedPoseMood}
+                    setSelectedPoseMood={setSelectedPoseMood}
                     poseDescription={poseDescription}
                     setPoseDescription={setPoseDescription}
                   />
@@ -490,8 +574,10 @@ function App() {
                   <div style={{ height: '3px', width: '100%', background: 'linear-gradient(90deg, rgba(249,115,22,0.5), rgba(139,92,246,0.5))', margin: '3rem 0', borderRadius: '2px', boxShadow: '0 0 15px rgba(139,92,246,0.3)' }} />
 
                   <FramingSection
-                    selectedFraming={selectedFraming}
-                    setSelectedFraming={setSelectedFraming}
+                    selectedShotType={selectedShotType}
+                    setSelectedShotType={setSelectedShotType}
+                    selectedShotAngle={selectedShotAngle}
+                    setSelectedShotAngle={setSelectedShotAngle}
                     framingDescription={framingDescription}
                     setFramingDescription={setFramingDescription}
                   />
@@ -513,6 +599,7 @@ function App() {
             setNumPrompts={setNumPrompts}
             onViewHistory={() => setShowOverlay('history')}
             onViewFavorites={() => setShowOverlay('favorites')}
+            onReset={handleReset}
           />
         </div>
 

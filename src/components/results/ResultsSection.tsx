@@ -21,6 +21,13 @@ interface ResultsSectionProps {
     setCopyOptions: React.Dispatch<React.SetStateAction<{ costume: boolean; pose: boolean; framing: boolean; scene: boolean }>>;
 }
 
+const DETAIL_LABELS: Record<string, string> = {
+    c01: '01: 衣装の設定 / COSTUME',
+    c02: '02: ポーズの設定 / POSE',
+    c03: '03: 表情の設定 / EXPRESSION',
+    c04: '04: 構図の設定 / FRAMING',
+};
+
 export const ResultsSection: React.FC<ResultsSectionProps> = ({
     generatedPrompts,
     isGenerating,
@@ -29,12 +36,26 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
     isCopied,
     isAllCopied,
     history,
+    synthesisLogs,
     onToggleFavorite,
     onRemix,
     copyOptions,
     setCopyOptions
 }) => {
     const { t } = useLanguage();
+    const [expandedDetails, setExpandedDetails] = React.useState<Record<string, boolean>>({});
+
+    const toggleDetails = (id: string) => {
+        setExpandedDetails(prev => ({ ...prev, [id]: !prev[id] }));
+    };
+
+    const logEndRef = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+        if (isGenerating && logEndRef.current) {
+            logEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [synthesisLogs, isGenerating]);
 
     const handleSingleCopy = (item: GeneratedPrompt, index: number) => {
         const parts = [];
@@ -50,12 +71,75 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
     return (
         <div className="results-wrapper">
             {isGenerating && (
-                <div className="loading-container">
-                    <Sparkles size={48} className="animate-spin-slow" style={{ marginBottom: '1rem' }} />
-                    <p style={{ fontSize: '0.75rem', fontWeight: 'bold', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                        GENERATING NEW STYLES...
-                    </p>
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '6rem 2rem',
+                    gap: '2.5rem'
+                }}>
+                    <div className="animate-spin-slow">
+                        <Sparkles size={60} color="#f97316" style={{ filter: 'drop-shadow(0 0 15px rgba(249, 115, 22, 0.4))' }} />
+                    </div>
+
+                    <div className="terminal-loader">
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            {synthesisLogs.map((log, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    className="terminal-line"
+                                >
+                                    <span className="terminal-prefix">[{new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}]</span>
+                                    <span>{log}</span>
+                                    {i === synthesisLogs.length - 1 && <span className="terminal-cursor" />}
+                                </motion.div>
+                            ))}
+                            <div ref={logEndRef} />
+                            {synthesisLogs.length === 0 && (
+                                <div className="terminal-line">
+                                    <span className="terminal-prefix">[{new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}]</span>
+                                    <span>INITIALIZING...</span>
+                                    <span className="terminal-cursor" />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div style={{
+                        fontSize: '0.65rem',
+                        fontWeight: 900,
+                        color: 'rgba(0, 242, 255, 0.4)',
+                        letterSpacing: '0.4em',
+                        textTransform: 'uppercase',
+                        textAlign: 'center'
+                    }}>
+                        Synthesizing high-density aesthetic data
+                    </div>
                 </div>
+            )}
+
+            {!isGenerating && generatedPrompts.length === 0 && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="result-placeholder"
+                >
+                    <div className="placeholder-icon-circle">
+                        <Sparkles size={40} color="rgba(255,255,255,0.2)" />
+                        <div className="placeholder-scan-line" />
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                        <h3 style={{ fontSize: '1.25rem', fontWeight: 900, letterSpacing: '0.4em', color: '#fff', textTransform: 'uppercase', marginBottom: '8px' }}>
+                            COMMAND_WAITING
+                        </h3>
+                        <p style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', fontWeight: 800, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+                            Configure your parameters above and initialize synthesis
+                        </p>
+                    </div>
+                </motion.div>
             )}
 
             {!isGenerating && generatedPrompts.length > 0 && (
@@ -159,7 +243,7 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.1 }}
-                                        className="result-card"
+                                        className={`result-card ${item.isR18Mode ? 'r18-card-glow' : ''}`}
                                     >
                                         <div className="card-number">
                                             {String(index + 1).padStart(2, '0')}
@@ -226,6 +310,21 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                             </div>
 
                                             <div style={{ display: 'flex', gap: '0.6rem' }}>
+                                                {item.isR18Mode && (
+                                                    <div style={{
+                                                        backgroundColor: 'rgba(255, 0, 255, 0.12)',
+                                                        border: '1px solid rgba(255, 0, 255, 0.3)',
+                                                        borderRadius: '8px',
+                                                        padding: '2px 8px',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        alignItems: 'center',
+                                                        minWidth: '45px'
+                                                    }}>
+                                                        <span style={{ fontSize: '0.45rem', color: '#ff00ff', fontWeight: 900, textTransform: 'uppercase' }}>OVERDRIVE</span>
+                                                        <span style={{ fontSize: '1rem', color: '#fff', fontWeight: 900, lineHeight: 1 }}>R18</span>
+                                                    </div>
+                                                )}
                                                 {item.sexyLevel !== undefined && (
                                                     <div style={{
                                                         backgroundColor: 'rgba(244, 63, 94, 0.12)',
@@ -288,13 +387,128 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                                 </div>
 
                                                 {item.scene && (
-                                                    <div className="tag-container">
+                                                    <div className="tag-container" style={{ marginBottom: '1rem' }}>
                                                         <span style={{ fontSize: '0.55rem', color: 'rgba(10, 242, 255, 0.5)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', marginRight: '0.5rem' }}>SCENE</span>
                                                         {item.scene?.split(',').slice(0, 3).map((tag, i) => (
                                                             <span key={i} className="mini-tag" style={{ color: '#00f2ff', borderColor: 'rgba(0, 242, 255, 0.1)' }}>{tag.trim()}</span>
                                                         ))}
                                                     </div>
                                                 )}
+
+                                                {/* Details Expander */}
+                                                <button
+                                                    onClick={() => toggleDetails(item.id || String(index))}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '8px',
+                                                        backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                                                        border: '1px solid rgba(255, 255, 255, 0.05)',
+                                                        borderRadius: '8px',
+                                                        color: 'rgba(255, 255, 255, 0.4)',
+                                                        fontSize: '9px',
+                                                        fontWeight: 900,
+                                                        letterSpacing: '0.15em',
+                                                        textTransform: 'uppercase',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        gap: '8px',
+                                                        marginBottom: '1rem',
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.3s ease'
+                                                    }}
+                                                >
+                                                    <Sparkles size={10} />
+                                                    {expandedDetails[item.id || String(index)] ? '閉じる / HIDE' : '設定詳細を表示 / DETAILS'}
+                                                </button>
+
+                                                <AnimatePresence>
+                                                    {expandedDetails[item.id || String(index)] && (
+                                                        <motion.div
+                                                            initial={{ height: 0, opacity: 0 }}
+                                                            animate={{ height: 'auto', opacity: 1 }}
+                                                            exit={{ height: 0, opacity: 0 }}
+                                                            style={{
+                                                                overflow: 'hidden',
+                                                                backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                                                                borderRadius: '10px',
+                                                                padding: '12px',
+                                                                marginBottom: '1rem',
+                                                                border: '1px solid rgba(255, 255, 255, 0.03)'
+                                                            }}
+                                                        >
+                                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                                                {[
+                                                                    {
+                                                                        section: 'c01',
+                                                                        items: [
+                                                                            { label: 'テーマ', val: item.originalTheme, type: 'theme' },
+                                                                            { label: 'コンセプト', val: item.originalConcept, type: 'concept' }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        section: 'c02',
+                                                                        items: [
+                                                                            { label: '雰囲気', val: item.originalPoseMood, type: 'mood' },
+                                                                            { label: '姿勢', val: item.originalPoseStance, type: 'stance' },
+                                                                            { label: '自由記述', val: item.originalPoseDescription, type: 'text' }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        section: 'c03',
+                                                                        items: [
+                                                                            { label: '感情', val: item.originalExpression, type: 'expression' },
+                                                                            { label: '自由記述', val: item.originalExpressionDescription, type: 'text' }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        section: 'c04',
+                                                                        items: [
+                                                                            { label: 'アングル', val: item.originalFraming, type: 'framing' },
+                                                                            { label: '自由記述', val: item.originalFramingDescription, type: 'text' }
+                                                                        ]
+                                                                    }
+                                                                ].map((group, gIdx) => (
+                                                                    <div key={gIdx} style={{ borderBottom: gIdx < 3 ? '1px solid rgba(255,255,255,0.05)' : 'none', paddingBottom: gIdx < 3 ? '8px' : '0' }}>
+                                                                        <div style={{ fontSize: '9px', fontWeight: 900, color: 'var(--cyan)', letterSpacing: '0.05em', marginBottom: '6px' }}>
+                                                                            {DETAIL_LABELS[group.section]}
+                                                                        </div>
+                                                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                                                            {group.items.filter(i => {
+                                                                                if (!i.val || i.val === '' || i.val === 'random') return false;
+                                                                                if (i.type === 'text' && (i.val === 'None' || i.val === 'model')) return false;
+                                                                                return true;
+                                                                            }).map((detail, dIdx) => {
+                                                                                let displayVal = String(detail.val);
+
+                                                                                if (detail.type === 'concept' && displayVal.includes('DIVERSE_REQUEST')) {
+                                                                                    displayVal = 'おまかせ';
+                                                                                } else if (detail.type === 'theme') {
+                                                                                    displayVal = (t(`editor.themes.${displayVal}`) || displayVal);
+                                                                                } else if (detail.type === 'mood') {
+                                                                                    displayVal = (t(`editor.pose_mood_presets.${displayVal}`) || displayVal);
+                                                                                } else if (detail.type === 'stance') {
+                                                                                    displayVal = (t(`editor.pose_stance_presets.${displayVal}`) || displayVal);
+                                                                                } else if (detail.type === 'expression') {
+                                                                                    displayVal = (t(`editor.expression_presets.${displayVal}`) || displayVal);
+                                                                                } else if (detail.type === 'framing') {
+                                                                                    displayVal = (t(`editor.framing_presets.${displayVal}`) || displayVal);
+                                                                                }
+
+                                                                                return (
+                                                                                    <div key={dIdx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingLeft: '4px' }}>
+                                                                                        <span style={{ fontSize: '8px', fontWeight: 900, color: 'rgba(255,255,255,0.2)', minWidth: '50px' }}>{detail.label}</span>
+                                                                                        <span style={{ fontSize: '9px', fontWeight: 700, color: '#fff', textAlign: 'right', maxWidth: '75%', wordBreak: 'break-all' }}>{displayVal}</span>
+                                                                                    </div>
+                                                                                );
+                                                                            })}
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
                                             </div>
 
                                             {/* Primary Copy Selected Action */}
@@ -325,14 +539,6 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                                 </button>
                                             </div>
                                         </div>
-
-                                        <button
-                                            onClick={() => onCopy(item.prompt.replace(/\n/g, ' '), index + 60000)}
-                                            className={`btn-card-footer ${isCopied === index + 60000 ? 'copied' : ''}`}
-                                        >
-                                            {isCopied === index + 60000 ? <Check size={12} /> : <Copy size={12} />}
-                                            {isCopied === index + 60000 ? 'COPIED ALL' : 'FULL PROMPT'}
-                                        </button>
                                     </motion.div>
                                 );
                             })}

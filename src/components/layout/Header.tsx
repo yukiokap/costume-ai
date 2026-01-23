@@ -26,7 +26,19 @@ export const Header: React.FC<HeaderProps> = ({
                 </h1>
             </div>
 
-            <div className="flex gap-4 items-center">
+            <div className="flex gap-6 items-center">
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
+                    gap: '2px',
+                    opacity: 0.6,
+                    textAlign: 'right'
+                }} className="hidden md:flex">
+                    <span style={{ fontSize: '9px', fontWeight: 900, color: '#fff', letterSpacing: '0.1em' }}>AI COSTUME DESIGN ATELIER</span>
+                    <span style={{ fontSize: '8px', color: 'rgba(255,255,255,0.5)', fontWeight: 800, letterSpacing: '0.05em' }}>CHARACTER SYNTHESIS SYSTEM v0.8.2</span>
+                </div>
+
                 <button
                     onClick={() => setShowSettings(!showSettings)}
                     className="relative px-6 py-3 transition-all duration-300 group overflow-hidden"

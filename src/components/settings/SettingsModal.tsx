@@ -33,7 +33,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             setLocalKey(apiKey);
             setWipeConfirm(false);
         }
-    }, [isOpen, apiKey]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen]); // Only sync when modal opens
 
     const handleSave = () => {
         setIsSaving(true);
@@ -55,9 +56,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     };
 
     const toggleCopyOption = (key: string) => {
+        const k = key as keyof typeof copyOptions;
         setCopyOptions({
             ...copyOptions,
-            [key as keyof typeof copyOptions]: !((copyOptions as any)[key])
+            [k]: !copyOptions[k]
         });
     };
 
@@ -227,19 +229,19 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                         style={{
                                             padding: '12px 16px',
                                             borderRadius: '10px',
-                                            backgroundColor: (copyOptions as any)[opt.id] ? 'rgba(249, 115, 22, 0.15)' : 'rgba(255, 255, 255, 0.03)',
-                                            border: (copyOptions as any)[opt.id] ? '1px solid #f97316' : '1px solid rgba(255, 255, 255, 0.08)',
-                                            color: (copyOptions as any)[opt.id] ? '#f97316' : 'rgba(255, 255, 255, 0.4)',
+                                            backgroundColor: copyOptions[opt.id as keyof typeof copyOptions] ? 'rgba(249, 115, 22, 0.15)' : 'rgba(255, 255, 255, 0.03)',
+                                            border: copyOptions[opt.id as keyof typeof copyOptions] ? '1px solid #f97316' : '1px solid rgba(255, 255, 255, 0.08)',
+                                            color: copyOptions[opt.id as keyof typeof copyOptions] ? '#f97316' : 'rgba(255, 255, 255, 0.4)',
                                             fontSize: '11px',
                                             fontWeight: '900',
                                             display: 'flex',
                                             alignItems: 'center',
-                                            justifyContent: 'space-between',
+                                            justifyContent: 'center',
                                             transition: 'all 0.2s ease'
                                         }}
                                     >
                                         <span className="truncate">{opt.label}</span>
-                                        {(copyOptions as any)[opt.id] && <Check size={12} />}
+                                        {copyOptions[opt.id as keyof typeof copyOptions] && <Check size={12} />}
                                     </button>
                                 ))}
                             </div>
@@ -260,23 +262,39 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                 onClick={handleWipe}
                                 style={{
                                     width: '100%',
-                                    padding: '16px',
+                                    padding: '20px',
                                     borderRadius: '12px',
                                     backgroundColor: wipeConfirm ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255, 255, 255, 0.03)',
                                     border: wipeConfirm ? '2px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.1)',
                                     color: wipeConfirm ? '#ef4444' : 'rgba(255, 255, 255, 0.4)',
-                                    fontSize: '12px',
+                                    fontSize: '11px',
                                     fontWeight: '900',
-                                    letterSpacing: '0.1em',
+                                    letterSpacing: '0.05em',
                                     transition: 'all 0.3s ease',
                                     display: 'flex',
+                                    flexDirection: 'column',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    gap: '12px'
+                                    gap: '12px',
+                                    textAlign: 'center',
+                                    lineHeight: '1.4'
                                 }}
                             >
-                                <Zap size={16} />
-                                {wipeConfirm ? `[!] ${t('settings.purge_confirm')}` : t('settings.purge_description')}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    <Zap size={16} />
+                                    <span style={{ textTransform: 'uppercase' }}>
+                                        {wipeConfirm ? 'DANGER: DATA_DELETION_REQD' : t('settings.purge_description')}
+                                    </span>
+                                </div>
+                                {wipeConfirm && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 5 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        style={{ fontSize: '9px', fontWeight: '500', maxWidth: '80%' }}
+                                    >
+                                        {t('settings.purge_confirm')}
+                                    </motion.div>
+                                )}
                             </button>
                         </div>
 

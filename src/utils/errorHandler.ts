@@ -1,7 +1,6 @@
 
-export const getErrorMessage = (error: any, t: (key: string) => string): string => {
-    const errorString = error?.toString() || '';
-    const message = error?.message || errorString;
+export const getErrorMessage = (error: unknown, t: (key: string) => string): string => {
+    const message = error instanceof Error ? error.message : String(error);
 
     if (message.includes('400') || message.includes('API key not valid')) {
         return t('results.errors.api_key_invalid');

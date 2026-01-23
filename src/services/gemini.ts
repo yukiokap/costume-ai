@@ -1,28 +1,29 @@
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
-import type { DesignParts } from '../types';
+import type { DesignParts, GeneratedPrompt } from '../types';
 
 const WHITE_BACKGROUND_PROMPT = "(simple background:1.5),(plain background:1.5),(white background:1.5)";
 
-const MODEL_STAND_POSES = [
-  "parade rest, standing",
-  "contrapposto",
-  "standing, sway back",
-  "arched back, standing",
-  "crossed legs, standing",
-  "watson cross",
-  "uneven footing, standing",
-  "standing on one leg",
-  "legs apart, feet apart, standing",
-  "leaning forward, standing"
-];
+const sanitizePrompt = (text: string): string => {
+  if (!text) return '';
 
-const MODEL_EXPRESSIONS = [
-  "neutral expression, calm look",
-  "confident look, looking at viewer",
-  "faint smile, gentle eyes",
-  "cool gaze, professional look",
-  "slight smirk, sophisticated expression"
-];
+  return text
+    // Replace problematic phrases
+    .replace(/\bwalking away from camera\b/gi, 'walking away, from behind')
+    .replace(/\b(looking|turning) away from camera\b/gi, '$1 away, looking back')
+    .replace(/\btowards? camera\b/gi, 'towards viewer')
+    .replace(/\b(at|to) camera\b/gi, 'at viewer')
+    // Remove forbidden words and system artifacts
+    .replace(/\bcamera\b/gi, '')
+    .replace(/\b(bone|spine)\b/gi, '')
+    .replace(/\brandom\b/gi, '') // Remove literal 'random' placeholder text
+    // Cleanup structure
+    .split(',')
+    .map(part => part.trim())
+    .filter(part => part.length > 0 && part.toLowerCase() !== 'from')
+    .join(', ')
+    .replace(/,\s*,/g, ',')
+    .trim();
+};
 
 const sexyLevelDescription = (level: number) => {
   if (level <= 2) {
@@ -40,50 +41,19 @@ const sexyLevelDescription = (level: number) => {
   return "PHASE 5: EXTREME/MICRO (Destruction & Reconstruction). Almost naked, nearly bare skin focus. Outfit is torn or micro-sized. Nipples MUST be covered by pasties, band-aids, or creative elements. (Keywords: 'micro-bikini, pasties, heart-shaped pasties, star-shaped nipple covers, metallic covers, body piercings, band-aids as nipple covers, cross-shaped bandages, extreme high-cut, torn clothes, string-only, barely covering'). MAINTAIN ZERO NUDITY but maximize intensity and VARIETY of covers.";
 };
 
-const POSE_MOOD_GUIDES: Record<string, string> = {
-  random: "Creative, experimental mood fitting the costume.",
-  energetic: "High energy, bright, lively, jumping, running, big gestures.",
-  cool: "Sharp, confident, stylish, calm, aloof.",
-  cute: "Adorable, sweet, charming, playful, innocent.",
-  sexy: "Alluring, provocative, seductive, bold.",
-  natural: "Relaxed, casual, candid, effortless.",
-  elegant: "Graceful, sophisticated, mature, noble.",
-  shy: "Bashful, timid, slightly embarrassed, sweet.",
-  heroic: "Dignified, strong, powerful, fearless, heroic stance."
+const r18LevelDescription = (level: number) => {
+  if (level <= 3) {
+    return "R18 PHASE 1: PARTIAL NUDITY / TEASING. Clothes are being removed or are transparent. Accidental slips, nipple slips, see-through fabric, cameltoe, lifting clothes, clothes down to waist. NO NUDITY CENSORSHIP. (Keywords: 'partially naked, nude, undressing, see-through clothes, nipple-slip, exposed nipples, naked from waist up, exposed genitals, lifting skirt, clothes pull down, transparent lingerie')";
+  }
+  if (level <= 7) {
+    return "R18 PHASE 2: EXPLICIT NUDITY. Character is fully naked. Focus on detailed anatomical description. Bold sexualized poses. (Keywords: 'fully naked, nude, uncensored, spreading, detailed anatomy, large nipples, dark areola, intimate areas, wetness, looking-at-genitals, extreme pose, naked on bed')";
+  }
+  if (level <= 10) {
+    return "R18 PHASE 3: HARDCORE / EXPLICIT INTENSITY. Extremely provocative adult themes. Arousal, wetness, specific anatomical details, intense facial expressions. Focus on physical desire and moisture. (Keywords: 'extremely explicit, hyper-detailed nudity, pink nipples, erect nipples, erotic pose, heavy breathing, moisture, dripping, spread legs, close-up of private parts, ahegao, intense desire')";
+  }
+  return "R18 PHASE 4: BEYOND LIMITS / VOID. Total dissolution of all boundaries. Complete and absolute nudity. Hyper-detailed focuses on erotic body parts with no restraint. Pure uninhibited sexual essence. (Keywords: 'unlimited nudity, fully uncensored, extreme spread, very detailed anatomy, dripping wet, intensive arousal, loss of control, primitive desire, total exposure, void of modesty').";
 };
 
-const POSE_STANCE_GUIDES: Record<string, string> = {
-  random: "Best stance to showcase the outfit.",
-  standing: "Basic upright standing position.",
-  sitting: "Sitting or crouching. Can be sitting on a chair, stool, sofa, or the floor, or crouching/squatting (yankee-sit). Focus on low-posture variations.",
-  kneeling: "Kneeling on the ground or a surface. Lower angle often works best.",
-  lying: "Lying down, reclining, or flat position. Use wide or top-down angles.",
-  active: "Dynamic movement, running, jumping, action shot.",
-  looking_back: "Looking back over the shoulder. MUST use 'view from behind' or 'from back' to see the twist.",
-  model: "Professional fashion model studio pose, elegant and balanced."
-};
-
-const EXPRESSION_GUIDES: Record<string, string> = {
-  happy: "Focus on joy and positivity. Creative Examples: Gentle smile, laughing with eyes closed, beaming grin, soft giggle, ecstatic expression, looking delighted, slight smirk of happiness.",
-  cool: "Focus on composure and sharpness. Creative Examples: Sharp gaze, emotionless stare, looking down somewhat, confident smirk, serious eyes, unbroken eye contact, mysterious look.",
-  cute: "Focus on sweetness and innocence. Creative Examples: Stick out tongue, shy glance, wide eyes, puffed cheeks, winking, surprised look, innocent smile, looking up.",
-  sexy: "Focus on allure and desire. Creative Examples: Biting lip, half-lidded eyes, sultriness, licking lips, desire-filled gaze, heavy breathing look, looking over shoulder.",
-  emotional: "Focus on deep feelings or sadness. Creative Examples: Teary eyes, melancholic gaze, looking distant, pained smile, crying, overwhelmed emotion, fragile look.",
-  aggressive: "Focus on intensity and power. Creative Examples: Furrowed brows, shouting, clenched teeth, crazy smile, intense glare, battle cry face, menacing look.",
-  random: "Creative, experimental, and unpredictable expressions."
-};
-
-const FRAMING_GUIDES: Record<string, string> = {
-  model: "full body, from front, eye level",
-  random: "Best angle to showcase the outfit.",
-  full_body: "full body shot, showing shoes and head, ensuring the entire costume is visible",
-  knee_up: "knee up shot, balanced composition focusing on the main outfit",
-  portrait: "upper body shot, portrait, focus on face and chest details",
-  front: "view from front, symmetric composition, best for reference",
-  side: "view from side, side profile, highlighting side details",
-  back: "view from behind, back shot, showing back design",
-  dynamic: "dynamic angle, dutch angle, from below or above, dramatic composition"
-};
 
 export const generateCostumePrompts = async (
   apiKey: string,
@@ -109,12 +79,16 @@ export const generateCostumePrompts = async (
     cute: "adorable, sweet, playful, soft, charming, lovely",
     sexy: "alluring, bold, seductive, glamorous, mature",
     elegant: "sophisticated, graceful, refined, high-class, classic",
-    natural: "relaxed, effortless, casual, authentic, comfortable",
+    active: "energetic, sporty, dynamic, functional, athletic",
+    casual: "relaxed, everyday, comfortable, simple, down-to-earth",
+    fantasy: "magical, mythical, otherworldly, detailed, ornate",
+    fetish: "daring, provocative, stylized, extreme, unconventional",
+    pop: "vibrant, colorful, trendy, expressive, geometric",
+    dark: "mysterious, gothic, moody, intense, shadow-focused",
     random: "creative, experimental, unpredictable"
   };
 
   const currentThemeAdj = themeAdjectives[parts.theme] || "";
-  const sexyConstraint = sexyLevelDescription(parts.sexyLevel);
 
   // --- DESIGN SANITIZATION FOR REMIX ---
   // If moving from high sexy level to low sexy level, we need to strip contradictory tags
@@ -137,251 +111,144 @@ export const generateCostumePrompts = async (
       .join(', ');
   }
 
-  // --- STAGE 1: COSTUME DESIGN ONLY ---
-  // Enhanced Accessory logic
-  let accessoryConstraint = "";
-  if (parts.accessoryLevel <= 2) {
-    accessoryConstraint = "MINIMALIST: NO accessories, NO jewelry. Only the base clothes. (Keyword: 'minimalist, simple, clean')";
-  } else if (parts.accessoryLevel <= 5) {
-    accessoryConstraint = "STANDARD: 1-2 basic themed accessories (e.g. only a headband). (Keyword: 'basic accessories')";
-  } else if (parts.accessoryLevel <= 8) {
-    accessoryConstraint = "HIGH-DENSITY: Add many accessories. Necklaces, belts, ribbons, stockings, goggles, or glowing LEDs. (Keyword: 'highly detailed, layered accessories, decorative jewelry')";
-  } else {
-    accessoryConstraint = "EXTREME OVERLOAD: Physically impossible amount of detail. Floating parts, massive wings, layered lace, heavy mechanical parts, jewelry on every limb. (Keyword: 'hyper-detailed, overwhelming accessories, intricate ornaments, maximum density')";
-  }
-
-  const stage1Prompt = `
-    [STAGE 1: MASTER COSTUME DESIGNER]
-    Task: Design ${count} unique fashion outfits based on the [USER CHARACTER CONCEPT].
-    
-    [CORE HIERARCHY]
-    1. PRIMARY SUBJECT: ${parts.concept || 'None (Follow Theme instead)'}
-    
-    ${parts.concept && parts.concept.includes('[DIVERSE_REQUEST:') ? `
-    [NOTE: DIVERSE_REQUEST DETECTED]
-    The user provided a list of multiple different concepts.
-    You MUST assign one unique concept from the provided list to each of the ${count} variations in order.
-    Do NOT repeat the same concept across variations. Use the list as the foundation for each slot.
-    ` : ''}
-    
-    2. STYLE FILTER (Theme): "${parts.theme.toUpperCase()}" (${currentThemeAdj})
-    ${sanitizedBaseDesign ? `3. MANDATORY BASE DESIGN (Tags): "${sanitizedBaseDesign}"` : ''}
-    
-    [PHASE 0: SEMANTIC EXTRACTION]
-    - Analyze the Japanese/English concept above. 
-    ${sanitizedBaseDesign ? `- IMPORTANT: Use the MANDATORY BASE DESIGN as the immutable foundation for the outfit. Do not change its core elements, only apply the requested style/modifiers.` : ''}
-    ${parts.remixBaseDesign && sanitizedBaseDesign !== parts.remixBaseDesign ? `- NOTE: Some extreme exposure tags from the original design were removed to satisfy the current [SEXY LEVEL ${parts.sexyLevel}]. Replace them with appropriate full-coverage alternatives (e.g., standard fabric, proper top, full underwear).` : ''}
-    - Extract ALL character identity markers (e.g. 'Warrior', 'Nurse', 'Student').
-    - Extract ALL visual nuances (e.g. '歴戦' -> battle-worn, rugged, scuffed gear, scuffed metal; '豪華' -> ornate, gold-trim).
-    - MAINTAIN CHARACTER IDENTITY AT ALL COSTS. The subject is the foundation.
-    
-    [PHASE 1: SYNTHESIS & ELEVATION]
-    - If the Theme and Concept conflict (e.g. Elegant + School Swimsuit):
-        - Create a "High-Fashion/Designer" version of the concept.
-        - Silhouette: Keep the recognizable silhouette of the [PRIMARY SUBJECT].
-        - Material: Elevate to premium fabrics (silk sheen, velvet, high-tech matte, sheer lace).
-        - Details: Add sophisticated hardware (gold/silver), asymmetrical cuts, or layered textures.
-    - If the Theme and Concept align:
-        - Maximize the synergy between the character archetype and the aesthetic.
-    
-    [CONSTRAINTS]
-    - Sexy Level (${parts.sexyLevel}/10): ${sexyConstraint}
-    - Accessory Level (${parts.accessoryLevel}/10): ${accessoryConstraint}
-    
-    [OUTPUT FORMAT]
-    Provide ${count} variations separated by "[[SPLIT]]". 
-    Each item MUST follow this format exactly:
-    [[NAME]] Professional name (${language === 'en' ? 'Equation: [Style Keyword] + [English Character Archetype]' : 'Equation: [Style Keyword] + [Japanese Character Archetype]'}). 
-    [[DESC]] Brief ${language === 'en' ? 'English' : 'Japanese'} summary (one line)
-    [[COSTUME]] English tags ONLY for outfit/accessories. Include high-weight tags for character identity first.
-    [[SPLIT]]
-    
-    *RULES*: 
-    - POETIC OR VAGUE NAMES ARE FORBIDDEN.
-    - Names must be descriptive (e.g. ${language === 'en' ? "'Elegant Cafe Maid', 'Cool Cybernetic Bodysuit', 'Cute Summer Sundress'" : "'エレガント・カフェメイド', 'クール・サイバーボディースーツ', 'キュート・サマーワンピース'"}).
-    - Output ONLY the specified tags.
-    - FORBIDDEN TAGS: No environment, lighting, or camera tags in [[COSTUME]]. Focus ONLY on the character.
-    - ABSOLUTELY NO JAPANESE TEXT in [[COSTUME]]. All tags must be English.
-    ${parts.sexyLevel >= 9 ? "- Level 10 means pasties or creative covers. Use 'pasties', 'heart-shaped pasties', 'metallic covers'." : ""}
-  `;
-
-  try {
-    const res1 = await model.generateContent(stage1Prompt);
-    const text1 = res1.response.text();
-    const costumes = text1.split('[[SPLIT]]').map(v => ({
-      name: (v.match(/\[\[NAME\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim(),
-      desc: (v.match(/\[\[DESC\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim(),
-      tags: (v.match(/\[\[COSTUME\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim()
-        .replace(/(background|room|sky|ocean|beach|city|street|view|scenery|landscape|indoor|outdoor|lighting|shadow|cinematic|bokeh|depth of field)/gi, '') // Remove environmental hallucinations
-        .replace(/,\s*,/g, ',').trim(), // Cleanup commas
-    })).filter(c => c.tags);
-
-    if (costumes.length === 0) {
-      if (text1.includes('[[COSTUME]]')) {
-        const costumeTags = (text1.match(/\[\[COSTUME\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim();
-        const costumeName = (text1.match(/\[\[NAME\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || 'New Collection').trim();
-        const desc = (text1.match(/\[\[DESC\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || 'Generated Costume').trim();
-        if (costumeTags) costumes.push({ name: costumeName, desc, tags: costumeTags });
-      }
-    }
-
-    // --- STAGE 2: INDEPENDENT DIRECTOR ---
-    const stage2Prompt = `
-      [STAGE 2: CINEMATIC DIRECTOR]
-      Task: Generate ${costumes.length} sets of cinematic atmospheric settings and pose details.
+  // --- STAGE 1: THE ARCHITECT (COMBINED DESIGN & DIRECTION) ---
+  const architectPrompt = `
+      [STAGE 1: THE ARCHITECT]
+      Task: Simultaneously design ${count} unique outfits and their cinematic pose/settings.
+  
+      [USER REQUIREMENTS (IMMUTABLE)]
+      - Primary Subject/Concept: ${parts.concept || 'None'}
+      - Theme: ${parts.theme.toUpperCase()} (${currentThemeAdj})
+      ${sanitizedBaseDesign ? `- MANDATORY BASE DESIGN: "${sanitizedBaseDesign}"` : ''}
+      - Sexy Level: ${parts.sexyLevel}/10 (${parts.isR18Mode ? 'R18 Mode Active' : 'Standard Mode'})
+      - Accessory Level: ${parts.accessoryLevel}/10
+      - Enable Lighting/Atmosphere Effects: ${parts.enableLighting ? 'YES' : 'NO (CRITICAL: DO NOT output any lighting, cinematic, or atmosphere tags)'}
       
-      [CONTEXT]
-      - Theme: "${parts.theme.toUpperCase()}"
-      - Concept Vibe: ${parts.concept || 'NONE'}
-      - Background Mode: ${parts.useWhiteBackground ? 'FORCED WHITE' : 'DYNAMIC SCENE'}
-      - Lighting Mode: ${parts.enableLighting ? 'ON' : 'OFF'}
+      ${parts.isR18Mode ? `
+      [R18 MODE COSTUME RULES - CRITICAL]
+      - Costumes and outfits MUST exist (this is a costume AI).
+      - ABSOLUTELY FORBIDDEN: 'pasties', 'nipple covers', 'band-aids', 'tape', 'stickers', 'concealment'.
+      - Do NOT hide anatomy with stickers or covers. Show natural anatomy.
+      - Full nudity is ALLOWED where clothing does not cover.
+      - ${r18LevelDescription(parts.sexyLevel)}
+      ` : `
+      [STANDARD MODE COSTUME RULES]
+      - ${sexyLevelDescription(parts.sexyLevel)}
+      `}
       
-      [USER CUSTOM REQUESTS (HIGHEST PRIORITY)]
-      - Custom Pose Request: ${parts.poseDescription ? `"${parts.poseDescription}" (MUST FOLLOW THIS)` : 'None'}
-      - Custom Expression Request: ${parts.expressionDescription ? `"${parts.expressionDescription}"` : 'None'}
-      - Custom Framing Request: ${parts.framingDescription ? `"${parts.framingDescription}"` : 'None'}
+      [POSE & FRAMING REQUIREMENTS]
+      - Shot Type/Distance: ${parts.shotType || 'Autofill based on context/theme'}
+      - Shot Angle: ${parts.shotAngle || 'Autofill based on context/theme'}
+      - Pose Stance (MANDATORY): ${(!parts.poseStance || parts.poseStance === 'random') ? 'Autofill based on context/theme' : parts.poseStance.toUpperCase()}
+      - Pose Mood: ${(!parts.poseMood || parts.poseMood === 'random') ? 'Autofill based on context/theme' : parts.poseMood.toUpperCase()}
+      - Expression: ${(!parts.expression || parts.expression === 'random') ? 'Autofill based on context/theme' : parts.expression.toUpperCase()}
 
-      [GUIDES (Use only if no custom request)]
-      - Expression Style: ${parts.expression ? parts.expression.toUpperCase() : 'RANDOM'} (${EXPRESSION_GUIDES[parts.expression || ''] || 'Apply this specific expression'})
-      - Pose Mood: ${parts.poseMood ? parts.poseMood.toUpperCase() : 'RANDOM'} (${POSE_MOOD_GUIDES[parts.poseMood || ''] || 'Apply this specific pose mood'})
-      - Pose Stance: ${parts.poseStance ? parts.poseStance.toUpperCase() : 'RANDOM'} (${POSE_STANCE_GUIDES[parts.poseStance || ''] || 'Take this specific stance'})
-      - Framing Style: ${parts.framing ? parts.framing.toUpperCase() : 'RANDOM'} (${FRAMING_GUIDES[parts.framing || ''] || 'Use this specific camera framing'})
-      
-      [COSTUME CONTEXT]
-      ${costumes.map((c, i) => `Costume ${i}: ${c.name} (${c.desc})`).join('\n')}
+      [CUSTOM OVERRIDES (ABSOLUTE HIGHEST PRIORITY)]
+      - CUSTOM POSE: ${parts.poseDescription ? `"${parts.poseDescription}"` : 'None'}
+      - CUSTOM EXPRESSION: ${parts.expressionDescription ? `"${parts.expressionDescription}"` : 'None'}
+      - CUSTOM FRAMING: ${parts.framingDescription ? `"${parts.framingDescription}"` : 'None'}
+  
+      [LOGIC FOR POSE & EXPRESSION (CRITICAL TRANSLATION)]
+      1. IF CUSTOM POSE/EXPRESSION is provided (even in Japanese):
+         - YOU MUST TRANSLATE IT TO ACCURATE ENGLISH TAGS.
+         - "M字開脚" -> "spread legs, m-style legs"
+         - "恥ずかしい" -> "embarrassed, shy, blushing"
+         - "マンコ見せ" -> "spread legs, exposing crotch, presenting"
+         - DO NOT OUTPUT JAPANESE. TRANSLATE THE *MEANING*.
 
-      [INSTRUCTIONS]
-      1. POSE & EXPRESSION:
-        - IF [Custom Pose Request] is present: IGNORE all preset styles. Generate precise tags for "${parts.poseDescription}".
-        - IF [Custom Expression Request] is present: IGNORE preset styles. Generate tags for "${parts.expressionDescription}".
-        - OTHERWISE: Follow the GUIDES.
+      2. ELSE IF "Pose Stance" is specified (e.g., "LYING", "SITTING", "KNEELING"):
+         - YOU MUST USE IT. Do not default to standing.
+         - 'LYING' -> "lying on back", "lying on side", "reclining", "on bed/floor".
+         - 'SITTING' -> "sitting", "knees up", "crossed legs", "on chair/sofa".
+         - 'KNEELING' -> "kneeling", "on all fours".
+         - 'LOOKING_BACK' -> "looking back", "from behind".
 
-      2. SCENE:
-        - If Background is WHITE: Use "simple background, white background".
-        - If Background is DYNAMIC: Analyze the costume + theme. Create a PERFECTLY FITTING background.
-      
-      3. LIGHTING:
-        - If Mode ON: Use "cinematic lighting, dramatic shadows, volumetric lighting, rim light".
-        - If Mode OFF: FORBIDDEN to use any lighting tags. Keep it FLAT and NATURAL.
-
-      4. FORBIDDEN WORDS:
-        - NEVER use the word 'camera'. Use 'looking at viewer', 'eye contact', or 'gaze'.
-        - ABSOLUTELY FORBIDDEN: NEVER use the word 'bone' or 'spine' (except for 'collarbone'). Using these words results in anatomical/skeletal/internal-view artifacts in images.
-        - Use 'arched back' instead of 'arched spine'.
-
-      5. CUSTOM INPUT HANDLING & LANGUAGE:
-        - ABSOLUTE PROHIBITION: DO NOT output Japanese text in ANY tags ([[POSE]], [[EXPRESSION]], [[FRAMING]], [[SCENE]]).
-        - INTERPRETATION: If a custom request is provided (Japanese or English):
-          1. Analyze the core intent and visual nuance.
-          2. Convert it into effective English image generation tags.
-          3. DO NOT just translate literally; EXPAND into descriptive visual tags.
-          (e.g. "Wariza" -> "wariza, w-sitting, sitting on floor, knees bent")
-          (e.g. "キリッと" -> "sharp gaze, fierce expression, confident, serious")
-
-      6. LOGICAL CONSISTENCY (STRICT RULE):
-        - If Pose Stance is "LOOKING_BACK" (見返り), ABSOLUTELY FORBIDDEN to use "from front" or "frontal view".
-        - In this case, FORCE Framing to be "view from behind, looking back over shoulder, side view".
-        - If Pose Stance is "SITTING" or "SQUATTING", prefer "low angle" or "from below".
-        - The Stance's physical requirement ALWAYS overrides the preset Framing Style if they conflict.
-
+      [LOGIC FOR FRAMING (SHOT/ANGLE) - CRITICAL]
+      1. IF CUSTOM FRAMING is provided (e.g., "あおり", "pussyアップ", "マンコドアップ"):
+         - YOU MUST TRANSLATE SLANG TO TECHNICAL ENGLISH TAGS.
+         - "あおり" -> "low angle, from below"
+         - "pussyアップ" / "マンコドアップ" -> "close-up of crotch, focus on hips, crotch shot, genital focus"
+         - "顔アップ" -> "face focus, portrait, close-up"
+         - "足舐め" -> "focus on feet, foot focus"
+         - DO NOT IGNORE INPUT. TRANSLATE IT.
+      2. OTHERWISE use the specified Shot Type and Angle tags.
+  
       [OUTPUT FORMAT]
-      Return exactly ${costumes.length} items separated by "[[SPLIT]]":
-      [[ID]] Index (0 to ${costumes.length - 1})
-      [[POSE]] English Pose tags only. ABSOLUTELY NO JAPANESE TEXT.
-      [[EXPRESSION]] English Facial expression tags only. ABSOLUTELY NO JAPANESE TEXT.
-      [[FRAMING]] Angle/Framing tags only. ABSOLUTELY NO JAPANESE TEXT.
-      [[SCENE]] Environment/Lighting tags only. ABSOLUTELY NO JAPANESE TEXT.
+      Provide ${count} items separated by "[[SPLIT]]". 
+      Each item MUST follow this format exactly:
+      [[ID]] Index (0 to ${count - 1})
+      [[NAME]] Professional Name (Costume Name) - Japanese OK
+      [[DESC]] Brief summary (${language}) - Japanese OK
+      [[COSTUME]] English costume tags ONLY. (NO Japanese - used in prompt).
+      [[POSE]] English pose & expression tags ONLY. (Translate custom input. NO Japanese - used in prompt).
+      [[SCENE]] Background & lighting tags ONLY. (English tags ONLY. NO Japanese - used in prompt).
       [[SPLIT]]
     `;
 
-    const res2 = await model.generateContent(stage2Prompt);
-    const text2 = res2.response.text();
+  try {
+    const res1 = await model.generateContent(architectPrompt);
+    const text1 = res1.response.text();
 
-    const stage2Results = text2.split('[[SPLIT]]').map(v => {
-      const idMatch = v.match(/\[\[ID\]\]\s*(\d+)/);
-      if (!idMatch) return null;
-      const idx = parseInt(idMatch[1]);
-      return {
-        idx,
-        pose: (v.match(/\[\[POSE\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim(),
-        expression: (v.match(/\[\[EXPRESSION\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim(),
-        framing: (v.match(/\[\[FRAMING\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim(),
-        scene: (v.match(/\[\[SCENE\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim(),
-      };
-    }).filter(v => v !== null);
+    // Parse Architect Output
+    const rawResults: GeneratedPrompt[] = text1.split('[[SPLIT]]').map((v: string) => {
+      const name = (v.match(/\[\[NAME\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || 'New Design').trim();
+      const desc = (v.match(/\[\[DESC\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim();
+      const costume = (v.match(/\[\[COSTUME\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim()
+        .replace(/(background|room|sky|ocean|beach|city|street|view|scenery|landscape|indoor|outdoor|lighting|shadow|cinematic|bokeh|depth of field)/gi, '')
+        .replace(/,\s*,/g, ',').trim();
+      const pose = (v.match(/\[\[POSE\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim();
+      const scene = (v.match(/\[\[SCENE\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim();
 
-    return costumes.map((baseCostume, i) => {
-      const director = stage2Results.find(r => r.idx === i) || stage2Results[i] || { pose: '', expression: '', framing: '', scene: '' };
-
-      // 1. POSE LOGIC
-      // If user provided a custom description, ALWAYS use the director's generation (which followed the custom request).
-      // Only use the "Model Preset" logic if NO custom description exists AND the user selected 'model'.
-      let finalPoseTags = '';
-
-      if (!parts.poseDescription && parts.poseStance === 'model') {
-        // Fallback to random model poses ONLY if no custom description
-        const randomPose = MODEL_STAND_POSES[Math.floor(Math.random() * MODEL_STAND_POSES.length)];
-        finalPoseTags = randomPose;
-      } else {
-        // Use AI generated pose (which respects custom input or theme/mood)
-        finalPoseTags = director.pose;
-      }
-
-      // 2. EXPRESSION LOGIC
-      let finalExpressionTags = director.expression;
-      if (!parts.expressionDescription && parts.poseStance === 'model') {
-        // Add model expression flavor if model preset and no custom expression
-        const randomExp = MODEL_EXPRESSIONS[Math.floor(Math.random() * MODEL_EXPRESSIONS.length)];
-        finalExpressionTags = `${finalExpressionTags}, ${randomExp}`;
-      }
-
-      const finalPoseAndExp = `${finalPoseTags}, ${finalExpressionTags}`;
-
-      // 3. FRAMING OVERRIDE
-      let finalFraming = director.framing;
-      if (parts.framingDescription) {
-        // AI already handled it in director.framing
-      } else if (parts.framing) {
-        // If it's a guide key, use the guide. Otherwise, use the tag string itself.
-        finalFraming = FRAMING_GUIDES[parts.framing] || parts.framing;
-      } else if (!finalFraming) {
-        finalFraming = FRAMING_GUIDES.model;
-      }
-
-      // 4. SCENE OVERRIDE
-      let finalScene = '';
-      if (parts.useWhiteBackground) {
-        finalScene = WHITE_BACKGROUND_PROMPT;
-      } else {
-        if (parts.enableLighting) {
-          finalScene = director.scene;
-        } else {
-          finalScene = director.scene
-            .replace(/(studio lighting|cinematic lighting|volumetric lighting|dramatic shadows|rim lighting|depth of field|bokeh|soft lighting|hard lighting)/gi, '')
-            .replace(/,\s*,/g, ',')
-            .trim();
+      // Lighting/Atmosphere Filter (if disabled)
+      const filterLighting = (text: string) => {
+        if (parts.enableLighting === false) {
+          return text.replace(/\b(lighting|shadow|cinematic|atmosphere|bloom|glare|rays|soft light|hard light|realistic lighting|dramatic lighting|vibrant|moody|volumetric|ambient|realistic)\b/gi, '').trim();
         }
-      }
+        return text;
+      };
 
-      const promptParts = [baseCostume.tags, finalPoseAndExp, finalFraming, finalScene].filter(p => p && p.length > 0);
-      const fullPrompt = promptParts.join(', ');
+      const finalPose = filterLighting(pose);
+      const finalSceneRaw = filterLighting(scene);
+
+      // Build finalFraming from inputs
+      const finalFraming = sanitizePrompt(`${parts.shotAngle || ''}, ${parts.shotType || ''}`);
+
+      // White Background Hardware Force
+      const finalScene = parts.useWhiteBackground ? WHITE_BACKGROUND_PROMPT : sanitizePrompt(finalSceneRaw);
 
       return {
         id: Math.random().toString(36).substring(2, 9),
-        description: baseCostume.name || baseCostume.desc,
-        prompt: fullPrompt,
-        costume: baseCostume.tags,
-        composition: finalPoseAndExp,
+        description: name || desc,
+        costume: costume,
+        composition: finalPose,
         framing: finalFraming,
         scene: finalScene,
         sexyLevel: parts.sexyLevel,
+        isR18Mode: parts.isR18Mode,
         accessoryLevel: parts.accessoryLevel,
         originalConcept: parts.concept,
         originalTheme: parts.theme,
-        originalPoseMood: parts.poseMood,
-        originalPoseStance: parts.poseStance
+
+        // Correctly Map Selection IDs for History Display
+        originalShotType: parts.originalShotType || parts.shotType,
+        originalShotAngle: parts.originalShotAngle || parts.shotAngle,
+        originalPoseStance: parts.poseStanceId || parts.poseStance,
+        originalPoseMood: parts.poseMoodId || parts.poseMood,
+        originalExpression: parts.expressionId || parts.expression,
+
+        originalPoseDescription: parts.poseDescription,
+        originalExpressionDescription: parts.expressionDescription,
+        originalFramingDescription: parts.framingDescription,
+
+        prompt: sanitizePrompt(`${finalFraming}, ${costume}, ${pose}, ${finalScene}`)
       };
-    }).filter(v => v.costume);
+    }).filter((r: GeneratedPrompt) => r.costume);
+
+    if (rawResults.length === 0) {
+      console.warn("Architect parsing failed, returning empty base");
+    }
+
+    return rawResults;
 
   } catch (err) {
     console.error("Gemini Multi-Step Error:", err);
@@ -391,7 +258,7 @@ export const generateCostumePrompts = async (
 
 export const generateSexyRangePrompts = async (
   apiKey: string,
-  parts: Record<string, any>,
+  parts: DesignParts,
   referencePrompt?: string,
   language: 'ja' | 'en' = 'ja'
 ) => {
@@ -408,9 +275,14 @@ export const generateSexyRangePrompts = async (
     ],
   });
 
+  const maxLevel = 10;
   const prompt = `
-    Generate 10 prompts for the same concept with INCREASING Sexy Level (1 to 10).
+    Generate ${maxLevel} prompts for the same concept with INCREASING Sexy Level (1 to ${maxLevel}).
     ${referencePrompt ? `Base: ${referencePrompt}` : `Concept: ${parts.concept || parts.base} | Theme: ${parts.theme} | Pose: ${parts.poseMood} ${parts.poseStance}`}
+    
+    [LEVEL GUIDELINES]
+    - Level 1-10: Follow traditional sexy progression.
+    ${parts.isR18Mode ? "- IMPORTANT: Since Overdrive is ON, use explicit and provocative language appropriate for an adult R18 context at every level." : ""}
     
     Format: Level [N]: [[DESC]] ${language === 'en' ? 'English' : 'Japanese'} [[PROMPT]] English
     Separate with [[SPLIT]]
@@ -424,14 +296,14 @@ export const generateSexyRangePrompts = async (
     const result = await model.generateContent(prompt);
     const text = result.response.text();
 
-    return text.split('[[SPLIT]]').map((v: any) => {
+    return text.split('[[SPLIT]]').map((v: string) => {
       const levelMatch = v.match(/Level\s*\d+:/i);
       const cleanV = v.replace(levelMatch ? levelMatch[0] : '', '').trim();
       const p = cleanV.split('[[PROMPT]]');
       const desc = p[0]?.replace('[[DESC]]', '').trim() || '';
       const promptText = p[1]?.trim() || '';
       return { description: desc, prompt: promptText };
-    }).filter((v: any) => v.prompt.length > 0);
+    }).filter((v: { description: string, prompt: string }) => v.prompt.length > 0);
   } catch (err) {
     console.error("Sexy Range Error:", err);
     throw err;

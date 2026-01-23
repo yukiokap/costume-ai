@@ -1,6 +1,6 @@
 import React from 'react';
 import { NeonToggle } from '../ui/NeonToggle';
-import { Sparkles, Clock, Heart } from 'lucide-react';
+import { Sparkles, Clock, Heart, RotateCcw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { RotaryDial } from '../ui/RotaryDial';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -16,6 +16,7 @@ interface FooterControlsProps {
     setNumPrompts: (val: number) => void;
     onViewHistory: () => void;
     onViewFavorites: () => void;
+    onReset: () => void;
 }
 
 export const FooterControls: React.FC<FooterControlsProps> = ({
@@ -28,7 +29,8 @@ export const FooterControls: React.FC<FooterControlsProps> = ({
     numPrompts,
     setNumPrompts,
     onViewHistory,
-    onViewFavorites
+    onViewFavorites,
+    onReset
 }) => {
     const { t } = useLanguage();
 
@@ -130,7 +132,33 @@ export const FooterControls: React.FC<FooterControlsProps> = ({
                 </div>
 
                 {/* 下部：補助ボタン */}
-                <div style={{ display: 'flex', flexDirection: 'row', gap: '1rem', width: '100%', maxWidth: '500px', padding: '0 1rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'row', gap: '0.75rem', width: '100%', maxWidth: '600px', padding: '0 1rem' }}>
+                    <motion.button
+                        whileHover={{ scale: 1.02, backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={onReset}
+                        style={{
+                            padding: '1rem',
+                            background: 'rgba(0, 0, 0, 0.2)',
+                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            borderRadius: '12px',
+                            color: '#94a3b8',
+                            fontSize: '0.65rem',
+                            fontWeight: 800,
+                            letterSpacing: '0.1em',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '6px',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                            flex: 1
+                        }}
+                    >
+                        <RotateCcw size={14} />
+                        {t('common.reset').toUpperCase()}
+                    </motion.button>
+
                     <motion.button
                         whileHover={{ scale: 1.02, backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
                         whileTap={{ scale: 0.98 }}
@@ -141,13 +169,13 @@ export const FooterControls: React.FC<FooterControlsProps> = ({
                             border: '1px solid rgba(255, 255, 255, 0.1)',
                             borderRadius: '12px',
                             color: '#94a3b8',
-                            fontSize: '0.7rem',
+                            fontSize: '0.65rem',
                             fontWeight: 800,
-                            letterSpacing: '0.15em',
+                            letterSpacing: '0.1em',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            gap: '8px',
+                            gap: '6px',
                             cursor: 'pointer',
                             transition: 'all 0.3s ease',
                             flex: 1
@@ -167,13 +195,13 @@ export const FooterControls: React.FC<FooterControlsProps> = ({
                             border: '1px solid rgba(255, 255, 255, 0.1)',
                             borderRadius: '12px',
                             color: '#f43f5e',
-                            fontSize: '0.7rem',
+                            fontSize: '0.65rem',
                             fontWeight: 800,
-                            letterSpacing: '0.15em',
+                            letterSpacing: '0.1em',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            gap: '8px',
+                            gap: '6px',
                             cursor: 'pointer',
                             transition: 'all 0.3s ease',
                             flex: 1

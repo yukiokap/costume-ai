@@ -12,6 +12,14 @@ export interface GeneratedPrompt {
     originalTheme?: string;
     originalPoseMood?: string;
     originalPoseStance?: string;
+    originalExpression?: string;
+    originalFraming?: string;
+    originalShotType?: string;
+    originalShotAngle?: string;
+    originalPoseDescription?: string;
+    originalExpressionDescription?: string;
+    originalFramingDescription?: string;
+    isR18Mode?: boolean;
 }
 
 export interface HistoryItem extends GeneratedPrompt {
@@ -27,16 +35,25 @@ export interface DesignParts {
     accessoryLevel: number;
     pose?: string;
     poseMood?: string;
+    poseMoodId?: string;
     poseStance?: string;
+    poseStanceId?: string;
     poseDescription?: string;
     expression?: string;
+    expressionId?: string;
     expressionDescription?: string;
     framing?: string;
+    framingId?: string;
     framingDescription?: string;
+    shotType?: string;
+    shotAngle?: string;
+    originalShotType?: string;
+    originalShotAngle?: string;
     enableLighting?: boolean;
     useWhiteBackground?: boolean;
     base?: string;
     accessories?: string;
     background?: string;
     remixBaseDesign?: string;
+    isR18Mode?: boolean;
 }

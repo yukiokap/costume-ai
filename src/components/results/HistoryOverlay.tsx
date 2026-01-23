@@ -19,6 +19,13 @@ interface HistoryOverlayProps {
     setCopyOptions: React.Dispatch<React.SetStateAction<{ costume: boolean; pose: boolean; framing: boolean; scene: boolean }>>;
 }
 
+const DETAIL_LABELS: Record<string, string> = {
+    c01: '01: 衣装の設定 / COSTUME',
+    c02: '02: ポーズの設定 / POSE',
+    c03: '03: 表情の設定 / EXPRESSION',
+    c04: '04: 構図の設定 / FRAMING',
+};
+
 export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
     isOpen,
     onClose,
@@ -33,6 +40,12 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
     setCopyOptions
 }) => {
     const { t } = useLanguage();
+    const [expandedDetails, setExpandedDetails] = React.useState<Record<string, boolean>>({});
+
+    const toggleDetails = (id: string) => {
+        setExpandedDetails(prev => ({ ...prev, [id]: !prev[id] }));
+    };
+
     const title = mode === 'history' ? 'GENERATE HISTORY' : 'FAVORITE PROMPTS';
     const Icon = mode === 'history' ? Clock : Heart;
 
@@ -253,7 +266,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                         initial={{ opacity: 0, scale: 0.9 }}
                                         animate={{ opacity: 1, scale: 1 }}
                                         transition={{ delay: idx * 0.03 }}
-                                        className="result-card"
+                                        className={`result-card ${item.isR18Mode ? 'r18-card-glow' : ''}`}
                                         style={{
                                             borderTop: `4px solid ${themeColor}`,
                                             borderColor: item.isFavorite && mode === 'history' ? '#f43f5e' : undefined
@@ -338,6 +351,21 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                             </div>
 
                                             <div style={{ display: 'flex', gap: '0.4rem' }}>
+                                                {item.isR18Mode && (
+                                                    <div style={{
+                                                        backgroundColor: 'rgba(255, 0, 255, 0.12)',
+                                                        border: '1px solid rgba(255, 0, 255, 0.3)',
+                                                        borderRadius: '8px',
+                                                        padding: '2px 6px',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        alignItems: 'center',
+                                                        minWidth: '38px'
+                                                    }}>
+                                                        <span style={{ fontSize: '0.4rem', color: '#ff00ff', fontWeight: 900, textTransform: 'uppercase' }}>OVERDRIVE</span>
+                                                        <span style={{ fontSize: '0.9rem', color: '#fff', fontWeight: 900, lineHeight: 1 }}>R18</span>
+                                                    </div>
+                                                )}
                                                 {item.sexyLevel !== undefined && (
                                                     <div style={{
                                                         backgroundColor: 'rgba(244, 63, 94, 0.12)',
@@ -402,13 +430,134 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                                     </div>
                                                 )}
                                                 {item.scene && (
-                                                    <div className="tag-container" style={{ margin: 0 }}>
+                                                    <div className="tag-container" style={{ margin: 0, marginBottom: '1rem' }}>
                                                         <span style={{ fontSize: '0.45rem', fontWeight: 900, color: 'rgba(0, 242, 255, 0.5)', textTransform: 'uppercase', marginRight: '4px' }}>SCENE</span>
                                                         {item.scene.split(',').slice(0, 2).map((t, i) => (
                                                             <span key={i} className="mini-tag" style={{ color: '#00f2ff', borderStyle: 'dotted' }}>{t.trim()}</span>
                                                         ))}
                                                     </div>
                                                 )}
+
+                                                {/* Details Expander (Synchronized with ResultsSection) */}
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleDetails(item.id);
+                                                    }}
+                                                    style={{
+                                                        width: '100%',
+                                                        padding: '8px',
+                                                        backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                                                        border: '1px solid rgba(255, 255, 255, 0.05)',
+                                                        borderRadius: '8px',
+                                                        color: 'rgba(255, 255, 255, 0.4)',
+                                                        fontSize: '9px',
+                                                        fontWeight: 900,
+                                                        letterSpacing: '0.15em',
+                                                        textTransform: 'uppercase',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        gap: '8px',
+                                                        marginBottom: '1rem',
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.3s ease'
+                                                    }}
+                                                >
+                                                    <X size={10} style={{ transform: expandedDetails[item.id] ? 'rotate(0deg)' : 'rotate(45deg)', transition: 'transform 0.3s ease' }} />
+                                                    {expandedDetails[item.id] ? '閉じる / HIDE' : '設定詳細を表示 / DETAILS'}
+                                                </button>
+
+                                                <AnimatePresence>
+                                                    {expandedDetails[item.id] && (
+                                                        <motion.div
+                                                            initial={{ height: 0, opacity: 0 }}
+                                                            animate={{ height: 'auto', opacity: 1 }}
+                                                            exit={{ height: 0, opacity: 0 }}
+                                                            style={{
+                                                                overflow: 'hidden',
+                                                                backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                                                                borderRadius: '10px',
+                                                                padding: '12px',
+                                                                marginBottom: '1rem',
+                                                                border: '1px solid rgba(255, 255, 255, 0.03)'
+                                                            }}
+                                                        >
+                                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                                                {[
+                                                                    {
+                                                                        section: 'c01',
+                                                                        items: [
+                                                                            { label: 'テーマ', val: item.originalTheme, type: 'theme' },
+                                                                            { label: 'コンセプト', val: item.originalConcept, type: 'concept' }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        section: 'c02',
+                                                                        items: [
+                                                                            { label: '雰囲気', val: item.originalPoseMood, type: 'mood' },
+                                                                            { label: '姿勢', val: item.originalPoseStance, type: 'stance' },
+                                                                            { label: '自由記述', val: item.originalPoseDescription, type: 'text' }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        section: 'c03',
+                                                                        items: [
+                                                                            { label: '感情', val: item.originalExpression, type: 'expression' },
+                                                                            { label: '自由記述', val: item.originalExpressionDescription, type: 'text' }
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        section: 'c04',
+                                                                        items: [
+                                                                            { label: 'ショット', val: item.originalShotType, type: 'shot_type' },
+                                                                            { label: 'アングル', val: item.originalShotAngle, type: 'shot_angle' },
+                                                                            { label: '自由記述', val: item.originalFramingDescription, type: 'text' }
+                                                                        ]
+                                                                    }
+                                                                ].map((group, gIdx) => (
+                                                                    <div key={gIdx} style={{ borderBottom: gIdx < 3 ? '1px solid rgba(255,255,255,0.05)' : 'none', paddingBottom: gIdx < 3 ? '8px' : '0' }}>
+                                                                        <div style={{ fontSize: '9px', fontWeight: 900, color: '#00f2ff', letterSpacing: '0.05em', marginBottom: '6px' }}>
+                                                                            {DETAIL_LABELS[group.section]}
+                                                                        </div>
+                                                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                                                            {group.items.filter(i => {
+                                                                                if (!i.val || i.val === '' || i.val === 'random') return false;
+                                                                                if (i.type === 'text' && (i.val === 'None' || i.val === 'model')) return false;
+                                                                                return true;
+                                                                            }).map((detail, dIdx) => {
+                                                                                let displayVal = String(detail.val);
+
+                                                                                if (detail.type === 'concept' && displayVal.includes('DIVERSE_REQUEST')) {
+                                                                                    displayVal = 'おまかせ';
+                                                                                } else if (detail.type === 'theme') {
+                                                                                    displayVal = (t(`editor.themes.${displayVal}`) || displayVal);
+                                                                                } else if (detail.type === 'mood') {
+                                                                                    displayVal = (t(`editor.pose_mood_presets.${displayVal}`) || displayVal);
+                                                                                } else if (detail.type === 'stance') {
+                                                                                    displayVal = (t(`editor.pose_stance_presets.${displayVal}`) || displayVal);
+                                                                                } else if (detail.type === 'expression') {
+                                                                                    displayVal = (t(`editor.expression_presets.${displayVal}`) || displayVal);
+                                                                                } else if (detail.type === 'shot_type') {
+                                                                                    displayVal = (t(`editor.shot_type_presets.${displayVal}`) || displayVal);
+                                                                                } else if (detail.type === 'shot_angle') {
+                                                                                    displayVal = (t(`editor.shot_angle_presets.${displayVal}`) || displayVal);
+                                                                                }
+
+                                                                                return (
+                                                                                    <div key={dIdx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingLeft: '4px' }}>
+                                                                                        <span style={{ fontSize: '8px', fontWeight: 900, color: 'rgba(255,255,255,0.2)', minWidth: '50px' }}>{detail.label}</span>
+                                                                                        <span style={{ fontSize: '9px', fontWeight: 700, color: '#fff', textAlign: 'right', maxWidth: '75%', wordBreak: 'break-all' }}>{displayVal}</span>
+                                                                                    </div>
+                                                                                );
+                                                                            })}
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
                                             </div>
 
                                             {/* Primary Copy Selected Action */}
@@ -439,14 +588,6 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                                 </button>
                                             </div>
                                         </div>
-
-                                        <button
-                                            onClick={() => onCopy(item.prompt.replace(/\n/g, ' '), idx + 60000)}
-                                            className={`btn-card-footer ${isCopied === idx + 60000 ? 'copied' : ''}`}
-                                        >
-                                            {isCopied === idx + 60000 ? <Check size={14} /> : <Copy size={14} />}
-                                            {isCopied === idx + 60000 ? 'COPIED ALL' : 'FULL PROMPT'}
-                                        </button>
                                     </motion.div>
                                 ))}
                             </div>

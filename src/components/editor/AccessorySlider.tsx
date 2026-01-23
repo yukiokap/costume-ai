@@ -13,13 +13,14 @@ export const AccessorySlider: React.FC<AccessorySliderProps> = ({ value, onChang
 
     return (
         <div className="sexy-slider-container">
-            <div className="sexy-slider-header">
-                <label className="sexy-slider-label" style={{ color: '#f59e0b' }}>
+            <div className="sexy-slider-header" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <label className="sexy-slider-label" style={{ color: '#f59e0b', flex: 1 }}>
                     <Gem size={14} className="icon-orange" style={{ color: '#f59e0b' }} />
                     Decorative Level / {t('editor.accessory_level')}
                 </label>
-                <div className="sexy-slider-value-group">
-                    <span className="sexy-slider-number">
+
+                <div className="sexy-slider-value-group" style={{ minWidth: '160px', justifyContent: 'flex-end', marginRight: '1rem' }}>
+                    <span className="sexy-slider-number" style={{ textAlign: 'right' }}>
                         {value === 10 ? 'MAX' : value}
                     </span>
                     <span className="sexy-slider-intensity">Intensity {value * 10}%</span>
@@ -74,15 +75,15 @@ export const AccessorySlider: React.FC<AccessorySliderProps> = ({ value, onChang
             <div className="sexy-slider-footer">
                 <div className="sexy-slider-hint">
                     <span className="hint-dot" />
-                    <span>{t('editor.accessory_hint_low' as any)}</span>
+                    <span>{t('editor.accessory_hint_low')}</span>
                 </div>
                 <div className="sexy-slider-hint">
                     <span className="hint-dot" style={{ backgroundColor: '#fbbf24' }} />
-                    <span>{t('editor.accessory_hint_mid' as any)}</span>
+                    <span>{t('editor.accessory_hint_mid')}</span>
                 </div>
                 <div className="sexy-slider-hint">
                     <span className="hint-dot" style={{ backgroundColor: '#f59e0b' }} />
-                    <span>{t('editor.accessory_hint_high' as any)}</span>
+                    <span>{t('editor.accessory_hint_high')}</span>
                 </div>
             </div>
         </div>

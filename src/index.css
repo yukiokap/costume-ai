@@ -5,11 +5,23 @@
   --neon-blue: #006aff;
   --amber: #fbbf24;
   --violet: #8b5cf6;
+  --pink: #f43f5e;
+  --magenta: #ff00ff;
   --deep-dark: #050508;
   --glass-bg: rgba(10, 12, 18, 0.7);
   --border-cyan: rgba(0, 242, 255, 0.2);
   --glow-shadow: 0 0 30px rgba(0, 242, 255, 0.15);
   --accent-glow: 0 0 15px rgba(0, 242, 255, 0.4);
+}
+
+:root.r18-mode {
+  --cyan: #ff00ff;
+  --neon-blue: #ff0055;
+  --amber: #f43f5e;
+  --violet: #d946ef;
+  --border-cyan: rgba(255, 0, 255, 0.2);
+  --accent-glow: 0 0 20px rgba(255, 0, 255, 0.5);
+  --deep-dark: #0a0208;
 }
 
 * {
@@ -185,9 +197,13 @@ body {
   overflow-x: auto;
   gap: 0.75rem;
   width: 100%;
-  padding-bottom: 0.5rem;
+  padding: 0.5rem 0.5rem 1rem;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  position: relative;
+  scroll-behavior: smooth;
+  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 20px, black calc(100% - 20px), transparent);
 }
 
 .premium-grid::-webkit-scrollbar,
@@ -257,12 +273,48 @@ body {
 
 .theme-card.selected,
 .pose-card.selected,
-.theme-card.selected,
-.pose-card.selected,
 .expression-card.selected,
 .framing-card.selected {
-  border-color: rgba(255, 255, 255, 0.6) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 255, 255, 0.1);
+  border-color: var(--cyan) !important;
+  box-shadow:
+    0 0 20px rgba(0, 242, 255, 0.3),
+    inset 0 0 10px rgba(0, 242, 255, 0.2);
+  transform: scale(1.02) translateY(-2px);
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Selected indicator dot */
+.theme-card.selected::after,
+.pose-card.selected::after,
+.expression-card.selected::after,
+.framing-card.selected::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 6px;
+  height: 6px;
+  background: var(--cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--cyan);
+  animation: glow-pulse 2s infinite;
+}
+
+@keyframes glow-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .theme-icon-box {
@@ -288,29 +340,60 @@ body {
   color: #fff;
 }
 
-/* Specific Theme Gradients */
+/* Specific Theme Gradients - Unique Palette */
 .theme-random.selected {
-  background: linear-gradient(135deg, #64748b, #334155);
+  background: linear-gradient(135deg, #4b5563, #1f2937) !important;
+  /* Slate Gray */
 }
 
-.theme-chic.selected {
-  background: linear-gradient(135deg, #3f3f46, #09090b);
+.theme-cool.selected {
+  background: linear-gradient(135deg, #1e3a8a, #1e40af) !important;
+  /* Deep Blue */
 }
 
-.theme-colorful.selected {
-  background: linear-gradient(135deg, #fb923c, #f43f5e);
+.theme-cute.selected {
+  background: linear-gradient(135deg, #f472b6, #db2777) !important;
+  /* Soft Pink */
 }
 
-.theme-pastel.selected {
-  background: linear-gradient(135deg, #7dd3fc, #f472b6);
+.theme-sexy.selected {
+  background: linear-gradient(135deg, #dc2626, #991b1b) !important;
+  /* Power Red */
 }
 
-.theme-mode.selected {
-  background: linear-gradient(135deg, #6366f1, #312e81);
+.theme-elegant.selected {
+  background: linear-gradient(135deg, #eab308, #a16207) !important;
+  /* Gold */
 }
 
-.theme-lovely.selected {
-  background: linear-gradient(135deg, #fda4af, #e11d48);
+.theme-active.selected {
+  background: linear-gradient(135deg, #f97316, #c2410c) !important;
+  /* Intense Orange */
+}
+
+.theme-casual.selected {
+  background: linear-gradient(135deg, #22c55e, #15803d) !important;
+  /* Fresh Green */
+}
+
+.theme-fantasy.selected {
+  background: linear-gradient(135deg, #06b6d4, #0e7490) !important;
+  /* Cyan / Magic */
+}
+
+.theme-fetish.selected {
+  background: linear-gradient(135deg, #7c3aed, #4c1d95) !important;
+  /* Deep Purple */
+}
+
+.theme-pop.selected {
+  background: linear-gradient(135deg, #fde047, #ca8a04) !important;
+  /* Bright Yellow */
+}
+
+.theme-dark.selected {
+  background: linear-gradient(135deg, #18181b, #09090b) !important;
+  /* Coal Black */
 }
 
 /* Premium Concept Input */
@@ -638,58 +721,101 @@ body {
   opacity: 0.5;
 }
 
-/* Specific Pose Gradients */
-.pose-random.selected {
-  background: linear-gradient(135deg, #64748b, #334155);
+/* Specific Pose Gradients - Unique Mood Palette */
+.mood-random.selected,
+.stance-random.selected {
+  background: linear-gradient(135deg, #4b5563, #1f2937) !important;
 }
 
-.pose-cool.selected {
-  background: linear-gradient(135deg, #0ea5e9, #0369a1);
+.mood-energetic.selected {
+  background: linear-gradient(135deg, #fbbf24, #d97706) !important;
+  /* Sun Orange */
 }
 
-.pose-cute.selected {
-  background: linear-gradient(135deg, #f472b6, #db2777);
+.mood-cool.selected {
+  background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
+  /* Sky Blue */
 }
 
-.pose-elegant.selected {
-  background: linear-gradient(135deg, #a855f7, #7e22ce);
+.mood-cute.selected {
+  background: linear-gradient(135deg, #ec4899, #be185d) !important;
+  /* Vibrant Pink */
 }
 
-.pose-sexy.selected {
-  background: linear-gradient(135deg, #f43f5e, #be123c);
+.mood-sexy.selected {
+  background: linear-gradient(135deg, #f43f5e, #9f1239) !important;
+  /* Crimson Red */
 }
 
-.pose-natural.selected {
-  background: linear-gradient(135deg, #10b981, #047857);
+.mood-natural.selected {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  /* Emerald Green */
 }
 
-/* Specific Expression Gradients */
+.mood-elegant.selected {
+  background: linear-gradient(135deg, #8b5cf6, #5b21b6) !important;
+  /* Violet */
+}
+
+.mood-shy.selected {
+  background: linear-gradient(135deg, #06b6d4, #0891b2) !important;
+  /* Teal / Cyan */
+}
+
+.mood-heroic.selected {
+  background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
+  /* Alert Red */
+}
+
+/* Stances generic highlight */
+.pose-card.selected[class*="stance-"] {
+  background: linear-gradient(135deg, #22d3ee, #0891b2) !important;
+}
+
+/* Stances can also have colors if they match names, but usually generic is fine. 
+   Adding generic highlights for stances to ensure they pop. */
+.pose-card.selected[class*="stance-"] {
+  background: linear-gradient(135deg, #22d3ee, #0891b2) !important;
+}
+
+/* Specific Expression Gradients - Unique Emotion Palette */
 .expr-random.selected {
-  background: linear-gradient(135deg, #64748b, #334155);
+  background: linear-gradient(135deg, #4b5563, #1f2937) !important;
+}
+
+.expr-model.selected {
+  background: linear-gradient(135deg, #64748b, #475569) !important;
+  /* Steel Case */
 }
 
 .expr-happy.selected {
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+  /* Warm Amber */
 }
 
 .expr-cool.selected {
-  background: linear-gradient(135deg, #94a3b8, #475569);
+  background: linear-gradient(135deg, #6366f1, #4338ca) !important;
+  /* Indigo Focus */
 }
 
 .expr-cute.selected {
-  background: linear-gradient(135deg, #f472b6, #db2777);
+  background: linear-gradient(135deg, #f06292, #c2185b) !important;
+  /* Rose Pink */
 }
 
 .expr-sexy.selected {
-  background: linear-gradient(135deg, #f43f5e, #be123c);
+  background: linear-gradient(135deg, #e11d48, #881337) !important;
+  /* Dark Rose */
 }
 
 .expr-emotional.selected {
-  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+  /* Deep Sky */
 }
 
 .expr-aggressive.selected {
-  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  background: linear-gradient(135deg, #dc2626, #7f1d1d) !important;
+  /* Blood Red */
 }
 
 .premium-textarea {
@@ -751,4 +877,292 @@ body {
 
 .framing-dynamic.selected {
   background: linear-gradient(135deg, #c026d3, #a21caf);
+}
+
+/* Terminal Loading Sequence */
+.terminal-loader {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 242, 255, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 400px;
+  max-height: 200px;
+  overflow-y: auto;
+  font-family: 'Space Mono', 'Courier New', monospace;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.terminal-loader::-webkit-scrollbar {
+  display: none;
+}
+
+.terminal-line {
+  font-size: 10px;
+  line-height: 1.6;
+  color: #00f2ff;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.terminal-prefix {
+  opacity: 0.5;
+  color: #fff;
+}
+
+.terminal-cursor {
+  width: 6px;
+  height: 12px;
+  background: #00f2ff;
+  display: inline-block;
+  animation: terminal-blink 1s infinite;
+  vertical-align: middle;
+}
+
+@keyframes terminal-blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+.pulse-icon {
+  animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 5px #00f2ff);
+  }
+
+  50% {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 15px #00f2ff);
+  }
+
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 5px #00f2ff);
+  }
+}
+
+/* Idea Dice Button */
+.idea-dice-btn {
+  background: rgba(34, 211, 238, 0.1);
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  border-radius: 8px;
+  padding: 4px 10px;
+  color: #22d3ee;
+  font-size: 10px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.1em;
+}
+
+.idea-dice-btn:hover {
+  background: rgba(34, 211, 238, 0.2);
+  border-color: #22d3ee;
+  box-shadow: 0 0 15px rgba(34, 211, 238, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Result Placeholder */
+.result-placeholder {
+  border: 1px dashed rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  opacity: 0.5;
+  transition: all 0.5s ease;
+  background: rgba(2, 4, 6, 0.3);
+}
+
+.result-placeholder:hover {
+  opacity: 0.8;
+  border-color: rgba(0, 242, 255, 0.2);
+  background: rgba(0, 242, 255, 0.01);
+}
+
+.placeholder-icon-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.placeholder-scan-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00f2ff, transparent);
+  animation: placeholder-scan 3s infinite ease-in-out;
+}
+
+@keyframes placeholder-scan {
+
+  0%,
+  100% {
+    top: 10%;
+    opacity: 0;
+  }
+
+  50% {
+    top: 90%;
+    opacity: 1;
+  }
+}
+
+/* Sexy Critical Glitch */
+.sexy-critical {
+  color: #f43f5e !important;
+  text-shadow: 0 0 10px rgba(244, 63, 94, 0.6), 2px 0 0 rgba(255, 0, 255, 0.4), -2px 0 0 rgba(0, 255, 255, 0.4);
+  animation: glitch-text 0.2s infinite;
+}
+
+@keyframes glitch-text {
+  0% {
+    transform: translate(0)
+  }
+
+  20% {
+    transform: translate(-1px, 1px)
+  }
+
+  40% {
+    transform: translate(-1px, -1px)
+  }
+
+  60% {
+    transform: translate(1px, 1px)
+  }
+
+  80% {
+    transform: translate(1px, -1px)
+  }
+
+  100% {
+    transform: translate(0)
+  }
+}
+
+.sexy-slider-critical-bg {
+  border: 1px solid rgba(244, 63, 94, 0.5) !important;
+  background: rgba(244, 63, 94, 0.05) !important;
+  box-shadow: 0 0 20px rgba(244, 63, 94, 0.1) !important;
+}
+
+.r18-pulse-bg {
+  background: radial-gradient(circle, rgba(255, 0, 255, 0.1) 0%, transparent 70%) !important;
+  animation: r18-pulse 2s infinite ease-in-out;
+}
+
+@keyframes r18-pulse {
+
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.level-11-glitch {
+  color: #ff00ff !important;
+  text-shadow: 0 0 15px #ff00ff, 2px 0 0 #00ffff, -2px 0 0 #ff0055 !important;
+  animation: glitch-text 0.1s infinite !important;
+  font-size: 1.1em !important;
+}
+
+.r18-card-glow {
+  border: 1px solid rgba(255, 0, 255, 0.4) !important;
+  box-shadow: 0 0 20px rgba(255, 0, 255, 0.2), inset 0 0 10px rgba(255, 0, 255, 0.1) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.r18-card-glow::after {
+  content: "R18";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: rgba(255, 0, 255, 0.05);
+  font-style: italic;
+  pointer-events: none;
+  z-index: 0;
+}
+
+
+/* Horizontal Scroll Navigation */
+.scroll-nav-container {
+  position: relative;
+  width: 100%;
+}
+
+.scroll-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  z-index: 10;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.scroll-nav-container:hover .scroll-arrow {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.scroll-arrow-left {
+  left: -12px;
+}
+
+.scroll-arrow-right {
+  right: -12px;
+}
+
+.scroll-arrow:hover {
+  background: #00f2ff;
+  border-color: #00f2ff;
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+  color: #000;
 }

@@ -1,77 +1,96 @@
-import { Zap, ZoomIn, ArrowDown, ArrowRight, ArrowLeft, Maximize, Scan, Camera } from 'lucide-react';
+import { Maximize, Scan, ZoomIn, Camera, StretchHorizontal, ArrowDown, ArrowUp, ArrowRight, ArrowLeft, Zap, Focus, type LucideIcon } from 'lucide-react';
 
-export interface FramingArchetype {
+export interface FramingItem {
     id: string;
     label: string;
     description: string;
-    icon: any;
+    icon: LucideIcon;
     prompt: string;
 }
 
-export const FRAMING_ARCHETYPES: FramingArchetype[] = [
-    {
-        id: 'model',
-        label: 'カタログ風',
-        description: 'Professional Catalog',
-        icon: Camera,
-        prompt: 'full body, from front, eye level'
-    },
-    {
-        id: 'random',
-        label: 'おまかせ',
-        description: 'AI Decision',
-        icon: Zap,
-        prompt: 'best angle to showcase the outfit'
-    },
+export const SHOT_TYPES: FramingItem[] = [
     {
         id: 'full_body',
         label: '全身',
-        description: 'Head to Toe',
+        description: 'Full Body',
         icon: Maximize,
-        prompt: 'full body shot, showing shoes and head'
+        prompt: 'full body'
     },
     {
-        id: 'knee_up',
+        id: 'cowboy_shot',
         label: '膝上',
-        description: 'Knee Up',
-        icon: ArrowDown,
-        prompt: 'knee up shot, balanced composition'
+        description: 'Cowboy Shot',
+        icon: Camera,
+        prompt: 'cowboy shot'
     },
     {
-        id: 'portrait',
-        label: 'アップ',
-        description: 'Portrait / Bust',
-        icon: ZoomIn,
-        prompt: 'upper body shot, portrait, focus on face and chest'
+        id: 'waist_up',
+        label: '腰上',
+        description: 'Waist Up',
+        icon: StretchHorizontal,
+        prompt: 'waist up'
     },
+    {
+        id: 'upper_body',
+        label: '胸上',
+        description: 'Upper Body',
+        icon: Scan,
+        prompt: 'upper body'
+    },
+    {
+        id: 'close_up',
+        label: '接写',
+        description: 'Close-up',
+        icon: ZoomIn,
+        prompt: 'close-up'
+    }
+];
+
+export const SHOT_ANGLES: FramingItem[] = [
     {
         id: 'front',
         label: '正面',
-        description: 'From Front',
-        icon: Scan,
-        prompt: 'view from front, symmetric composition'
+        description: 'Front View',
+        icon: Focus,
+        prompt: 'from front'
     },
     {
         id: 'side',
-        label: '横顔',
+        label: '横',
         description: 'Side View',
         icon: ArrowRight,
-        prompt: 'view from side, side profile'
+        prompt: 'from side'
     },
     {
         id: 'back',
-        label: '後ろ姿',
+        label: '後ろ',
         description: 'Back View',
         icon: ArrowLeft,
-        prompt: 'view from behind, back shot, showing back design'
+        prompt: 'from behind'
+    },
+    {
+        id: 'above',
+        label: '上',
+        description: 'From Above',
+        icon: ArrowUp,
+        prompt: 'from above'
+    },
+    {
+        id: 'below',
+        label: '下',
+        description: 'From Below',
+        icon: ArrowDown,
+        prompt: 'from below'
     },
     {
         id: 'dynamic',
         label: 'ダイナミック',
         description: 'Dynamic Angle',
         icon: Zap,
-        prompt: 'dynamic angle, dutch angle, from below or above, dramatic composition'
+        prompt: 'dynamic angle'
     }
 ];
 
-export const FRAMING_SETTINGS = FRAMING_ARCHETYPES;
+// Compatibility exports
+export const FRAMING_ARCHETYPES = SHOT_TYPES;
+export const FRAMING_SETTINGS = SHOT_TYPES;

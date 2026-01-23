@@ -17,13 +17,13 @@
 
 @media (min-width: 1024px) {
     .results-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 1536px) {
     .results-grid {
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
@@ -136,6 +136,7 @@
     margin-bottom: 0.75rem;
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }

@@ -1,84 +1,26 @@
 import {
-    User, Zap, Heart, Star, Flame, Coffee, Camera,
-    Smile, Shield, RotateCcw,
-    Wind, UserPlus, Sofa, Ghost
+    User, Zap, Coffee, Camera,
+    RotateCcw,
+    Wind, UserPlus, Sofa,
+    type LucideIcon
 } from 'lucide-react';
 
 export interface PoseArchetype {
     id: string;
     label: string;
     description: string;
-    icon: any;
+    icon: LucideIcon;
     prompt: string;
 }
 
-export const POSE_MOODS: PoseArchetype[] = [
-    {
-        id: 'random',
-        label: 'おまかせ',
-        description: 'AI recommended mood',
-        icon: Zap,
-        prompt: ''
-    },
-    {
-        id: 'energetic',
-        label: '元気',
-        description: 'High energy & bright',
-        icon: Smile,
-        prompt: 'high energy mood, bright and cheerful atmosphere, lively personality'
-    },
-    {
-        id: 'cool',
-        label: 'クール',
-        description: 'Sharp & Stylish',
-        icon: User,
-        prompt: 'cool and stylish mood, sharp and confident atmosphere, aloof expression'
-    },
-    {
-        id: 'cute',
-        label: 'キュート',
-        description: 'Adorable & Sweet',
-        icon: Heart,
-        prompt: 'cute and adorable mood, sweet and charming atmosphere, sugary personality'
-    },
-    {
-        id: 'sexy',
-        label: 'セクシー',
-        description: 'Alluring & Bold',
-        icon: Flame,
-        prompt: 'sexy and alluring mood, bold and provocative atmosphere, seductive personality'
-    },
-    {
-        id: 'natural',
-        label: 'ナチュラル',
-        description: 'Relaxed & Casual',
-        icon: Coffee,
-        prompt: 'natural and relaxed mood, casual everyday atmosphere, soft personality'
-    },
-    {
-        id: 'elegant',
-        label: '上品',
-        description: 'Graceful & Mature',
-        icon: Star,
-        prompt: 'elegant and graceful mood, sophisticated and mature atmosphere, noble personality'
-    },
-    {
-        id: 'shy',
-        label: 'シャイ',
-        description: 'Bashful & Sweet',
-        icon: Ghost,
-        prompt: 'shy and bashful mood, slightly embarrassed atmosphere, timid personality'
-    },
-    {
-        id: 'heroic',
-        label: '威厳',
-        description: 'Dignified & Strong',
-        icon: Shield,
-        prompt: 'heroic and dignified mood, strong and powerful atmosphere, fearless personality'
-    }
-];
-
 export const POSE_STANCES: PoseArchetype[] = [
+    {
+        id: 'model',
+        label: 'モデル立ち',
+        description: 'Fashion catalog style',
+        icon: Camera,
+        prompt: 'professional model pose, fashion catalog style, lookbook photography, elegant posture, balanced composition'
+    },
     {
         id: 'random',
         label: 'おまかせ',
@@ -127,14 +69,6 @@ export const POSE_STANCES: PoseArchetype[] = [
         description: 'Looking over shoulder',
         icon: RotateCcw,
         prompt: 'looking back over shoulder pose, turned torso'
-    },
-
-    {
-        id: 'model',
-        label: 'モデル立ち',
-        description: 'Fashion catalog style',
-        icon: Camera,
-        prompt: 'professional model pose, fashion catalog style, lookbook photography, elegant posture, balanced composition'
     }
 ];
 

@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import React, { createContext, useContext, useState, type ReactNode } from 'react';
 import { translations, type Language } from '../i18n/translations';
 
 interface LanguageContextType {
@@ -28,19 +29,18 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
     // Helper function to get nested translation value
     const t = (path: string): string => {
         const keys = path.split('.');
-        let current: any = translations[language];
+        let current: unknown = translations[language];
 
         for (const key of keys) {
-            if (current[key] === undefined) {
-                // Fallback to Japanese if key not found in current language
-                // or just return the path for debugging
+            if (typeof current === 'object' && current !== null && key in current) {
+                current = (current as Record<string, unknown>)[key];
+            } else {
                 console.warn(`Translation key not found: ${path}`);
                 return path;
             }
-            current = current[key];
         }
 
-        return current as string;
+        return typeof current === 'string' ? current : path;
     };
 
     return (
