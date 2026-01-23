@@ -1166,3 +1166,69 @@ body {
   box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
   color: #000;
 }
+
+/* Overdrive Tooltip */
+.overdrive-tooltip-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-left: -2px;
+  cursor: help;
+}
+
+.icon-info-dim {
+  color: rgba(255, 255, 255, 0.2);
+  transition: color 0.3s ease;
+}
+
+.overdrive-tooltip-container:hover .icon-info-dim {
+  color: var(--magenta);
+}
+
+.overdrive-tooltip-bubble {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+  background: rgba(10, 2, 8, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--magenta);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  width: 220px;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #fff;
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  z-index: 1000;
+  box-shadow: 0 10px 30px rgba(255, 0, 255, 0.2);
+}
+
+.overdrive-tooltip-container:hover .overdrive-tooltip-bubble {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-20px);
+}
+
+.tooltip-glitch-line {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  width: 30px;
+  height: 2px;
+  background: var(--magenta);
+  box-shadow: 0 0 10px var(--magenta);
+}
+
+.overdrive-tooltip-bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: var(--magenta) transparent transparent transparent;
+}

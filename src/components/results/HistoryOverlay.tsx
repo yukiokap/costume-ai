@@ -26,6 +26,57 @@ const DETAIL_LABELS: Record<string, string> = {
     c04: '04: 構図の設定 / FRAMING',
 };
 
+const DetailRow: React.FC<{ detail: { label: string; val: any; type: string }; t: any }> = ({ detail, t }) => {
+    const [isExpanded, setIsExpanded] = React.useState(false);
+    const { val, type, label } = detail;
+
+    let displayVal = String(val);
+
+    if (val === 'random') {
+        displayVal = 'おまかせ';
+    } else if (type === 'concept' && displayVal.includes('DIVERSE_REQUEST')) {
+        displayVal = 'おまかせ';
+    } else if (type === 'theme') {
+        displayVal = (t(`editor.themes.${displayVal}`) || displayVal);
+    } else if (type === 'stance') {
+        displayVal = (t(`editor.pose_stance_presets.${displayVal}`) || displayVal);
+    } else if (type === 'expression') {
+        displayVal = (t(`editor.expression_presets.${displayVal}`) || displayVal);
+    } else if (type === 'shot_type') {
+        displayVal = (t(`editor.shot_type_presets.${displayVal}`) || displayVal);
+    } else if (type === 'shot_angle') {
+        displayVal = (t(`editor.shot_angle_presets.${displayVal}`) || displayVal);
+    }
+
+    if (type === 'text') {
+        return (
+            <div style={{ display: 'flex', flexDirection: 'column', paddingLeft: '4px', gap: '4px' }}>
+                <div
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}
+                >
+                    <span style={{ fontSize: '8px', fontWeight: 900, color: 'rgba(255,255,255,0.2)', minWidth: '50px' }}>{label}</span>
+                    <span style={{ fontSize: '9px', fontWeight: 700, color: '#00f2ff', textDecoration: 'underline' }}>
+                        {isExpanded ? '閉じる' : '自由入力内容を表示'}
+                    </span>
+                </div>
+                {isExpanded && (
+                    <div style={{ fontSize: '9px', color: '#fff', backgroundColor: 'rgba(255,255,255,0.05)', padding: '6px', borderRadius: '4px', lineHeight: '1.4', wordBreak: 'break-all' }}>
+                        {displayVal}
+                    </div>
+                )}
+            </div>
+        );
+    }
+
+    return (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingLeft: '4px' }}>
+            <span style={{ fontSize: '8px', fontWeight: 900, color: 'rgba(255,255,255,0.2)', minWidth: '50px' }}>{label}</span>
+            <span style={{ fontSize: '9px', fontWeight: 700, color: '#fff', textAlign: 'right', maxWidth: '75%', wordBreak: 'break-all' }}>{displayVal}</span>
+        </div>
+    );
+};
+
 export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
     isOpen,
     onClose,
@@ -401,7 +452,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
 
                                         <div className="card-content">
                                             <h3 className="card-desc" style={{ marginTop: '0.25rem', fontSize: '0.8rem' }}>
-                                                {item.description.replace(/^[:：\s]+/, '')}
+                                                {item.description.replace(/^[:\s\u30fb]+/, '')}
                                             </h3>
 
                                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
@@ -509,7 +560,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                                                     {
                                                                         section: 'c04',
                                                                         items: [
-                                                                            { label: 'ショット', val: item.originalShotType, type: 'shot_type' },
+                                                                            { label: '距離', val: item.originalShotType, type: 'shot_type' },
                                                                             { label: 'アングル', val: item.originalShotAngle, type: 'shot_angle' },
                                                                             { label: '自由記述', val: item.originalFramingDescription, type: 'text' }
                                                                         ]
@@ -521,35 +572,12 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                                                         </div>
                                                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                                                                             {group.items.filter(i => {
-                                                                                if (!i.val || i.val === '' || i.val === 'random') return false;
+                                                                                if (i.val === undefined || i.val === null || i.val === '') return false;
                                                                                 if (i.type === 'text' && (i.val === 'None' || i.val === 'model')) return false;
                                                                                 return true;
-                                                                            }).map((detail, dIdx) => {
-                                                                                let displayVal = String(detail.val);
-
-                                                                                if (detail.type === 'concept' && displayVal.includes('DIVERSE_REQUEST')) {
-                                                                                    displayVal = 'おまかせ';
-                                                                                } else if (detail.type === 'theme') {
-                                                                                    displayVal = (t(`editor.themes.${displayVal}`) || displayVal);
-                                                                                } else if (detail.type === 'mood') {
-                                                                                    displayVal = (t(`editor.pose_mood_presets.${displayVal}`) || displayVal);
-                                                                                } else if (detail.type === 'stance') {
-                                                                                    displayVal = (t(`editor.pose_stance_presets.${displayVal}`) || displayVal);
-                                                                                } else if (detail.type === 'expression') {
-                                                                                    displayVal = (t(`editor.expression_presets.${displayVal}`) || displayVal);
-                                                                                } else if (detail.type === 'shot_type') {
-                                                                                    displayVal = (t(`editor.shot_type_presets.${displayVal}`) || displayVal);
-                                                                                } else if (detail.type === 'shot_angle') {
-                                                                                    displayVal = (t(`editor.shot_angle_presets.${displayVal}`) || displayVal);
-                                                                                }
-
-                                                                                return (
-                                                                                    <div key={dIdx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingLeft: '4px' }}>
-                                                                                        <span style={{ fontSize: '8px', fontWeight: 900, color: 'rgba(255,255,255,0.2)', minWidth: '50px' }}>{detail.label}</span>
-                                                                                        <span style={{ fontSize: '9px', fontWeight: 700, color: '#fff', textAlign: 'right', maxWidth: '75%', wordBreak: 'break-all' }}>{displayVal}</span>
-                                                                                    </div>
-                                                                                );
-                                                                            })}
+                                                                            }).map((detail, dIdx) => (
+                                                                                <DetailRow key={dIdx} detail={detail} t={t} />
+                                                                            ))}
                                                                         </div>
                                                                     </div>
                                                                 ))}

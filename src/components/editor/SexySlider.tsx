@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Flame } from 'lucide-react';
+import { Flame, Info } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 interface SexySliderProps {
@@ -30,10 +30,22 @@ export const SexySlider: React.FC<SexySliderProps> = ({ value, onChange, isR18Mo
                     </div>
 
                     {/* Overdrive Switch - Fixed to Right */}
-                    <div className="flex items-center gap-2 px-3 py-1 bg-black/40 border border-white/5 rounded-lg shrink-0" style={{ width: '160px', justifyContent: 'center' }}>
-                        <span style={{ fontSize: '8px', fontWeight: 900, color: isR18Mode ? 'var(--magenta)' : 'rgba(255,255,255,0.3)', letterSpacing: '0.1em' }}>
-                            OVERDRIVE_MODE
-                        </span>
+                    <div className="flex items-center gap-2 px-3 py-1 bg-black/40 border border-white/5 rounded-lg shrink-0" style={{ position: 'relative', width: 'auto', justifyContent: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{ fontSize: '8px', fontWeight: 900, color: isR18Mode ? 'var(--magenta)' : 'rgba(255,255,255,0.3)', letterSpacing: '0.1em' }}>
+                                OVERDRIVE_MODE
+                            </span>
+
+                            {/* Tooltip Content */}
+                            <div className="overdrive-tooltip-container">
+                                <Info size={10} className="icon-info-dim" />
+                                <div className="overdrive-tooltip-bubble">
+                                    <div className="tooltip-glitch-line" />
+                                    {t('editor.overdrive_hint')}
+                                </div>
+                            </div>
+                        </div>
+
                         <button
                             onClick={() => onR18Change(!isR18Mode)}
                             style={{

@@ -110,6 +110,7 @@ export const translations = {
             accessory_hint_low: 'L1-3: シンプル・純粋',
             accessory_hint_mid: 'L4-7: 華やか・装飾的',
             accessory_hint_high: 'L8-10: 豪華・絢爛な装飾',
+            overdrive_hint: 'リミッターを解除し、より過激で直接的な表現（R18）の生成を許可します。',
         },
         settings: {
             title: 'システム設定',
@@ -249,6 +250,7 @@ export const translations = {
             accessory_hint_low: 'L1-3: Simple & Pure',
             accessory_hint_mid: 'L4-7: Ornate & Decorative',
             accessory_hint_high: 'L8-10: Luxurious & Extravagant',
+            overdrive_hint: 'Disable safety protocols for explicit aesthetic synthesis (R18 mode).',
         },
         settings: {
             title: 'System Settings',
