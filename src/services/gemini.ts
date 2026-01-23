@@ -140,7 +140,6 @@ export const generateCostumePrompts = async (
       - Shot Type/Distance: ${parts.shotType || 'Autofill based on context/theme'}
       - Shot Angle: ${parts.shotAngle || 'Autofill based on context/theme'}
       - Pose Stance (MANDATORY): ${(!parts.poseStance || parts.poseStance === 'random') ? 'Autofill based on context/theme' : parts.poseStance.toUpperCase()}
-      - Pose Mood: ${(!parts.poseMood || parts.poseMood === 'random') ? 'Autofill based on context/theme' : parts.poseMood.toUpperCase()}
       - Expression: ${(!parts.expression || parts.expression === 'random') ? 'Autofill based on context/theme' : parts.expression.toUpperCase()}
 
       [CUSTOM OVERRIDES (ABSOLUTE HIGHEST PRIORITY)]
@@ -233,7 +232,6 @@ export const generateCostumePrompts = async (
         originalShotType: parts.originalShotType || parts.shotType,
         originalShotAngle: parts.originalShotAngle || parts.shotAngle,
         originalPoseStance: parts.poseStanceId || parts.poseStance,
-        originalPoseMood: parts.poseMoodId || parts.poseMood,
         originalExpression: parts.expressionId || parts.expression,
 
         originalPoseDescription: parts.poseDescription,
@@ -278,7 +276,7 @@ export const generateSexyRangePrompts = async (
   const maxLevel = 10;
   const prompt = `
     Generate ${maxLevel} prompts for the same concept with INCREASING Sexy Level (1 to ${maxLevel}).
-    ${referencePrompt ? `Base: ${referencePrompt}` : `Concept: ${parts.concept || parts.base} | Theme: ${parts.theme} | Pose: ${parts.poseMood} ${parts.poseStance}`}
+    ${referencePrompt ? `Base: ${referencePrompt}` : `Concept: ${parts.concept || parts.base} | Theme: ${parts.theme} | Pose: ${parts.poseStance} | Expression: ${parts.expression}`}
     
     [LEVEL GUIDELINES]
     - Level 1-10: Follow traditional sexy progression.

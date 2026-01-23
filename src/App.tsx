@@ -14,7 +14,7 @@ import { ResultsSection } from './components/results/ResultsSection'
 import { SectionDivider } from './components/ui/SectionDivider'
 import { ALL_ITEMS } from './data/costumes'
 import { EXPRESSION_DATA } from './data/expressions_data'
-import { POSE_STANCE_DATA, POSE_MOOD_DATA } from './data/poses_data'
+import { POSE_STANCE_DATA } from './data/poses_data'
 import { FRAMING_DATA } from './data/framing_data'
 import { SettingsModal } from './components/settings/SettingsModal';
 import { FooterControls } from './components/layout/FooterControls';
@@ -65,7 +65,6 @@ function App() {
   const [sexyLevel, setSexyLevel] = useState(5)
   const [accessoryLevel, setAccessoryLevel] = useState<number>(5)
   const [selectedPoseStance, setSelectedPoseStance] = useState('model')
-  const [selectedPoseMood, setSelectedPoseMood] = useState('random')
   const [poseDescription, setPoseDescription] = useState('')
   const [selectedExpression, setSelectedExpression] = useState('model')
   const [expressionDescription, setExpressionDescription] = useState('')
@@ -178,8 +177,6 @@ function App() {
         concept: getEffectiveConcept(false),
         poseStanceId: selectedPoseStance,
         poseStance: getEffectiveValue(selectedPoseStance, POSE_STANCE_DATA),
-        poseMoodId: selectedPoseMood,
-        poseMood: getEffectiveValue(selectedPoseMood, POSE_MOOD_DATA),
         expressionId: selectedExpression,
         expression: getEffectiveValue(selectedExpression, EXPRESSION_DATA),
         shotType: getEffectiveValue(selectedShotType, FRAMING_DATA),
@@ -291,8 +288,6 @@ function App() {
         concept: getEffectiveConcept(true),
         poseStanceId: selectedPoseStance,
         poseStance: getEffectiveValue(selectedPoseStance, POSE_STANCE_DATA),
-        poseMoodId: selectedPoseMood,
-        poseMood: getEffectiveValue(selectedPoseMood, POSE_MOOD_DATA),
         expressionId: selectedExpression,
         expression: getEffectiveValue(selectedExpression, EXPRESSION_DATA),
         shotType: getEffectiveValue(selectedShotType, FRAMING_DATA),
@@ -341,7 +336,6 @@ function App() {
     if (item.originalTheme) setTheme(item.originalTheme);
     if (item.originalConcept) setConcept(item.originalConcept);
     if (item.originalPoseStance) setSelectedPoseStance(item.originalPoseStance);
-    if (item.originalPoseMood) setSelectedPoseMood(item.originalPoseMood);
     if (item.originalPoseDescription) setPoseDescription(item.originalPoseDescription);
     if (item.originalExpression) setSelectedExpression(item.originalExpression);
     if (item.originalExpressionDescription) setExpressionDescription(item.originalExpressionDescription);
@@ -372,7 +366,6 @@ function App() {
 
     // 02: Advanced - Pose
     setSelectedPoseStance('model');
-    setSelectedPoseMood('random');
     setPoseDescription('');
 
     // 03: Advanced - Expression
@@ -563,8 +556,6 @@ function App() {
                   <div style={{ height: '3px', width: '100%', background: 'linear-gradient(90deg, rgba(16,185,129,0.5), rgba(249,115,22,0.5))', margin: '3rem 0', borderRadius: '2px', boxShadow: '0 0 15px rgba(249,115,22,0.3)' }} />
 
                   <ExpressionSection
-                    selectedPoseMood={selectedPoseMood}
-                    setSelectedPoseMood={setSelectedPoseMood}
                     selectedExpression={selectedExpression}
                     setSelectedExpression={setSelectedExpression}
                     expressionDescription={expressionDescription}

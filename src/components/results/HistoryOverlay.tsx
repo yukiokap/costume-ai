@@ -502,7 +502,6 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                                                     {
                                                                         section: 'c03',
                                                                         items: [
-                                                                            { label: '雰囲気', val: item.originalPoseMood, type: 'mood' },
                                                                             { label: '感情', val: item.originalExpression, type: 'expression' },
                                                                             { label: '自由記述', val: item.originalExpressionDescription, type: 'text' }
                                                                         ]

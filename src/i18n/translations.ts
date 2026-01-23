@@ -39,7 +39,6 @@ export const translations = {
             section_pose_title: '02: ポーズの設定',
             section_expression_title: '03: 表情・感情の設定',
             section_framing_title: '04: 構図の設定',
-            pose_mood_label: 'ポーズの雰囲気 / Mood Concepts',
             pose_stance_label: '具体的な姿勢 / Stance Concepts',
             pose_custom_label: 'ポーズの詳細記述 (任意)',
             pose_custom_placeholder: '具体的な姿勢や動きを自由に記述してください...',
@@ -62,17 +61,6 @@ export const translations = {
                 pop: 'ポップ',
                 dark: 'ダーク',
                 anime: 'アニメ'
-            },
-            pose_mood_presets: {
-                random: 'おまかせ',
-                energetic: '元気',
-                cool: 'クール',
-                cute: 'キュート',
-                sexy: 'セクシー',
-                natural: 'ナチュラル',
-                elegant: '上品',
-                shy: 'シャイ',
-                heroic: '威厳'
             },
             pose_stance_presets: {
                 random: 'おまかせ',
@@ -190,7 +178,6 @@ export const translations = {
             section_pose_title: '02: Pose Settings',
             section_expression_title: '03: Emotion & Mood Settings',
             section_framing_title: '04: Framing Settings',
-            pose_mood_label: 'Pose Mood Concepts',
             pose_stance_label: 'Pose Stance Concepts',
             pose_custom_label: 'Detailed Pose Description (Optional)',
             pose_custom_placeholder: 'Describe the specific physical pose or action freely...',
@@ -213,17 +200,6 @@ export const translations = {
                 pop: 'Pop',
                 dark: 'Dark',
                 anime: 'Anime'
-            },
-            pose_mood_presets: {
-                random: 'Random',
-                energetic: 'Energetic',
-                cool: 'Cool',
-                cute: 'Cute',
-                sexy: 'Sexy',
-                natural: 'Natural',
-                elegant: 'Elegant',
-                shy: 'Shy',
-                heroic: 'Heroic'
             },
             pose_stance_presets: {
                 random: 'Random',

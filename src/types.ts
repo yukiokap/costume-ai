@@ -10,7 +10,6 @@ export interface GeneratedPrompt {
     accessoryLevel?: number;
     originalConcept?: string;
     originalTheme?: string;
-    originalPoseMood?: string;
     originalPoseStance?: string;
     originalExpression?: string;
     originalFraming?: string;
@@ -34,8 +33,6 @@ export interface DesignParts {
     sexyLevel: number;
     accessoryLevel: number;
     pose?: string;
-    poseMood?: string;
-    poseMoodId?: string;
     poseStance?: string;
     poseStanceId?: string;
     poseDescription?: string;
