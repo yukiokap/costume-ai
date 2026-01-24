@@ -71,7 +71,3 @@ export const POSE_STANCES: PoseArchetype[] = [
         prompt: 'looking back over shoulder pose, turned torso'
     }
 ];
-
-// For backward compatibility (not strictly needed but good to keep structure for a moment)
-export const POSE_ARCHETYPES = POSE_STANCES;
-export const POSE_SETTINGS = POSE_ARCHETYPES;

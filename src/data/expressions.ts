@@ -101,6 +101,3 @@ export const EXPRESSION_ARCHETYPES: ExpressionArchetype[] = [
         prompt: 'aggressive and bold expression, fierce gaze, strong presence'
     }
 ];
-
-// For backward compatibility if needed, but primarily using archetypes now
-export const EXPRESSION_SETTINGS = EXPRESSION_ARCHETYPES;

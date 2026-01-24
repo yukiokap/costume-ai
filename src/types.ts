@@ -44,6 +44,8 @@ export interface DesignParts {
     framingDescription?: string;
     shotType?: string;
     shotAngle?: string;
+    shotTypeId?: string;
+    shotAngleId?: string;
     originalShotType?: string;
     originalShotAngle?: string;
     enableLighting?: boolean;

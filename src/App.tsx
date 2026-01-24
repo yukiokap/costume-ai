@@ -14,7 +14,7 @@ import { ResultsSection } from './components/results/ResultsSection'
 import { SectionDivider } from './components/ui/SectionDivider'
 import { ALL_ITEMS } from './data/costumes'
 import { EXPRESSION_DATA } from './data/expressions_data'
-import { POSE_STANCE_DATA } from './data/poses_data'
+import { POSE_STANCE_DATA, POSE_MOOD_DATA } from './data/poses_data'
 import { FRAMING_DATA } from './data/framing_data'
 import { SettingsModal } from './components/settings/SettingsModal';
 import { FooterControls } from './components/layout/FooterControls';
@@ -40,6 +40,69 @@ const getOptionPool = (val: string, data: Record<string, string[]>) => {
   const list = data[val];
   if (!list || list.length === 0) return val;
   return list.join(' | ');
+};
+
+// --- Enhanced Pose Logic ---
+const getEnhancedPosePool = (stanceId: string, themeId: string) => {
+  let pool: string[] = [];
+
+  // 1. Add stance-specific techniques (Standing, Sitting, etc.)
+  if (stanceId !== 'random' && POSE_STANCE_DATA[stanceId]) {
+    pool.push(...POSE_STANCE_DATA[stanceId]);
+  }
+
+  // 2. Automatically mix in "Mood" based on the current Theme
+  const themeToMoodMap: Record<string, string> = {
+    'cute': 'cute',
+    'cool': 'cool',
+    'sexy': 'sexy',
+    'elegant': 'elegant',
+    'active': 'energetic',
+    'casual': 'natural',
+    'fantasy': 'heroic',
+    'pop': 'energetic',
+    'dark': 'cool'
+  };
+
+  const moodId = themeToMoodMap[themeId];
+  if (moodId && POSE_MOOD_DATA[moodId]) {
+    // Mix mood tags to give the stance a specific "flavor"
+    pool.push(...POSE_MOOD_DATA[moodId]);
+  }
+
+  if (pool.length === 0) return 'randomly varied and artistic posing';
+  return pool.join(' | ');
+};
+
+// --- Enhanced Expression Logic ---
+const getEnhancedExpressionPool = (expressionId: string, themeId: string) => {
+  let pool: string[] = [];
+
+  // 1. Add expression-specific tech (Happy, Cool, etc.)
+  if (expressionId !== 'random' && EXPRESSION_DATA[expressionId]) {
+    pool.push(...EXPRESSION_DATA[expressionId]);
+  }
+
+  // 2. Automatically mix in "Mood" based on the current Theme
+  const themeToMoodMap: Record<string, string> = {
+    'cute': 'cute',
+    'cool': 'cool',
+    'sexy': 'sexy',
+    'elegant': 'happy', // Elegant often pairs well with gentle happy smiles
+    'active': 'happy',
+    'casual': 'happy',
+    'fantasy': 'cool',
+    'pop': 'happy',
+    'dark': 'aggressive'
+  };
+
+  const moodId = themeToMoodMap[themeId];
+  if (moodId && EXPRESSION_DATA[moodId]) {
+    pool.push(...EXPRESSION_DATA[moodId]);
+  }
+
+  if (pool.length === 0) return 'professional model expression, varied emotions';
+  return pool.join(' | ');
 };
 
 function App() {
@@ -176,11 +239,13 @@ function App() {
         theme,
         concept: getEffectiveConcept(false),
         poseStanceId: selectedPoseStance,
-        poseStance: getOptionPool(selectedPoseStance, POSE_STANCE_DATA),
+        poseStance: getEnhancedPosePool(selectedPoseStance, theme),
         expressionId: selectedExpression,
-        expression: getOptionPool(selectedExpression, EXPRESSION_DATA),
+        expression: getEnhancedExpressionPool(selectedExpression, theme),
         shotType: getOptionPool(selectedShotType, FRAMING_DATA),
         shotAngle: getOptionPool(selectedShotAngle, FRAMING_DATA),
+        shotTypeId: selectedShotType,
+        shotAngleId: selectedShotAngle,
         poseDescription: poseDescription,
         expressionDescription: expressionDescription,
         framingDescription: framingDescription,
@@ -287,11 +352,13 @@ function App() {
         theme,
         concept: getEffectiveConcept(true),
         poseStanceId: selectedPoseStance,
-        poseStance: getOptionPool(selectedPoseStance, POSE_STANCE_DATA),
+        poseStance: getEnhancedPosePool(selectedPoseStance, theme),
         expressionId: selectedExpression,
-        expression: getOptionPool(selectedExpression, EXPRESSION_DATA),
+        expression: getEnhancedExpressionPool(selectedExpression, theme),
         shotType: getOptionPool(selectedShotType, FRAMING_DATA),
         shotAngle: getOptionPool(selectedShotAngle, FRAMING_DATA),
+        shotTypeId: selectedShotType,
+        shotAngleId: selectedShotAngle,
         poseDescription: poseDescription,
         expressionDescription: expressionDescription,
         framingDescription: framingDescription,

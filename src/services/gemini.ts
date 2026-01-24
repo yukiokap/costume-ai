@@ -7,15 +7,15 @@ const sanitizePrompt = (text: string): string => {
   if (!text) return '';
 
   return text
-    // Replace problematic phrases
+    // Replace remaining camera-related slang with standard terms
     .replace(/\bwalking away from camera\b/gi, 'walking away, from behind')
     .replace(/\b(looking|turning) away from camera\b/gi, '$1 away, looking back')
     .replace(/\btowards? camera\b/gi, 'towards viewer')
     .replace(/\b(at|to) camera\b/gi, 'at viewer')
-    // Remove forbidden words and system artifacts
+    // Remove individual forbidden words
     .replace(/\bcamera\b/gi, '')
     .replace(/\b(bone|spine)\b/gi, '')
-    .replace(/\brandom\b/gi, '') // Remove literal 'random' placeholder text
+    .replace(/\brandom\b/gi, '')
     // Cleanup structure
     .split(',')
     .map(part => part.trim())
@@ -23,6 +23,18 @@ const sanitizePrompt = (text: string): string => {
     .join(', ')
     .replace(/,\s*,/g, ',')
     .trim();
+};
+
+const getFixedViewpoint = (angleId: string): string => {
+  const mapping: Record<string, string> = {
+    'front': 'from front',
+    'side': 'from side',
+    'back': 'from behind',
+    'dynamic': 'dynamic angle',
+    'low_angle': 'from below',
+    'high_angle': 'from above'
+  };
+  return mapping[angleId] || 'from front';
 };
 
 const sexyLevelDescription = (level: number) => {
@@ -138,11 +150,13 @@ export const generateCostumePrompts = async (
       
       [CINEMATIC DIRECTION & DIVERSITY RULES (CRITICAL)]
       1. You are producing ${count} DISTINCT concepts. 
-      2. For each concept, you MUST use a different pose, expression, and camera angle/shot-type.
-      3. POSE REQUIREMENT: ${parts.poseDescription ? `User request is "${parts.poseDescription}". Generate ${count} DIFFERENT artistic interpretations of this.` : `Pool: ${parts.poseStance}`}
-      4. EXPRESSION REQUIREMENT: ${parts.expressionDescription ? `User request is "${parts.expressionDescription}". Generate ${count} DIFFERENT facial expressions following this.` : `Pool: ${parts.expression}`}
-      5. FRAMING REQUIREMENT: ${parts.framingDescription ? `User request is "${parts.framingDescription}". Interpret this technically for each item.` : `Pool: ${parts.shotType}, ${parts.shotAngle}`}
-      *CRITICAL*: Never use identical [[FRAMING]] or [[POSE]] tags for multiple items. Even with the same requirement, vary the execution.
+      2. For each concept, you MUST use a different pose and expression.
+      3. ${parts.shotAngleId ? `FIXED VIEWPOINT (MANDATORY): You MUST use exact string "${getFixedViewpoint(parts.shotAngleId)}" for [[FRAMING]].` : `FRAMING REQUIREMENT: ${parts.framingDescription ? `User request is "${parts.framingDescription}".` : `Shot: ${parts.shotType || 'Varies'}, Angle: ${parts.shotAngle || 'Varies'}`}`}
+      4. POSE REQUIREMENT: ${parts.poseDescription ? `User request is "${parts.poseDescription}". Generate ${count} DIFFERENT artistic interpretations.` : `Pool: ${parts.poseStance}`}
+      *MANDATORY POSE VARIETAL*: Even if the same stance is requested, you MUST vary the body weight distribution (contrapposto, leaning), arm positions (hands on hips, in pockets, raised, behind head), and head tilt. Provide specific, professional descriptions.
+      5. EXPRESSION REQUIREMENT: ${parts.expressionDescription ? `User request is "${parts.expressionDescription}". Generate ${count} DIFFERENT expressions.` : `Pool: ${parts.expression}`}
+      *MANDATORY EXPRESSION VARIETAL*: Vary eye contact, mouth state (parted lips, slight smile, neutral), and emotional intensity.
+      *CRITICAL*: Never use any word like "camera" or "shot" in tags. Stick to technical composition terms. Use exactly the fixed viewpoint string if provided.
 
       [LOGIC FOR TRANSLATION]
       - Translate all Japanese user input into technical English tags.
@@ -156,7 +170,7 @@ export const generateCostumePrompts = async (
       [[DESC]] Brief summary (${language}) - Japanese OK
       [[COSTUME]] English costume tags ONLY.
       [[POSE]] English pose & expression tags ONLY.
-      [[FRAMING]] English camera tags ONLY (e.g., "low angle, full body shot").
+      [[FRAMING]] English viewpoint tags ONLY (MUST use fixed strings if provided).
       [[SCENE]] Background & lighting tags ONLY.
       [[SPLIT]]
     `;
@@ -176,6 +190,9 @@ export const generateCostumePrompts = async (
       const scene = (v.match(/\[\[SCENE\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim();
       const framing = (v.match(/\[\[FRAMING\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim();
 
+      // Final Force Viewpoint if ID exists
+      const forceViewpoint = parts.shotAngleId ? getFixedViewpoint(parts.shotAngleId) : framing;
+
       // Lighting/Atmosphere Filter (if disabled)
       const filterLighting = (text: string) => {
         if (parts.enableLighting === false) {
@@ -185,7 +202,7 @@ export const generateCostumePrompts = async (
       };
 
       const finalPose = filterLighting(pose);
-      const finalFraming = filterLighting(framing);
+      const finalFraming = sanitizePrompt(forceViewpoint); // Stronger sanitization here
       const finalSceneRaw = filterLighting(scene);
 
       // White Background Hardware Force
