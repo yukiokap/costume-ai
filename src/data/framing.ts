@@ -1,4 +1,4 @@
-import { Maximize, Scan, ZoomIn, Camera, StretchHorizontal, ArrowDown, ArrowUp, ArrowRight, ArrowLeft, Zap, Focus, type LucideIcon } from 'lucide-react';
+import { Maximize, Scan, ZoomIn, Camera, ArrowDown, ArrowUp, ArrowRight, ArrowLeft, Zap, Focus, LayoutGrid, type LucideIcon } from 'lucide-react';
 
 export interface FramingItem {
     id: string;
@@ -24,13 +24,6 @@ export const SHOT_TYPES: FramingItem[] = [
         prompt: 'cowboy shot'
     },
     {
-        id: 'waist_up',
-        label: '腰上',
-        description: 'Waist Up',
-        icon: StretchHorizontal,
-        prompt: 'waist up'
-    },
-    {
         id: 'upper_body',
         label: '胸上',
         description: 'Upper Body',
@@ -38,11 +31,25 @@ export const SHOT_TYPES: FramingItem[] = [
         prompt: 'upper body'
     },
     {
+        id: 'portrait',
+        label: 'ポートレート',
+        description: 'Portrait',
+        icon: Focus,
+        prompt: 'portrait, focus on face and shoulders'
+    },
+    {
         id: 'close_up',
         label: '接写',
         description: 'Close-up',
         icon: ZoomIn,
         prompt: 'close-up'
+    },
+    {
+        id: 'multiple_views',
+        label: 'マルチアングル',
+        description: 'Multiple Views',
+        icon: LayoutGrid,
+        prompt: 'multiple views, character sheet, split view, front side and back view'
     }
 ];
 
@@ -91,6 +98,3 @@ export const SHOT_ANGLES: FramingItem[] = [
     }
 ];
 
-// Compatibility exports
-export const FRAMING_ARCHETYPES = SHOT_TYPES;
-export const FRAMING_SETTINGS = SHOT_TYPES;

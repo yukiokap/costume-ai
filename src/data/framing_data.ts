@@ -9,15 +9,25 @@ export const FRAMING_DATA: Record<string, string[]> = {
         "vertical full body framing, balanced composition",
         "complete outfit display, full scale shot from a distance"
     ],
-    knee_up: [
-        "knee-up shot, focusing on the upper two-thirds of the body",
+    cowboy_shot: [
         "cowboy shot, medium wide view from the knees up",
+        "knee-up shot, focusing on the upper two-thirds of the body",
         "balanced medium shot, focusing on outfit details from hips to head",
         "three-quarter body shot, cinematic medium framing",
         "knee-up composition, professional fashion catalog style",
         "medium framing, steady eye-level shot from knees up",
         "detailed medium shot, emphasizing character and outfit core",
         "waist-to-knee transition shot, focusing on movement"
+    ],
+    upper_body: [
+        "upper body shot, focusing from the waist up",
+        "medium close-up, showcasing top and mid-section details",
+        "waist-up framing, professional fashion photography style",
+        "half body composition, eye-level view",
+        "upper half focus, cinematic lighting on garment textures",
+        "waist-up medium shot, balanced and clear",
+        "detailed upper body view, emphasizing torso and arms",
+        "upper body portrait style framing"
     ],
     portrait: [
         "portrait shot, focus on face and shoulders, blurred background",
@@ -28,6 +38,26 @@ export const FRAMING_DATA: Record<string, string[]> = {
         "profile portrait, side view of head and shoulders",
         "tightly framed headshot, emphasizing expression nuances",
         "cinematic portrait, dramatic shadows on facial features"
+    ],
+    close_up: [
+        "close-up shot on costume details, macro lens feel",
+        "extreme close-up on fabric texture and accessories",
+        "zoomed-in view, focusing on specific design elements",
+        "detailed close-up, sharp focus on intricate patterns",
+        "tight framing, emphasizing material quality and craftsmanship",
+        "macro photography style for outfit decorations",
+        "very close-up shot, shallow depth of field, detailed focus",
+        "magnified view of garment accents"
+    ],
+    multiple_views: [
+        "multiple views, character sheet, split view",
+        "front side and back view, multi-angle display",
+        "orthographic views, design reference sheet",
+        "triple view composition, showcasing all sides of the outfit",
+        "composite image with multiple perspectives",
+        "character design sheet, full turnaround views",
+        "split screen framing showing different angles",
+        "array of shots from various viewpoints"
     ],
     front: [
         "direct frontal view, symmetrical composition, eye level",

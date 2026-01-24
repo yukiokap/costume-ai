@@ -92,9 +92,10 @@ export const translations = {
             shot_type_presets: {
                 full_body: '全身',
                 cowboy_shot: '膝上',
-                waist_up: '腰上',
                 upper_body: '胸上',
-                close_up: '接写'
+                portrait: 'ポートレート',
+                close_up: '接写',
+                multiple_views: 'マルチアングル'
             },
             shot_angle_presets: {
                 front: '正面',
@@ -232,9 +233,10 @@ export const translations = {
             shot_type_presets: {
                 full_body: 'Full Body',
                 cowboy_shot: 'Cowboy Shot',
-                waist_up: 'Waist Up',
                 upper_body: 'Upper Body',
-                close_up: 'Close-up'
+                portrait: 'Portrait',
+                close_up: 'Close-up',
+                multiple_views: 'Multiple Views'
             },
             shot_angle_presets: {
                 front: 'Front',
