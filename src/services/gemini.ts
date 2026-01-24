@@ -310,7 +310,17 @@ export const generateSexyRangePrompts = async (
       const p = cleanV.split('[[PROMPT]]');
       const desc = p[0]?.replace('[[DESC]]', '').trim() || '';
       const promptText = p[1]?.trim() || '';
-      return { description: desc, prompt: promptText };
+
+      // Force framing tags into sexy range too
+      const forceType = parts.shotTypeId ? getFixedShotType(parts.shotTypeId) : '';
+      const forceAngle = parts.shotAngleId ? getFixedViewpoint(parts.shotAngleId) : '';
+      const framingTags = [forceType, forceAngle].filter(Boolean).join(', ');
+
+      const combinedPrompt = framingTags
+        ? sanitizePrompt(`${framingTags}, ${promptText}`)
+        : promptText;
+
+      return { description: desc, prompt: combinedPrompt };
     }).filter((v: { description: string, prompt: string }) => v.prompt.length > 0);
   } catch (err) {
     console.error("Sexy Range Error:", err);
