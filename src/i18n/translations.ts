@@ -94,8 +94,7 @@ export const translations = {
                 cowboy_shot: '膝上',
                 upper_body: '胸上',
                 portrait: 'ポートレート',
-                close_up: '接写',
-                multiple_views: 'マルチアングル'
+                close_up: '接写'
             },
             shot_angle_presets: {
                 front: '正面',
@@ -235,8 +234,7 @@ export const translations = {
                 cowboy_shot: 'Cowboy Shot',
                 upper_body: 'Upper Body',
                 portrait: 'Portrait',
-                close_up: 'Close-up',
-                multiple_views: 'Multiple Views'
+                close_up: 'Close-up'
             },
             shot_angle_presets: {
                 front: 'Front',

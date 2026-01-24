@@ -1,4 +1,4 @@
-import { Maximize, Scan, ZoomIn, Camera, ArrowDown, ArrowUp, ArrowRight, ArrowLeft, Zap, Focus, LayoutGrid, type LucideIcon } from 'lucide-react';
+import { Maximize, Scan, ZoomIn, Camera, ArrowDown, ArrowUp, ArrowRight, ArrowLeft, Zap, Focus, type LucideIcon } from 'lucide-react';
 
 export interface FramingItem {
     id: string;
@@ -43,13 +43,6 @@ export const SHOT_TYPES: FramingItem[] = [
         description: 'Close-up',
         icon: ZoomIn,
         prompt: 'close-up'
-    },
-    {
-        id: 'multiple_views',
-        label: 'マルチアングル',
-        description: 'Multiple Views',
-        icon: LayoutGrid,
-        prompt: 'multiple views, character sheet, split view, front side and back view'
     }
 ];
 

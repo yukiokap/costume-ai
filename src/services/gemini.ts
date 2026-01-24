@@ -30,11 +30,22 @@ const getFixedViewpoint = (angleId: string): string => {
     'front': 'from front',
     'side': 'from side',
     'back': 'from behind',
-    'dynamic': 'dynamic angle',
-    'low_angle': 'from below',
-    'high_angle': 'from above'
+    'above': 'from above',
+    'below': 'from below',
+    'dynamic': 'dynamic angle'
   };
   return mapping[angleId] || 'from front';
+};
+
+const getFixedShotType = (typeId: string): string => {
+  const mapping: Record<string, string> = {
+    'full_body': 'full body',
+    'cowboy_shot': 'cowboy shot',
+    'upper_body': 'upper body',
+    'portrait': 'portrait',
+    'close_up': 'close-up'
+  };
+  return mapping[typeId] || 'full body';
 };
 
 const sexyLevelDescription = (level: number) => {
@@ -190,8 +201,14 @@ export const generateCostumePrompts = async (
       const scene = (v.match(/\[\[SCENE\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim();
       const framing = (v.match(/\[\[FRAMING\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim();
 
-      // Final Force Viewpoint if ID exists
-      const forceViewpoint = parts.shotAngleId ? getFixedViewpoint(parts.shotAngleId) : framing;
+      // Force Fixed Framing if specific IDs are provided
+      const forceType = parts.shotTypeId ? getFixedShotType(parts.shotTypeId) : '';
+      const forceAngle = parts.shotAngleId ? getFixedViewpoint(parts.shotAngleId) : '';
+
+      let finalFramingRaw = framing;
+      if (forceType || forceAngle) {
+        finalFramingRaw = [forceType, forceAngle].filter(Boolean).join(', ');
+      }
 
       // Lighting/Atmosphere Filter (if disabled)
       const filterLighting = (text: string) => {
@@ -202,7 +219,7 @@ export const generateCostumePrompts = async (
       };
 
       const finalPose = filterLighting(pose);
-      const finalFraming = sanitizePrompt(forceViewpoint); // Stronger sanitization here
+      const finalFraming = sanitizePrompt(finalFramingRaw);
       const finalSceneRaw = filterLighting(scene);
 
       // White Background Hardware Force
