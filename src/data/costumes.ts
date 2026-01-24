@@ -8,7 +8,7 @@ import { BULK_ITEMS } from './items/bulk_expansion';
 import { MEGA_ITEMS } from './items/mega_expansion';
 import { ACCESSORIES_LIST, ACCESSORY_CATEGORIES, type AccessoryItem } from './items/accessories';
 import { ALL_BACKGROUNDS, BACKGROUND_CATEGORIES } from './backgrounds';
-import { POSE_ARCHETYPES } from './poses';
+import { POSE_STANCES } from './poses';
 import { ANIME_ITEMS } from './items/anime';
 
 export interface CostumeItem {
@@ -32,7 +32,7 @@ export const FASHION_CATEGORIES = [
     { id: 'anime', label: 'アニメ (Anime)' },
 ];
 
-export { ACCESSORIES_LIST, ACCESSORY_CATEGORIES, type AccessoryItem, ALL_BACKGROUNDS as BACKGROUND_SETTINGS, BACKGROUND_CATEGORIES, POSE_ARCHETYPES as POSE_SETTINGS };
+export { ACCESSORIES_LIST, ACCESSORY_CATEGORIES, type AccessoryItem, ALL_BACKGROUNDS as BACKGROUND_SETTINGS, BACKGROUND_CATEGORIES, POSE_STANCES as POSE_SETTINGS };
 
 // Helper to filter items by tag or presence in specific lists
 export const ALL_ITEMS = [

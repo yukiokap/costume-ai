@@ -11,5 +11,5 @@ export {
 } from './data/costumes';
 
 export {
-    EXPRESSION_SETTINGS
+    EXPRESSION_ARCHETYPES as EXPRESSION_SETTINGS
 } from './data/expressions';
