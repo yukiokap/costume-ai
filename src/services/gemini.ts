@@ -238,16 +238,16 @@ export const generateCostumePrompts = async (
         originalConcept: parts.concept,
         originalTheme: parts.theme,
 
-        // Correctly Map Selection IDs for History Display
-        originalShotType: parts.originalShotType || parts.shotType,
-        originalShotAngle: parts.originalShotAngle || parts.shotAngle,
-        originalPoseStance: parts.poseStanceId || parts.poseStance,
-        originalExpression: parts.expressionId || parts.expression,
+        originalShotType: parts.originalShotType || parts.shotTypeId,
+        originalShotAngle: parts.originalShotAngle || parts.shotAngleId,
+        originalPoseStance: parts.poseStanceId,
+        originalExpression: parts.expressionId,
 
         originalPoseDescription: parts.poseDescription,
         originalExpressionDescription: parts.expressionDescription,
         originalFramingDescription: parts.framingDescription,
 
+        // FORCE ORDER: [FRAMING], [COSTUME], [POSE], [SCENE]
         prompt: sanitizePrompt(`${finalFraming}, ${costume}, ${finalPose}, ${finalScene}`)
       };
     }).filter((r: GeneratedPrompt) => r.costume);
