@@ -199,18 +199,29 @@ export const generateCostumePrompts = async (
         .replace(/,\s*,/g, ',').trim();
       const pose = (v.match(/\[\[POSE\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim();
       const scene = (v.match(/\[\[SCENE\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim();
-      const framing = (v.match(/\[\[FRAMING\]\]\s*(.*?)(?=\[\[|$)/s)?.[1] || '').trim();
 
-      // Force Fixed Framing if specific IDs are provided
-      const forceType = parts.shotTypeId ? getFixedShotType(parts.shotTypeId) : '';
-      const forceAngle = parts.shotAngleId ? getFixedViewpoint(parts.shotAngleId) : '';
+      // --- BROADCAST FORCE FRAMING (Absolute Override) ---
+      const fixedShotMap: Record<string, string> = {
+        'full_body': 'full body',
+        'cowboy_shot': 'cowboy shot',
+        'upper_body': 'upper body',
+        'portrait': 'portrait',
+        'close_up': 'close-up'
+      };
 
-      let finalFramingRaw = framing;
-      if (forceType || forceAngle) {
-        finalFramingRaw = [forceType, forceAngle].filter(Boolean).join(', ');
-      }
+      const fixedAngleMap: Record<string, string> = {
+        'front': 'from front',
+        'side': 'from side',
+        'back': 'from behind',
+        'above': 'from above',
+        'below': 'from below',
+        'dynamic': 'dynamic angle'
+      };
 
-      // Lighting/Atmosphere Filter (if disabled)
+      const forcedType = parts.shotTypeId ? fixedShotMap[parts.shotTypeId] : '';
+      const forcedAngle = parts.shotAngleId ? fixedAngleMap[parts.shotAngleId] : '';
+      const forcedFraming = [forcedType, forcedAngle].filter(Boolean).join(', ');
+
       const filterLighting = (text: string) => {
         if (parts.enableLighting === false) {
           return text.replace(/\b(lighting|shadow|cinematic|atmosphere|bloom|glare|rays|soft light|hard light|realistic lighting|dramatic lighting|vibrant|moody|volumetric|ambient|realistic)\b/gi, '').trim();
@@ -219,36 +230,38 @@ export const generateCostumePrompts = async (
       };
 
       const finalPose = filterLighting(pose);
-      const finalFraming = sanitizePrompt(finalFramingRaw);
       const finalSceneRaw = filterLighting(scene);
-
-      // White Background Hardware Force
       const finalScene = parts.useWhiteBackground ? WHITE_BACKGROUND_PROMPT : sanitizePrompt(finalSceneRaw);
+
+      // ASSEMBLE FINAL PROMPT STRING (CRITICAL ORDER: [FORCED TAGS] -> [COSTUME] -> [POSE] -> [SCENE])
+      const finalItems = [];
+      if (forcedType) finalItems.push(forcedType);
+      if (forcedAngle) finalItems.push(forcedAngle);
+      if (costume) finalItems.push(costume);
+      if (finalPose) finalItems.push(finalPose);
+      if (finalScene) finalItems.push(finalScene);
 
       return {
         id: Math.random().toString(36).substring(2, 9),
         description: name || desc,
         costume: costume,
         composition: finalPose,
-        framing: finalFraming,
+        framing: forcedFraming,
         scene: finalScene,
         sexyLevel: parts.sexyLevel,
         isR18Mode: parts.isR18Mode,
         accessoryLevel: parts.accessoryLevel,
         originalConcept: parts.concept,
         originalTheme: parts.theme,
-
-        originalShotType: parts.originalShotType || parts.shotTypeId,
-        originalShotAngle: parts.originalShotAngle || parts.shotAngleId,
+        originalShotType: parts.shotTypeId,
+        originalShotAngle: parts.shotAngleId,
         originalPoseStance: parts.poseStanceId,
         originalExpression: parts.expressionId,
-
         originalPoseDescription: parts.poseDescription,
         originalExpressionDescription: parts.expressionDescription,
         originalFramingDescription: parts.framingDescription,
 
-        // FORCE ORDER: [FRAMING], [COSTUME], [POSE], [SCENE]
-        prompt: sanitizePrompt(`${finalFraming}, ${costume}, ${finalPose}, ${finalScene}`)
+        prompt: sanitizePrompt(finalItems.join(', '))
       };
     }).filter((r: GeneratedPrompt) => r.costume);
 
