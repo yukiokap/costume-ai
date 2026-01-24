@@ -14,7 +14,7 @@ import { ResultsSection } from './components/results/ResultsSection'
 import { SectionDivider } from './components/ui/SectionDivider'
 import { ALL_ITEMS } from './data/costumes'
 import { EXPRESSION_DATA } from './data/expressions_data'
-import { POSE_STANCE_DATA, POSE_MOOD_DATA } from './data/poses_data'
+import { POSE_STANCE_DATA } from './data/poses_data'
 import { FRAMING_DATA } from './data/framing_data'
 import { SettingsModal } from './components/settings/SettingsModal';
 import { FooterControls } from './components/layout/FooterControls';
@@ -25,6 +25,7 @@ import { useLanguage } from './contexts/LanguageContext'
 import { useHistory } from './contexts/HistoryContext'
 import { useSettings } from './contexts/SettingsContext'
 import { getErrorMessage } from './utils/errorHandler';
+import { getOptionPool, getEnhancedPosePool, getEnhancedExpressionPool } from './utils/promptUtils';
 
 // Fallback ID generator if crypto.randomUUID is missing
 const generateId = () => {
@@ -34,79 +35,10 @@ const generateId = () => {
   return Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
 };
 
-// --- Helper moved to top level to ensure scope clarity and prevent runtime ReferenceErrors ---
-const getOptionPool = (val: string, data: Record<string, string[]>) => {
-  if (!val || val === 'random') return 'randomly varied';
-  const list = data[val];
-  if (!list || list.length === 0) return val;
-  return list.join(' | ');
-};
 
-// --- Enhanced Pose Logic ---
-const getEnhancedPosePool = (stanceId: string, themeId: string) => {
-  let pool: string[] = [];
-
-  // 1. Add stance-specific techniques (Standing, Sitting, etc.)
-  if (stanceId !== 'random' && POSE_STANCE_DATA[stanceId]) {
-    pool.push(...POSE_STANCE_DATA[stanceId]);
-  }
-
-  // 2. Automatically mix in "Mood" based on the current Theme
-  const themeToMoodMap: Record<string, string> = {
-    'cute': 'cute',
-    'cool': 'cool',
-    'sexy': 'sexy',
-    'elegant': 'elegant',
-    'active': 'energetic',
-    'casual': 'natural',
-    'fantasy': 'heroic',
-    'pop': 'energetic',
-    'dark': 'cool'
-  };
-
-  const moodId = themeToMoodMap[themeId];
-  if (moodId && POSE_MOOD_DATA[moodId]) {
-    // Mix mood tags to give the stance a specific "flavor"
-    pool.push(...POSE_MOOD_DATA[moodId]);
-  }
-
-  if (pool.length === 0) return 'randomly varied and artistic posing';
-  return pool.join(' | ');
-};
-
-// --- Enhanced Expression Logic ---
-const getEnhancedExpressionPool = (expressionId: string, themeId: string) => {
-  let pool: string[] = [];
-
-  // 1. Add expression-specific tech (Happy, Cool, etc.)
-  if (expressionId !== 'random' && EXPRESSION_DATA[expressionId]) {
-    pool.push(...EXPRESSION_DATA[expressionId]);
-  }
-
-  // 2. Automatically mix in "Mood" based on the current Theme
-  const themeToMoodMap: Record<string, string> = {
-    'cute': 'cute',
-    'cool': 'cool',
-    'sexy': 'sexy',
-    'elegant': 'happy', // Elegant often pairs well with gentle happy smiles
-    'active': 'happy',
-    'casual': 'happy',
-    'fantasy': 'cool',
-    'pop': 'happy',
-    'dark': 'aggressive'
-  };
-
-  const moodId = themeToMoodMap[themeId];
-  if (moodId && EXPRESSION_DATA[moodId]) {
-    pool.push(...EXPRESSION_DATA[moodId]);
-  }
-
-  if (pool.length === 0) return 'professional model expression, varied emotions';
-  return pool.join(' | ');
-};
 
 function App() {
-  const { t, language } = useLanguage();
+  const { t, language: _language } = useLanguage();
   const {
     history,
     addToHistory,
@@ -239,9 +171,9 @@ function App() {
         theme,
         concept: getEffectiveConcept(false),
         poseStanceId: selectedPoseStance,
-        poseStance: getEnhancedPosePool(selectedPoseStance, theme),
+        poseStance: getEnhancedPosePool(selectedPoseStance, theme, POSE_STANCE_DATA),
         expressionId: selectedExpression,
-        expression: getEnhancedExpressionPool(selectedExpression, theme),
+        expression: getEnhancedExpressionPool(selectedExpression, theme, EXPRESSION_DATA),
         shotType: selectedShotType === 'random' ? 'randomly varied' : selectedShotType.replace(/_/g, ' '),
         shotAngle: selectedShotAngle === 'random' ? 'randomly varied' : getOptionPool(selectedShotAngle, FRAMING_DATA),
         shotTypeId: selectedShotType,
@@ -259,7 +191,7 @@ function App() {
         originalShotType: selectedShotType,
         originalShotAngle: selectedShotAngle,
       }
-      const results = await generateCostumePrompts(apiKey, parts, numPrompts, language)
+      const results = await generateCostumePrompts(apiKey, parts, numPrompts, _language)
 
       const newHistoryItems: HistoryItem[] = results.map(r => ({
         ...r,
@@ -352,9 +284,9 @@ function App() {
         theme,
         concept: getEffectiveConcept(true),
         poseStanceId: selectedPoseStance,
-        poseStance: getEnhancedPosePool(selectedPoseStance, theme),
+        poseStance: getEnhancedPosePool(selectedPoseStance, theme, POSE_STANCE_DATA),
         expressionId: selectedExpression,
-        expression: getEnhancedExpressionPool(selectedExpression, theme),
+        expression: getEnhancedExpressionPool(selectedExpression, theme, EXPRESSION_DATA),
         shotType: selectedShotType === 'random' ? 'randomly varied' : selectedShotType.replace(/_/g, ' '),
         shotAngle: selectedShotAngle === 'random' ? 'randomly varied' : getOptionPool(selectedShotAngle, FRAMING_DATA),
         shotTypeId: selectedShotType,
@@ -372,7 +304,7 @@ function App() {
         originalShotType: selectedShotType,
         originalShotAngle: selectedShotAngle,
       }
-      const results = await generateSexyRangePrompts(apiKey, parts, referencePrompt, language)
+      const results = await generateSexyRangePrompts(apiKey, parts, referencePrompt, _language)
 
       const newHistoryItems: HistoryItem[] = results.map(r => ({
         ...r,
