@@ -290,7 +290,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                     }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
                                             <div style={{ background: 'var(--cyan)', color: '#000', borderRadius: '4px', padding: '2px 6px', fontSize: '10px', fontWeight: 900 }}>HOW_TO</div>
-                                            <span style={{ fontSize: '11px', fontWeight: 900, color: 'var(--cyan)', letterSpacing: '0.1em' }}>APIキー取得ステップ</span>
+                                            <span style={{ fontSize: '11px', fontWeight: 900, color: 'var(--cyan)', letterSpacing: '0.1em' }}>{t('settings.api_step_title')}</span>
                                         </div>
 
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -324,7 +324,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                                     boxShadow: '0 0 15px rgba(0, 242, 255, 0.2)'
                                                 }}
                                             >
-                                                <ExternalLink size={14} /> Google AI Studio でキーを取得
+                                                <ExternalLink size={14} /> {t('settings.get_key_button')}
                                             </a>
                                         </div>
                                     </div>

@@ -68,7 +68,7 @@ export const SexySlider: React.FC = () => {
         }
     }, [isR18Mode]);
 
-    const costumeName = "ケーブルニットのマキシアンサンブル";
+    const costumeName = t('editor.visual_presets.sample_costume_name');
     const costumePrompt = "modest, high-neck, chunky cable knit sweater, floor-length wool skirt, long sleeves, terracotta color, heavy fabric, full coverage, from front, arm raised high, cheering, big smile, stoic expression, firm lips, upper body, from front, simple background, white background";
 
     const normalSamples = [

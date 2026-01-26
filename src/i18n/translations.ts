@@ -144,6 +144,7 @@ export const translations = {
             visual_presets: {
                 title: 'サンプルビジュアル',
                 subtitle: 'スタイルギャラリー',
+                sample_costume_name: 'ケーブルニットのマキシアンサンブル',
                 current_asset: '現在の衣装アセット',
                 copy_prompt: 'プロンプトをコピー',
                 prompt_copied: 'コピーしました！',
@@ -179,6 +180,8 @@ export const translations = {
             copy_scene: 'シチュエーションタグを含める',
             system_purge: 'システムパージ',
             language_interface: '言語設定',
+            api_step_title: 'APIキー取得ステップ',
+            get_key_button: 'Google AI Studio でキーを取得',
             get_api_key: 'APIキーを取得 (Google AI Studio)',
             purge_description: '履歴データのパージ (全削除)',
             purge_confirm: '本当によろしいですか？ 全ての生成履歴とお気に入りが完全に削除されます。(APIキーは保持されます)',
@@ -369,6 +372,7 @@ export const translations = {
             visual_presets: {
                 title: 'Sample Visuals',
                 subtitle: 'STYLE GALLERY',
+                sample_costume_name: 'Cable Knit Maxi Ensemble',
                 current_asset: 'Current Costume Asset',
                 copy_prompt: 'Copy Prompt',
                 prompt_copied: 'Copied!',
@@ -404,6 +408,8 @@ export const translations = {
             copy_scene: 'Include Scene Tags',
             system_purge: 'System Purge',
             language_interface: 'Interface language preference',
+            api_step_title: 'API Key Setup Steps',
+            get_key_button: 'Get Key at Google AI Studio',
             get_api_key: 'Get API Key (Google AI Studio)',
             purge_description: 'Purge History Data (Clear All)',
             purge_confirm: 'Are you sure? All generation history and favorites will be permanently deleted. (API Key is kept)',
