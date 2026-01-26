@@ -106,20 +106,25 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ onFinish }) => {
 
     // tooltip position logic
     const getTooltipStyle = () => {
+        const viewportWidth = window.innerWidth;
+        const defaultWidth = Math.min(viewportWidth - 40, 320);
+
         if (!targetRect) {
             return {
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                maxWidth: '400px',
-                width: '90%'
+                maxWidth: '90vw',
+                width: `${defaultWidth}px` // Use px to match other states for smoother transition
             };
         }
 
         const gap = 20;
         let top = 0;
         let left = 0;
-        const width = Math.min(window.innerWidth - 40, 320);
+
+        // Use the same width logic for consistency
+        const width = defaultWidth;
 
         // Basic positioning
         if (currentStep.position === 'bottom') {
@@ -132,7 +137,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ onFinish }) => {
 
         // Screen edge constraints
         if (left < 20) left = 20;
-        if (left + width > window.innerWidth - 20) left = window.innerWidth - width - 20;
+        if (left + width > viewportWidth - 20) left = viewportWidth - width - 20;
 
         // Vertical fallback
         if (top < 80) top = targetRect.bottom + gap; // if top flows offscreen, flip to bottom
@@ -140,13 +145,14 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ onFinish }) => {
 
         // Ensure within horizontal bounds with padding
         if (left < 10) left = 10;
-        if (left + width > window.innerWidth - 10) left = window.innerWidth - width - 10;
+        if (left + width > viewportWidth - 10) left = viewportWidth - width - 10;
 
         return {
             top: `${top}px`,
             left: `${left}px`,
             width: `${width}px`,
-            maxWidth: '90vw'
+            maxWidth: '90vw',
+            transform: 'none' // Reset transform explicitly when not centered
         };
     };
 
@@ -257,7 +263,8 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ onFinish }) => {
                             display: 'flex',
                             flexDirection: 'column',
                             gap: '16px',
-                            pointerEvents: 'auto'
+                            pointerEvents: 'auto',
+                            ...tooltipStyle // Apply style initially directly to prevent layout thrashing
                         }}
                     >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
