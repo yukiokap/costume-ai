@@ -1,7 +1,7 @@
-import React from 'react';
-import { Settings as SettingsIcon, Terminal } from 'lucide-react';
+import { Settings as SettingsIcon, Terminal, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useSettings } from '../../contexts/SettingsContext';
 
 interface HeaderProps {
     showSettings: boolean;
@@ -13,6 +13,7 @@ export const Header: React.FC<HeaderProps> = ({
     setShowSettings
 }) => {
     const { t, language } = useLanguage();
+    const { startTour } = useSettings();
 
     return (
         <header className="flex justify-between items-center mb-16 relative z-[60]">
@@ -41,6 +42,24 @@ export const Header: React.FC<HeaderProps> = ({
                     <span style={{ fontSize: '9px', fontWeight: 900, color: '#fff', letterSpacing: '0.1em' }}>AI COSTUME DESIGN ATELIER</span>
                     <span style={{ fontSize: '8px', color: 'rgba(255,255,255,0.5)', fontWeight: 800, letterSpacing: '0.05em' }}>CHARACTER SYNTHESIS SYSTEM v0.8.2</span>
                 </div>
+
+                <button
+                    onClick={() => startTour()}
+                    className="relative px-6 py-3 transition-all duration-300 group overflow-hidden"
+                    style={{
+                        background: 'rgba(234, 179, 8, 0.1)',
+                        border: '1px solid rgba(234, 179, 8, 0.3)',
+                        borderRadius: '8px',
+                        backdropFilter: 'blur(10px)',
+                    }}
+                >
+                    <div className="flex items-center gap-3 relative z-10">
+                        <Zap size={16} style={{ color: '#eab308' }} fill="#eab308" />
+                        <span style={{ color: '#fff' }} className="text-[11px] font-black uppercase tracking-[0.3em] group-hover:text-yellow-300 transition-colors">
+                            {t('results.start_tour')}
+                        </span>
+                    </div>
+                </button>
 
                 <button
                     id="tour-settings-btn"

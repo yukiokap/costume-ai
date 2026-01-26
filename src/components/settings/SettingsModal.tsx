@@ -31,7 +31,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     hasError = false
 }) => {
     const { t, language, setLanguage } = useLanguage();
-    const { apiKey, saveApiKey, startTour } = useSettings();
+    const { apiKey, saveApiKey } = useSettings();
 
     const [localKey, setLocalKey] = useState(apiKey);
     const [isSaving, setIsSaving] = useState(false);
@@ -445,28 +445,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                                 {t('settings.usage_guide_title')}
                                             </h3>
                                         </div>
-                                        <button
-                                            onClick={() => {
-                                                onClose();
-                                                setTimeout(() => startTour(), 300);
-                                            }}
-                                            style={{
-                                                fontSize: '10px',
-                                                fontWeight: 900,
-                                                color: '#000',
-                                                background: 'var(--cyan)',
-                                                border: 'none',
-                                                padding: '8px 16px',
-                                                borderRadius: '6px',
-                                                cursor: 'pointer',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '6px',
-                                                boxShadow: '0 0 15px rgba(0, 242, 255, 0.3)'
-                                            }}
-                                        >
-                                            <Zap size={12} fill="black" /> {t('results.start_tour')}
-                                        </button>
                                     </div>
 
                                     <UsageStep
@@ -503,31 +481,36 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                             desc={t('settings.usage_step_5_desc')}
                                         />
                                         <div style={{
-                                            marginTop: '12px',
+                                            marginTop: '16px',
                                             display: 'grid',
                                             gridTemplateColumns: 'repeat(4, 1fr)',
-                                            gap: '8px',
-                                            padding: '12px',
-                                            backgroundColor: 'rgba(0,0,0,0.3)',
-                                            borderRadius: '12px',
-                                            border: '1px solid rgba(255, 255, 255, 0.05)',
+                                            gap: '10px',
+                                            padding: '16px',
+                                            backgroundColor: 'rgba(0,0,0,0.4)',
+                                            borderRadius: '16px',
+                                            border: '1px solid rgba(0, 242, 255, 0.1)',
                                             pointerEvents: 'none'
                                         }}>
-                                            {[1, 2, 3, 4].map(i => (
-                                                <div key={i} style={{ aspectRatio: '3/4', borderRadius: '6px', overflow: 'hidden', position: 'relative' }}>
+                                            {[
+                                                { img: 'sexy_level_1.jpg', label: 'ELEGANT' },
+                                                { img: 'sexy_level_10.jpg', label: 'MAX SEXY' },
+                                                { img: 'accessory_level_10_sexy_1.jpg', label: 'ORNATE' },
+                                                { img: 'sexy_10_accessory_10.jpg', label: 'OVERDRIVE' }
+                                            ].map((sample, i) => (
+                                                <div key={i} style={{ aspectRatio: '3/4', borderRadius: '8px', overflow: 'hidden', position: 'relative', border: '1px solid rgba(255,255,255,0.05)' }}>
                                                     <img
-                                                        src={`/samples/${i === 1 ? 'sexy_level_1.jpg' : i === 2 ? 'sexy_level_10.jpg' : i === 3 ? 'accessory_level_10_sexy_1.jpg' : 'sexy_10_accessory_10.jpg'}`}
-                                                        style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.6 }}
+                                                        src={`/samples/${sample.img}`}
+                                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                                         alt="sample"
                                                     />
-                                                    {i === 1 && (
-                                                        <div style={{ position: 'absolute', inset: 0, border: '2px solid var(--cyan)', borderRadius: '6px' }} />
-                                                    )}
+                                                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.8))', padding: '4px', textAlign: 'center' }}>
+                                                        <span style={{ fontSize: '7px', fontWeight: 900, color: '#fff', letterSpacing: '0.05em' }}>{sample.label}</span>
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
-                                        <div style={{ fontSize: '10px', color: 'var(--cyan)', padding: '8px', textAlign: 'center', opacity: 0.8, fontWeight: 900 }}>
-                                            [ VISUAL_CATALOG_PREVIEW ]
+                                        <div style={{ fontSize: '9px', fontWeight: 900, color: 'var(--cyan)', padding: '10px', textAlign: 'center', letterSpacing: '0.2em' }}>
+                                            [ VISUAL_CATALOG_SAMPLES ]
                                         </div>
                                     </div>
                                 </motion.div>

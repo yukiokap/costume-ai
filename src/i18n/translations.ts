@@ -213,7 +213,7 @@ export const translations = {
             recent_results: '最新の生成結果',
             items_found_suffix: ' 件のアイテムが見つかりました',
             no_records: '記録がありません',
-            start_tour: 'システムツアーを開始',
+            start_tour: 'チュートリアルを開始',
             tour: {
                 welcome_title: 'SYSTEM ONLINE',
                 welcome_desc: 'Costume AIへようこそ。高度な衣装生成プロトコルの使用方法を案内します。',
@@ -469,7 +469,7 @@ export const translations = {
             recent_results: 'Recent Results',
             items_found_suffix: ' items found',
             no_records: 'No records found',
-            start_tour: 'START SYSTEM TOUR',
+            start_tour: 'START TUTORIAL',
             tour: {
                 welcome_title: 'SYSTEM ONLINE',
                 welcome_desc: 'Welcome to Costume AI. Initiating guidance sequence for advanced costume generation protocols.',
