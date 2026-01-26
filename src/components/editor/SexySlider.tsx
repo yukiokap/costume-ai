@@ -670,7 +670,7 @@ export const SexySlider: React.FC = () => {
                         position: 'relative',
                         '--tooltip-accent': 'var(--magenta)',
                         '--tooltip-accent-rgb': '255, 0, 255'
-                    }}>
+                    } as any}>
                         <div style={{
                             width: '16px',
                             height: '16px',
