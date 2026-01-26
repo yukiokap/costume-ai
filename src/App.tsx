@@ -60,12 +60,11 @@ function App() {
   const { hasSeenOnboarding, startTour } = useSettings();
   const [settingsTab, setSettingsTab] = useState<'config' | 'usage' | undefined>(undefined);
 
-  // Reset settings tab when closing settings
-  useEffect(() => {
-    if (!showSettings) {
-      setSettingsTab(undefined);
-    }
-  }, [showSettings]);
+  // Reset settings tab only when explicitly closing
+  const handleCloseSettings = () => {
+    setShowSettings(false);
+    setTimeout(() => setSettingsTab(undefined), 300); // Delay reset to prevent UI flash
+  };
 
   useEffect(() => {
     // Auto-start tour if not seen
@@ -120,7 +119,7 @@ function App() {
 
       <SettingsModal
         isOpen={showSettings}
-        onClose={() => setShowSettings(false)}
+        onClose={handleCloseSettings}
         hasError={isApiKeyError}
         initialTab={isApiKeyError ? "config" : settingsTab}
       />
