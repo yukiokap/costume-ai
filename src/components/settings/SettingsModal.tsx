@@ -47,7 +47,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             } else if (initialTab) {
                 setActiveTab(initialTab);
             } else if (!apiKey) {
-                setActiveTab('usage');
+                // Config tab now has the instructions, so it's better to default there
+                setActiveTab('config');
+                setTimeout(() => inputRef.current?.focus(), 100);
             } else {
                 setActiveTab('config');
             }
