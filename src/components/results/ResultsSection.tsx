@@ -306,39 +306,43 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                         </div>
 
                                         <div style={{
-                                            padding: '1rem 1.25rem 0',
+                                            padding: '1rem 1.25rem 0.5rem',
                                             display: 'flex',
+                                            flexWrap: 'wrap',
                                             justifyContent: 'space-between',
-                                            alignItems: 'center',
+                                            alignItems: 'flex-start',
+                                            gap: '0.75rem',
                                             zIndex: 20
                                         }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                                                 <button
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         if (historyItem) applyRemix(historyItem);
                                                     }}
+                                                    title="派生を作る / Remix"
                                                     style={{
                                                         background: 'rgba(234, 179, 8, 0.12)',
                                                         border: '1px solid rgba(234, 179, 8, 0.3)',
                                                         borderRadius: '10px',
-                                                        padding: '0 12px',
-                                                        height: '38px',
+                                                        padding: '0 10px',
+                                                        height: '34px',
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent: 'center',
-                                                        gap: '8px',
+                                                        gap: '6px',
                                                         color: '#eab308',
                                                         cursor: 'pointer',
                                                         transition: 'all 0.2s ease',
                                                         backdropFilter: 'blur(8px)',
-                                                        fontSize: '0.7rem',
+                                                        fontSize: '0.65rem',
                                                         fontWeight: 900,
-                                                        letterSpacing: '0.05em'
+                                                        letterSpacing: '0.05em',
+                                                        whiteSpace: 'nowrap'
                                                     }}
                                                 >
-                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" /></svg>
-                                                    <span>派生を作る</span>
+                                                    <Sparkles size={12} />
+                                                    <span>派生</span>
                                                 </button>
                                                 <button
                                                     onClick={(e) => {
@@ -349,8 +353,8 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                                         background: 'rgba(0,0,0,0.5)',
                                                         border: '1px solid rgba(255,255,255,0.1)',
                                                         borderRadius: '10px',
-                                                        width: '38px',
-                                                        height: '38px',
+                                                        width: '34px',
+                                                        height: '34px',
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent: 'center',
@@ -360,54 +364,57 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                                         backdropFilter: 'blur(8px)'
                                                     }}
                                                 >
-                                                    <Heart size={20} fill={isFavorite ? 'currentColor' : 'none'} />
+                                                    <Heart size={16} fill={isFavorite ? 'currentColor' : 'none'} />
                                                 </button>
                                             </div>
 
-                                            <div style={{ display: 'flex', gap: '0.6rem' }}>
+                                            <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                                                 {item.isR18Mode && (
                                                     <div style={{
-                                                        backgroundColor: 'rgba(255, 0, 255, 0.12)',
-                                                        border: '1px solid rgba(255, 0, 255, 0.3)',
-                                                        borderRadius: '8px',
-                                                        padding: '2px 8px',
+                                                        backgroundColor: 'rgba(255, 0, 255, 0.1)',
+                                                        border: '1px solid rgba(255, 0, 255, 0.2)',
+                                                        borderRadius: '6px',
+                                                        padding: '1px 6px',
                                                         display: 'flex',
                                                         flexDirection: 'column',
                                                         alignItems: 'center',
-                                                        minWidth: '45px'
+                                                        minWidth: '38px',
+                                                        backdropFilter: 'blur(4px)'
                                                     }}>
-                                                        <span style={{ fontSize: '0.45rem', color: '#ff00ff', fontWeight: 900, textTransform: 'uppercase' }}>OVERDRIVE</span>
-                                                        <span style={{ fontSize: '1rem', color: '#fff', fontWeight: 900, lineHeight: 1 }}>R18</span>
+                                                        <span style={{ fontSize: '0.4rem', color: '#ff00ff', fontWeight: 900, opacity: 0.8 }}>R18</span>
+                                                        <span style={{ fontSize: '0.85rem', color: '#fff', fontWeight: 900, lineHeight: 1 }}>ON</span>
                                                     </div>
                                                 )}
                                                 {item.sexyLevel !== undefined && (
                                                     <div style={{
-                                                        backgroundColor: 'rgba(244, 63, 94, 0.12)',
-                                                        border: '1px solid rgba(244, 63, 94, 0.3)',
-                                                        borderRadius: '8px',
-                                                        padding: '2px 8px',
+                                                        backgroundColor: 'rgba(244, 63, 94, 0.1)',
+                                                        border: '1px solid rgba(244, 63, 94, 0.2)',
+                                                        borderRadius: '6px',
+                                                        padding: '1px 6px',
                                                         display: 'flex',
                                                         flexDirection: 'column',
                                                         alignItems: 'center',
-                                                        minWidth: '45px'
+                                                        minWidth: '38px',
+                                                        backdropFilter: 'blur(4px)'
                                                     }}>
-                                                        <span style={{ fontSize: '0.45rem', color: '#f43f5e', fontWeight: 900, textTransform: 'uppercase' }}>SEXY</span>
-                                                        <span style={{ fontSize: '1rem', color: '#fff', fontWeight: 900, lineHeight: 1 }}>{item.sexyLevel}</span>
+                                                        <span style={{ fontSize: '0.4rem', color: '#f43f5e', fontWeight: 900, opacity: 0.8 }}>SEXY</span>
+                                                        <span style={{ fontSize: '0.85rem', color: '#fff', fontWeight: 900, lineHeight: 1 }}>{item.sexyLevel}</span>
                                                     </div>
                                                 )}
                                                 {item.accessoryLevel !== undefined && (
                                                     <div style={{
-                                                        backgroundColor: 'rgba(234, 179, 8, 0.12)',
-                                                        border: '1px solid rgba(234, 179, 8, 0.3)',
-                                                        borderRadius: '8px',
-                                                        padding: '2px 8px',
+                                                        backgroundColor: 'rgba(234, 179, 8, 0.1)',
+                                                        border: '1px solid rgba(234, 179, 8, 0.2)',
+                                                        borderRadius: '6px',
+                                                        padding: '1px 6px',
                                                         display: 'flex',
                                                         flexDirection: 'column',
                                                         alignItems: 'center',
-                                                        minWidth: '45px'
+                                                        minWidth: '38px',
+                                                        backdropFilter: 'blur(4px)'
                                                     }}>
-                                                        <span style={{ fontSize: '0.45rem', color: '#eab308', fontWeight: 900, textTransform: 'uppercase' }}>ACC</span>
-                                                        <span style={{ fontSize: '1rem', color: '#fff', fontWeight: 900, lineHeight: 1 }}>{item.accessoryLevel}</span>
+                                                        <span style={{ fontSize: '0.4rem', color: '#eab308', fontWeight: 900, opacity: 0.8 }}>ACC</span>
+                                                        <span style={{ fontSize: '0.85rem', color: '#fff', fontWeight: 900, lineHeight: 1 }}>{item.accessoryLevel}</span>
                                                     </div>
                                                 )}
                                             </div>
