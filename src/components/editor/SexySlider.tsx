@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Flame, Info, Heart, Eye, Sparkles, Zap, Lock, Shirt, Copy, Check, X } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -121,424 +122,430 @@ export const SexySlider: React.FC = () => {
             </AnimatePresence>
 
             {/* Enlarged Modal Overlay (Full Sample Gallery) */}
-            <AnimatePresence>
-                {showPreview && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        style={{
-                            position: 'fixed',
-                            top: 0,
-                            left: 0,
-                            width: '100vw',
-                            height: '100vh',
-                            backgroundColor: 'rgba(0, 0, 0, 0.95)',
-                            zIndex: 10000,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            padding: '20px',
-                            backdropFilter: 'blur(20px)'
-                        }}
-                        onClick={() => setShowPreview(false)}
-                    >
+            {createPortal(
+                <AnimatePresence>
+                    {showPreview && (
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                if (selectedSample) setSelectedSample(null);
-                            }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
                             style={{
-                                width: '100%',
-                                maxWidth: '1000px',
-                                maxHeight: '95vh',
+                                position: 'fixed',
+                                top: 0,
+                                left: 0,
+                                width: '100vw',
+                                height: '100vh',
+                                backgroundColor: 'rgba(0, 0, 0, 0.95)',
+                                zIndex: 10000,
                                 display: 'flex',
-                                flexDirection: 'column',
-                                gap: '1rem',
-                                overflowY: 'auto',
+                                alignItems: 'center',
+                                justifyContent: 'center',
                                 padding: '20px',
-                                position: 'relative',
-                                margin: 'auto'
+                                backdropFilter: 'blur(20px)'
                             }}
+                            onClick={() => setShowPreview(false)}
                         >
-                            <button
-                                onClick={() => setShowPreview(false)}
-                                style={{
-                                    position: 'absolute',
-                                    top: '20px',
-                                    right: '20px',
-                                    background: 'rgba(255, 255, 255, 0.1)',
-                                    border: 'none',
-                                    borderRadius: '50%',
-                                    width: '40px',
-                                    height: '40px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    cursor: 'pointer',
-                                    zIndex: 10,
-                                    color: '#fff',
-                                    transition: 'background 0.2s'
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (selectedSample) setSelectedSample(null);
                                 }}
-                                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
-                                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'}
-                            >
-                                <X size={24} />
-                            </button>
-
-                            <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '8px' }}>
-                                    <Sparkles color="#fbbf24" size={24} />
-                                    <h3 style={{ fontSize: '1.8rem', fontWeight: 900, letterSpacing: '0.25em', color: '#fff', textTransform: 'uppercase' }}>
-                                        {t('editor.visual_presets.subtitle')}
-                                    </h3>
-                                    <Sparkles color="#fbbf24" size={24} />
-                                </div>
-
-                                {/* Costume Information Area */}
-                                <div style={{
-                                    backgroundColor: 'rgba(255,255,255,0.03)',
-                                    border: '1px solid rgba(255,255,255,0.1)',
-                                    borderRadius: '16px',
-                                    padding: '16px',
-                                    maxWidth: '900px',
-                                    margin: '5px auto 15px',
-                                    textAlign: 'left',
+                                style={{
+                                    width: '100%',
+                                    maxWidth: '1000px',
+                                    maxHeight: '95vh',
                                     display: 'flex',
-                                    alignItems: 'flex-start',
-                                    gap: '16px',
+                                    flexDirection: 'column',
+                                    gap: '1rem',
+                                    overflowY: 'auto',
+                                    padding: '20px',
                                     position: 'relative',
-                                    flexWrap: 'wrap'
-                                }}>
-                                    <div style={{
-                                        width: '50px',
-                                        height: '50px',
-                                        borderRadius: '14px',
-                                        backgroundColor: 'rgba(34, 211, 238, 0.1)',
+                                    margin: 'auto'
+                                }}
+                            >
+                                <button
+                                    onClick={() => setShowPreview(false)}
+                                    style={{
+                                        position: 'absolute',
+                                        top: '20px',
+                                        right: '20px',
+                                        background: 'rgba(255, 255, 255, 0.1)',
+                                        border: 'none',
+                                        borderRadius: '50%',
+                                        width: '40px',
+                                        height: '40px',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
-                                        flexShrink: 0,
-                                        border: '1px solid var(--cyan)'
+                                        cursor: 'pointer',
+                                        zIndex: 10,
+                                        color: '#fff',
+                                        transition: 'background 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
+                                    onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'}
+                                >
+                                    <X size={24} />
+                                </button>
+
+                                <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '8px' }}>
+                                        <Sparkles color="#fbbf24" size={24} />
+                                        <h3 style={{ fontSize: '1.8rem', fontWeight: 900, letterSpacing: '0.25em', color: '#fff', textTransform: 'uppercase' }}>
+                                            {t('editor.visual_presets.subtitle')}
+                                        </h3>
+                                        <Sparkles color="#fbbf24" size={24} />
+                                    </div>
+
+                                    {/* Costume Information Area */}
+                                    <div style={{
+                                        backgroundColor: 'rgba(255,255,255,0.03)',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderRadius: '16px',
+                                        padding: '16px',
+                                        maxWidth: '900px',
+                                        margin: '5px auto 15px',
+                                        textAlign: 'left',
+                                        display: 'flex',
+                                        alignItems: 'flex-start',
+                                        gap: '16px',
+                                        position: 'relative',
+                                        flexWrap: 'wrap'
                                     }}>
-                                        <Shirt size={24} color="var(--cyan)" />
-                                    </div>
-                                    <div style={{ flex: 1, minWidth: '200px' }}>
-                                        <div style={{ fontSize: '14px', fontWeight: 900, color: 'var(--cyan)', letterSpacing: '0.12em', marginBottom: '4px' }}>
-                                            {t('editor.visual_presets.current_asset')}
-                                        </div>
-                                        <div style={{ fontSize: '18px', fontWeight: 900, color: '#fff', marginBottom: '8px', lineHeight: 1.2 }}>
-                                            {costumeName}
-                                        </div>
                                         <div style={{
-                                            fontSize: '11px',
-                                            opacity: 0.5,
-                                            fontStyle: 'italic',
-                                            lineHeight: '1.4',
-                                            color: 'rgba(255,255,255,0.7)',
-                                            maxHeight: '60px',
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                            display: '-webkit-box',
-                                            WebkitLineClamp: 3,
-                                            WebkitBoxOrient: 'vertical',
-                                            marginBottom: '12px'
-                                        }}>
-                                            {costumePrompt}
-                                        </div>
-
-                                        <motion.button
-                                            whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)' }}
-                                            whileTap={{ scale: 0.95 }}
-                                            onClick={handleCopyPrompt}
-                                            style={{
-                                                padding: '8px 16px',
-                                                borderRadius: '10px',
-                                                backgroundColor: copied ? '#4ade80' : 'rgba(255,255,255,0.05)',
-                                                border: `1px solid ${copied ? '#4ade80' : 'rgba(255,255,255,0.2)'}`,
-                                                color: copied ? '#000' : '#fff',
-                                                fontSize: '11px',
-                                                fontWeight: 900,
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '8px',
-                                                cursor: 'pointer',
-                                                transition: 'all 0.3s ease',
-                                                width: 'fit-content'
-                                            }}
-                                        >
-                                            {copied ? <Check size={14} /> : <Copy size={14} />}
-                                            {copied ? t('editor.visual_presets.prompt_copied') : t('editor.visual_presets.copy_prompt')}
-                                        </motion.button>
-                                    </div>
-                                </div>
-
-                                {/* Generation Settings (Recipe) */}
-                                <div style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
-                                    gap: '8px',
-                                    marginBottom: '20px',
-                                    padding: '0 5px'
-                                }}>
-                                    {[
-                                        { label: t('editor.visual_presets.label_costume'), value: t('editor.visual_presets.val_random'), icon: '🎲' },
-                                        { label: t('editor.visual_presets.label_concept'), value: t('editor.visual_presets.val_autumn'), icon: '🍂' },
-                                        { label: t('editor.visual_presets.label_pose'), value: t('editor.visual_presets.val_random'), icon: '💃' },
-                                        { label: t('editor.visual_presets.label_expression'), value: t('editor.visual_presets.val_random'), icon: '😊' },
-                                        { label: t('editor.visual_presets.label_framing'), value: t('editor.visual_presets.val_upper_front'), icon: '📐' },
-                                        { label: t('editor.visual_presets.label_scene'), value: t('editor.visual_presets.val_white_bg'), icon: '⬜' },
-                                    ].map((item, idx) => (
-                                        <div key={idx} style={{
-                                            backgroundColor: 'rgba(255,255,255,0.03)',
-                                            border: '1px solid rgba(255,255,255,0.1)',
-                                            borderRadius: '12px',
-                                            padding: '8px 10px',
+                                            width: '50px',
+                                            height: '50px',
+                                            borderRadius: '14px',
+                                            backgroundColor: 'rgba(34, 211, 238, 0.1)',
                                             display: 'flex',
-                                            flexDirection: 'column',
-                                            gap: '4px'
-                                        }}>
-                                            <div style={{ fontSize: '9px', fontWeight: 900, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em' }}>
-                                                {item.icon} {item.label}
-                                            </div>
-                                            <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--cyan)' }}>
-                                                {item.value}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Section 1: Standard Styles */}
-                            <div style={{ marginBottom: '1rem' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '0.8rem', paddingLeft: '5px' }}>
-                                    <div style={{ width: '4px', height: '16px', backgroundColor: 'var(--cyan)', borderRadius: '2px' }} />
-                                    <span style={{ fontSize: '11px', fontWeight: 900, color: 'var(--cyan)', letterSpacing: '0.2em' }}>{t('editor.visual_presets.standard_styles')}</span>
-                                </div>
-                                <div style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: 'repeat(4, 1fr)',
-                                    gap: '0.8rem'
-                                }}>
-                                    {normalSamples.map((sample) => (
-                                        <motion.div
-                                            key={sample.id}
-                                            whileHover={{ y: -8, scale: 1.02 }}
-                                            onClick={() => handleApplySample(sample)}
-                                            style={{
-                                                backgroundColor: 'rgba(255,255,255,0.02)',
-                                                borderRadius: '16px',
-                                                overflow: 'hidden',
-                                                border: `2px solid ${sample.color}33`,
-                                                cursor: 'pointer',
-                                                position: 'relative',
-                                                transition: 'all 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
-                                                boxShadow: '0 8px 25px rgba(0,0,0,0.4)',
-                                                aspectRatio: '3/4.5'
-                                            }}
-                                        >
-                                            <img src={sample.img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={sample.label} />
-                                            <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 40%, transparent 70%)` }} />
-                                            <div style={{ position: 'absolute', bottom: '0.8rem', width: '100%', textAlign: 'center', padding: '0 8px' }}>
-                                                <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#fff', letterSpacing: '0.1em', display: 'block' }}>{sample.label}</span>
-                                                <div style={{ fontSize: '0.55rem', fontWeight: 800, color: sample.color, marginTop: '2px' }}>S:{sample.sexy} / D:{sample.accessory}</div>
-                                            </div>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Section 2: Overdrive Styles (R18) */}
-                            <div style={{ position: 'relative' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '0.8rem', paddingLeft: '5px' }}>
-                                    <div style={{ width: '4px', height: '16px', backgroundColor: '#f43f5e', borderRadius: '2px' }} />
-                                    <span style={{ fontSize: '11px', fontWeight: 900, color: '#f43f5e', letterSpacing: '0.2em' }}>{t('editor.visual_presets.overdrive_styles')}</span>
-                                </div>
-                                <div style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: 'repeat(4, 1fr)',
-                                    gap: '0.8rem',
-                                    position: 'relative'
-                                }}>
-                                    {r18Samples.map((sample) => (
-                                        <motion.div
-                                            key={sample.id}
-                                            whileHover={isR18Mode ? { y: -8, scale: 1.02 } : {}}
-                                            onClick={() => isR18Mode && handleApplySample(sample)}
-                                            style={{
-                                                backgroundColor: 'rgba(244, 63, 94, 0.05)',
-                                                borderRadius: '16px',
-                                                overflow: 'hidden',
-                                                border: `2px solid ${isR18Mode ? 'rgba(244, 63, 94, 0.4)' : 'rgba(255,255,255,0.05)'}`,
-                                                cursor: isR18Mode ? 'pointer' : 'default',
-                                                position: 'relative',
-                                                transition: 'all 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
-                                                boxShadow: isR18Mode ? '0 8px 25px rgba(244, 63, 94, 0.2)' : 'none',
-                                                aspectRatio: '3/4.5',
-                                                filter: isR18Mode ? 'none' : 'blur(4px) grayscale(0.2)'
-                                            }}
-                                        >
-                                            <img src={sample.img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={sample.label} />
-                                            {isR18Mode && (
-                                                <>
-                                                    <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 40%, transparent 70%)` }} />
-                                                    <div style={{ position: 'absolute', bottom: '0.8rem', width: '100%', textAlign: 'center', padding: '0 8px' }}>
-                                                        <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#fff', letterSpacing: '0.1em', display: 'block' }}>{sample.label}</span>
-                                                        <div style={{ fontSize: '0.55rem', fontWeight: 800, color: sample.color, marginTop: '2px' }}>S:{sample.sexy} / D:{sample.accessory}</div>
-                                                    </div>
-                                                    <div style={{ position: 'absolute', top: '0.6rem', right: '0.6rem', backgroundColor: '#f43f5e', color: '#fff', fontSize: '0.6rem', fontWeight: 900, padding: '2px 6px', borderRadius: '4px' }}>
-                                                        <Zap size={8} fill="currentColor" /> R18
-                                                    </div>
-                                                </>
-                                            )}
-                                        </motion.div>
-                                    ))}
-
-                                    {!isR18Mode && (
-                                        <div style={{
-                                            position: 'absolute',
-                                            inset: 0,
-                                            backgroundColor: 'rgba(0,0,0,0.5)',
-                                            backdropFilter: 'blur(2px)',
-                                            zIndex: 5,
-                                            display: 'flex',
-                                            flexDirection: 'column',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            borderRadius: '16px',
-                                            gap: '10px',
-                                            border: '1px dashed rgba(244, 63, 94, 0.4)'
+                                            flexShrink: 0,
+                                            border: '1px solid var(--cyan)'
                                         }}>
-                                            <Lock size={20} color="#f43f5e" />
-                                            <div style={{ textAlign: 'center' }}>
-                                                <div style={{ color: '#f43f5e', fontSize: '12px', fontWeight: 900, letterSpacing: '0.1em' }}>{t('editor.visual_presets.locked_title')}</div>
-                                                <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '9px', marginTop: '2px' }}>{t('editor.visual_presets.locked_desc')}</div>
+                                            <Shirt size={24} color="var(--cyan)" />
+                                        </div>
+                                        <div style={{ flex: 1, minWidth: '200px' }}>
+                                            <div style={{ fontSize: '14px', fontWeight: 900, color: 'var(--cyan)', letterSpacing: '0.12em', marginBottom: '4px' }}>
+                                                {t('editor.visual_presets.current_asset')}
                                             </div>
+                                            <div style={{ fontSize: '18px', fontWeight: 900, color: '#fff', marginBottom: '8px', lineHeight: 1.2 }}>
+                                                {costumeName}
+                                            </div>
+                                            <div style={{
+                                                fontSize: '11px',
+                                                opacity: 0.5,
+                                                fontStyle: 'italic',
+                                                lineHeight: '1.4',
+                                                color: 'rgba(255,255,255,0.7)',
+                                                maxHeight: '60px',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                display: '-webkit-box',
+                                                WebkitLineClamp: 3,
+                                                WebkitBoxOrient: 'vertical',
+                                                marginBottom: '12px'
+                                            }}>
+                                                {costumePrompt}
+                                            </div>
+
+                                            <motion.button
+                                                whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)' }}
+                                                whileTap={{ scale: 0.95 }}
+                                                onClick={handleCopyPrompt}
+                                                style={{
+                                                    padding: '8px 16px',
+                                                    borderRadius: '10px',
+                                                    backgroundColor: copied ? '#4ade80' : 'rgba(255,255,255,0.05)',
+                                                    border: `1px solid ${copied ? '#4ade80' : 'rgba(255,255,255,0.2)'}`,
+                                                    color: copied ? '#000' : '#fff',
+                                                    fontSize: '11px',
+                                                    fontWeight: 900,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '8px',
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.3s ease',
+                                                    width: 'fit-content'
+                                                }}
+                                            >
+                                                {copied ? <Check size={14} /> : <Copy size={14} />}
+                                                {copied ? t('editor.visual_presets.prompt_copied') : t('editor.visual_presets.copy_prompt')}
+                                            </motion.button>
+                                        </div>
+                                    </div>
+
+                                    {/* Generation Settings (Recipe) */}
+                                    <div style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+                                        gap: '8px',
+                                        marginBottom: '20px',
+                                        padding: '0 5px'
+                                    }}>
+                                        {[
+                                            { label: t('editor.visual_presets.label_costume'), value: t('editor.visual_presets.val_random'), icon: '🎲' },
+                                            { label: t('editor.visual_presets.label_concept'), value: t('editor.visual_presets.val_autumn'), icon: '🍂' },
+                                            { label: t('editor.visual_presets.label_pose'), value: t('editor.visual_presets.val_random'), icon: '💃' },
+                                            { label: t('editor.visual_presets.label_expression'), value: t('editor.visual_presets.val_random'), icon: '😊' },
+                                            { label: t('editor.visual_presets.label_framing'), value: t('editor.visual_presets.val_upper_front'), icon: '📐' },
+                                            { label: t('editor.visual_presets.label_scene'), value: t('editor.visual_presets.val_white_bg'), icon: '⬜' },
+                                        ].map((item, idx) => (
+                                            <div key={idx} style={{
+                                                backgroundColor: 'rgba(255,255,255,0.03)',
+                                                border: '1px solid rgba(255,255,255,0.1)',
+                                                borderRadius: '12px',
+                                                padding: '8px 10px',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                gap: '4px'
+                                            }}>
+                                                <div style={{ fontSize: '9px', fontWeight: 900, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em' }}>
+                                                    {item.icon} {item.label}
+                                                </div>
+                                                <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--cyan)' }}>
+                                                    {item.value}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Section 1: Standard Styles */}
+                                <div style={{ marginBottom: '1rem' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '0.8rem', paddingLeft: '5px' }}>
+                                        <div style={{ width: '4px', height: '16px', backgroundColor: 'var(--cyan)', borderRadius: '2px' }} />
+                                        <span style={{ fontSize: '11px', fontWeight: 900, color: 'var(--cyan)', letterSpacing: '0.2em' }}>{t('editor.visual_presets.standard_styles')}</span>
+                                    </div>
+                                    <div style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: 'repeat(4, 1fr)',
+                                        gap: '0.8rem'
+                                    }}>
+                                        {normalSamples.map((sample) => (
+                                            <motion.div
+                                                key={sample.id}
+                                                whileHover={{ y: -8, scale: 1.02 }}
+                                                onClick={() => handleApplySample(sample)}
+                                                style={{
+                                                    backgroundColor: 'rgba(255,255,255,0.02)',
+                                                    borderRadius: '16px',
+                                                    overflow: 'hidden',
+                                                    border: `2px solid ${sample.color}33`,
+                                                    cursor: 'pointer',
+                                                    position: 'relative',
+                                                    transition: 'all 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
+                                                    boxShadow: '0 8px 25px rgba(0,0,0,0.4)',
+                                                    aspectRatio: '3/4.5'
+                                                }}
+                                            >
+                                                <img src={sample.img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={sample.label} />
+                                                <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 40%, transparent 70%)` }} />
+                                                <div style={{ position: 'absolute', bottom: '0.8rem', width: '100%', textAlign: 'center', padding: '0 8px' }}>
+                                                    <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#fff', letterSpacing: '0.1em', display: 'block' }}>{sample.label}</span>
+                                                    <div style={{ fontSize: '0.55rem', fontWeight: 800, color: sample.color, marginTop: '2px' }}>S:{sample.sexy} / D:{sample.accessory}</div>
+                                                </div>
+                                            </motion.div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Section 2: Overdrive Styles (R18) */}
+                                <div style={{ position: 'relative' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '0.8rem', paddingLeft: '5px' }}>
+                                        <div style={{ width: '4px', height: '16px', backgroundColor: '#f43f5e', borderRadius: '2px' }} />
+                                        <span style={{ fontSize: '11px', fontWeight: 900, color: '#f43f5e', letterSpacing: '0.2em' }}>{t('editor.visual_presets.overdrive_styles')}</span>
+                                    </div>
+                                    <div style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: 'repeat(4, 1fr)',
+                                        gap: '0.8rem',
+                                        position: 'relative'
+                                    }}>
+                                        {r18Samples.map((sample) => (
+                                            <motion.div
+                                                key={sample.id}
+                                                whileHover={isR18Mode ? { y: -8, scale: 1.02 } : {}}
+                                                onClick={() => isR18Mode && handleApplySample(sample)}
+                                                style={{
+                                                    backgroundColor: 'rgba(244, 63, 94, 0.05)',
+                                                    borderRadius: '16px',
+                                                    overflow: 'hidden',
+                                                    border: `2px solid ${isR18Mode ? 'rgba(244, 63, 94, 0.4)' : 'rgba(255,255,255,0.05)'}`,
+                                                    cursor: isR18Mode ? 'pointer' : 'default',
+                                                    position: 'relative',
+                                                    transition: 'all 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
+                                                    boxShadow: isR18Mode ? '0 8px 25px rgba(244, 63, 94, 0.2)' : 'none',
+                                                    aspectRatio: '3/4.5',
+                                                    filter: isR18Mode ? 'none' : 'blur(4px) grayscale(0.2)'
+                                                }}
+                                            >
+                                                <img src={sample.img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={sample.label} />
+                                                {isR18Mode && (
+                                                    <>
+                                                        <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 40%, transparent 70%)` }} />
+                                                        <div style={{ position: 'absolute', bottom: '0.8rem', width: '100%', textAlign: 'center', padding: '0 8px' }}>
+                                                            <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#fff', letterSpacing: '0.1em', display: 'block' }}>{sample.label}</span>
+                                                            <div style={{ fontSize: '0.55rem', fontWeight: 800, color: sample.color, marginTop: '2px' }}>S:{sample.sexy} / D:{sample.accessory}</div>
+                                                        </div>
+                                                        <div style={{ position: 'absolute', top: '0.6rem', right: '0.6rem', backgroundColor: '#f43f5e', color: '#fff', fontSize: '0.6rem', fontWeight: 900, padding: '2px 6px', borderRadius: '4px' }}>
+                                                            <Zap size={8} fill="currentColor" /> R18
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </motion.div>
+                                        ))}
+
+                                        {!isR18Mode && (
+                                            <div style={{
+                                                position: 'absolute',
+                                                inset: 0,
+                                                backgroundColor: 'rgba(0,0,0,0.5)',
+                                                backdropFilter: 'blur(2px)',
+                                                zIndex: 5,
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                borderRadius: '16px',
+                                                gap: '10px',
+                                                border: '1px dashed rgba(244, 63, 94, 0.4)'
+                                            }}>
+                                                <Lock size={20} color="#f43f5e" />
+                                                <div style={{ textAlign: 'center' }}>
+                                                    <div style={{ color: '#f43f5e', fontSize: '12px', fontWeight: 900, letterSpacing: '0.1em' }}>{t('editor.visual_presets.locked_title')}</div>
+                                                    <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '9px', marginTop: '2px' }}>{t('editor.visual_presets.locked_desc')}</div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
+
+            {/* Selected Sample Zoom Modal */}
+            {createPortal(
+                <AnimatePresence>
+                    {selectedSample && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            style={{
+                                position: 'fixed',
+                                top: 0,
+                                left: 0,
+                                width: '100vw',
+                                height: '100vh',
+                                backgroundColor: 'rgba(0, 0, 0, 0.98)',
+                                zIndex: 10001,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '20px',
+                                backdropFilter: 'blur(30px)'
+                            }}
+                            onClick={() => setSelectedSample(null)}
+                        >
+                            <motion.div
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.9, opacity: 0 }}
+                                onClick={(e) => e.stopPropagation()}
+                                style={{
+                                    width: '100%',
+                                    maxWidth: '500px',
+                                    maxHeight: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '20px',
+                                    alignItems: 'center',
+                                    margin: 'auto'
+                                }}
+                            >
+                                <div style={{
+                                    position: 'relative',
+                                    width: '100%',
+                                    aspectRatio: '3/4.5',
+                                    borderRadius: '20px',
+                                    overflow: 'hidden',
+                                    boxShadow: `0 0 50px ${selectedSample.color}40`,
+                                    border: `2px solid ${selectedSample.color}66`
+                                }}>
+                                    <img
+                                        src={selectedSample.img}
+                                        alt={selectedSample.label}
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                    />
+                                    <div style={{
+                                        position: 'absolute',
+                                        bottom: 0,
+                                        left: 0,
+                                        right: 0,
+                                        background: 'linear-gradient(transparent, rgba(0,0,0,0.9))',
+                                        padding: '30px 20px 20px',
+                                        textAlign: 'center'
+                                    }}>
+                                        <h2 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 900, letterSpacing: '0.1em', marginBottom: '4px' }}>{selectedSample.label}</h2>
+                                        <div style={{ color: selectedSample.color, fontWeight: 700, fontSize: '0.9rem' }}>
+                                            SEXY: {selectedSample.sexy} / DECO: {selectedSample.accessory}
+                                        </div>
+                                    </div>
+                                    {selectedSample.r18 && (
+                                        <div style={{ position: 'absolute', top: '20px', right: '20px', backgroundColor: '#f43f5e', color: '#fff', fontSize: '0.8rem', fontWeight: 900, padding: '4px 10px', borderRadius: '6px' }}>
+                                            <Zap size={14} fill="currentColor" /> R18
                                         </div>
                                     )}
                                 </div>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
 
-            {/* Selected Sample Zoom Modal */}
-            <AnimatePresence>
-                {selectedSample && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        style={{
-                            position: 'fixed',
-                            top: 0,
-                            left: 0,
-                            width: '100vw',
-                            height: '100vh',
-                            backgroundColor: 'rgba(0, 0, 0, 0.98)',
-                            zIndex: 10001,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            padding: '20px',
-                            backdropFilter: 'blur(30px)'
-                        }}
-                        onClick={() => setSelectedSample(null)}
-                    >
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.9, opacity: 0 }}
-                            onClick={(e) => e.stopPropagation()}
-                            style={{
-                                width: '100%',
-                                maxWidth: '500px',
-                                maxHeight: '100%',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: '20px',
-                                alignItems: 'center',
-                                margin: 'auto'
-                            }}
-                        >
-                            <div style={{
-                                position: 'relative',
-                                width: '100%',
-                                aspectRatio: '3/4.5',
-                                borderRadius: '20px',
-                                overflow: 'hidden',
-                                boxShadow: `0 0 50px ${selectedSample.color}40`,
-                                border: `2px solid ${selectedSample.color}66`
-                            }}>
-                                <img
-                                    src={selectedSample.img}
-                                    alt={selectedSample.label}
-                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                />
-                                <div style={{
-                                    position: 'absolute',
-                                    bottom: 0,
-                                    left: 0,
-                                    right: 0,
-                                    background: 'linear-gradient(transparent, rgba(0,0,0,0.9))',
-                                    padding: '30px 20px 20px',
-                                    textAlign: 'center'
-                                }}>
-                                    <h2 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 900, letterSpacing: '0.1em', marginBottom: '4px' }}>{selectedSample.label}</h2>
-                                    <div style={{ color: selectedSample.color, fontWeight: 700, fontSize: '0.9rem' }}>
-                                        SEXY: {selectedSample.sexy} / DECO: {selectedSample.accessory}
-                                    </div>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', width: '100%' }}>
+                                    <motion.button
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => setSelectedSample(null)}
+                                        style={{
+                                            padding: '16px',
+                                            borderRadius: '16px',
+                                            border: '1px solid rgba(255,255,255,0.1)',
+                                            background: 'rgba(255,255,255,0.05)',
+                                            color: '#fff',
+                                            fontWeight: 900,
+                                            fontSize: '0.9rem',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        {t('editor.visual_presets.close')}
+                                    </motion.button>
+                                    <motion.button
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={confirmApplySample}
+                                        style={{
+                                            padding: '16px',
+                                            borderRadius: '16px',
+                                            border: 'none',
+                                            background: selectedSample.color,
+                                            color: '#000',
+                                            fontWeight: 900,
+                                            fontSize: '0.9rem',
+                                            cursor: 'pointer',
+                                            boxShadow: `0 0 20px ${selectedSample.color}40`
+                                        }}
+                                    >
+                                        {t('editor.visual_presets.apply_style')}
+                                    </motion.button>
                                 </div>
-                                {selectedSample.r18 && (
-                                    <div style={{ position: 'absolute', top: '20px', right: '20px', backgroundColor: '#f43f5e', color: '#fff', fontSize: '0.8rem', fontWeight: 900, padding: '4px 10px', borderRadius: '6px' }}>
-                                        <Zap size={14} fill="currentColor" /> R18
-                                    </div>
-                                )}
-                            </div>
-
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', width: '100%' }}>
-                                <motion.button
-                                    whileTap={{ scale: 0.95 }}
-                                    onClick={() => setSelectedSample(null)}
-                                    style={{
-                                        padding: '16px',
-                                        borderRadius: '16px',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        background: 'rgba(255,255,255,0.05)',
-                                        color: '#fff',
-                                        fontWeight: 900,
-                                        fontSize: '0.9rem',
-                                        cursor: 'pointer'
-                                    }}
-                                >
-                                    {t('editor.visual_presets.close')}
-                                </motion.button>
-                                <motion.button
-                                    whileTap={{ scale: 0.95 }}
-                                    onClick={confirmApplySample}
-                                    style={{
-                                        padding: '16px',
-                                        borderRadius: '16px',
-                                        border: 'none',
-                                        background: selectedSample.color,
-                                        color: '#000',
-                                        fontWeight: 900,
-                                        fontSize: '0.9rem',
-                                        cursor: 'pointer',
-                                        boxShadow: `0 0 20px ${selectedSample.color}40`
-                                    }}
-                                >
-                                    {t('editor.visual_presets.apply_style')}
-                                </motion.button>
-                            </div>
+                            </motion.div>
                         </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <motion.div
