@@ -21,7 +21,7 @@ import { FooterControls } from './components/layout/FooterControls';
 import { HistoryOverlay } from './components/results/HistoryOverlay';
 import { OnboardingTour } from './components/guide/OnboardingTour';
 import { useSettings } from './contexts/SettingsContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 function App() {
   const {
@@ -58,6 +58,14 @@ function App() {
   } = useEditor();
 
   const { hasSeenOnboarding, startTour } = useSettings();
+  const [settingsTab, setSettingsTab] = useState<'config' | 'usage' | undefined>(undefined);
+
+  // Reset settings tab when closing settings
+  useEffect(() => {
+    if (!showSettings) {
+      setSettingsTab(undefined);
+    }
+  }, [showSettings]);
 
   useEffect(() => {
     // Auto-start tour if not seen
@@ -100,6 +108,7 @@ function App() {
 
       <OnboardingTour
         onFinish={() => {
+          setSettingsTab('config');
           setTimeout(() => setShowSettings(true), 500);
         }}
       />
@@ -113,7 +122,7 @@ function App() {
         isOpen={showSettings}
         onClose={() => setShowSettings(false)}
         hasError={isApiKeyError}
-        initialTab={isApiKeyError ? "config" : undefined}
+        initialTab={isApiKeyError ? "config" : settingsTab}
       />
 
       <main className="max-w-4xl mx-auto px-6 grid grid-cols-1 gap-12 relative z-10 items-start">

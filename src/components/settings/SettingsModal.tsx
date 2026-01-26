@@ -27,7 +27,7 @@ interface SettingsModalProps {
 export const SettingsModal: React.FC<SettingsModalProps> = ({
     isOpen,
     onClose,
-    initialTab = 'config',
+    initialTab,
     hasError = false
 }) => {
     const { t, language, setLanguage } = useLanguage();
@@ -35,7 +35,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
     const [localKey, setLocalKey] = useState(apiKey);
     const [isSaving, setIsSaving] = useState(false);
-    const [activeTab, setActiveTab] = useState<'config' | 'usage'>(initialTab);
+    const [activeTab, setActiveTab] = useState<'config' | 'usage'>(initialTab || 'config');
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -44,10 +44,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             if (hasError) {
                 setActiveTab('config');
                 setTimeout(() => inputRef.current?.focus(), 100);
+            } else if (initialTab) {
+                setActiveTab(initialTab);
             } else if (!apiKey) {
                 setActiveTab('usage');
             } else {
-                setActiveTab(initialTab);
+                setActiveTab('config');
             }
         }
     }, [isOpen, initialTab, hasError, apiKey]);
