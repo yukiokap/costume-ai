@@ -15,11 +15,10 @@ const STEPS: Step[] = [
     { targetId: 'none', titleKey: 'results.tour.welcome_title', descKey: 'results.tour.welcome_desc', position: 'center' },
     { targetId: 'tour-settings-btn', titleKey: 'results.tour.step1_title', descKey: 'results.tour.step1_desc', position: 'bottom' },
     { targetId: 'tour-main-input', titleKey: 'results.tour.step2_title', descKey: 'results.tour.step2_desc', position: 'bottom' },
-    { targetId: 'tour-sliders', titleKey: 'results.tour.step7_title', descKey: 'results.tour.step7_desc', position: 'bottom' },
-    { targetId: 'tour-overdrive-btn', titleKey: 'results.tour.step5_title', descKey: 'results.tour.step5_desc', position: 'bottom' },
-    { targetId: 'tour-generate-btn', titleKey: 'results.tour.step4_title', descKey: 'results.tour.step4_desc', position: 'bottom' },
+    { targetId: 'tour-sliders', titleKey: 'results.tour.step3_title', descKey: 'results.tour.step3_desc', position: 'bottom' },
+    { targetId: 'tour-overdrive-btn', titleKey: 'results.tour.step4_title', descKey: 'results.tour.step4_desc', position: 'bottom' },
+    { targetId: 'tour-generate-btn', titleKey: 'results.tour.step5_title', descKey: 'results.tour.step5_desc', position: 'bottom' },
     { targetId: 'tour-history-btn', titleKey: 'results.tour.step6_title', descKey: 'results.tour.step6_desc', position: 'bottom' },
-    { targetId: 'tour-favorites-btn', titleKey: 'results.tour.step8_title', descKey: 'results.tour.step8_desc', position: 'bottom' },
 ];
 
 interface OnboardingTourProps {
