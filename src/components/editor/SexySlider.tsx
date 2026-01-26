@@ -198,14 +198,15 @@ export const SexySlider: React.FC = () => {
                                     backgroundColor: 'rgba(255,255,255,0.03)',
                                     border: '1px solid rgba(255,255,255,0.1)',
                                     borderRadius: '16px',
-                                    padding: '20px 24px',
+                                    padding: '16px',
                                     maxWidth: '900px',
                                     margin: '5px auto 15px',
                                     textAlign: 'left',
                                     display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '24px',
-                                    position: 'relative'
+                                    alignItems: 'flex-start',
+                                    gap: '16px',
+                                    position: 'relative',
+                                    flexWrap: 'wrap'
                                 }}>
                                     <div style={{
                                         width: '50px',
@@ -220,11 +221,11 @@ export const SexySlider: React.FC = () => {
                                     }}>
                                         <Shirt size={24} color="var(--cyan)" />
                                     </div>
-                                    <div style={{ flex: 1 }}>
+                                    <div style={{ flex: 1, minWidth: '200px' }}>
                                         <div style={{ fontSize: '14px', fontWeight: 900, color: 'var(--cyan)', letterSpacing: '0.12em', marginBottom: '4px' }}>
                                             {t('editor.visual_presets.current_asset')}
                                         </div>
-                                        <div style={{ fontSize: '18px', fontWeight: 900, color: '#fff', marginBottom: '8px' }}>
+                                        <div style={{ fontSize: '18px', fontWeight: 900, color: '#fff', marginBottom: '8px', lineHeight: 1.2 }}>
                                             {costumeName}
                                         </div>
                                         <div style={{
@@ -233,17 +234,17 @@ export const SexySlider: React.FC = () => {
                                             fontStyle: 'italic',
                                             lineHeight: '1.4',
                                             color: 'rgba(255,255,255,0.7)',
-                                            maxHeight: '40px',
+                                            maxHeight: '60px',
                                             overflow: 'hidden',
                                             textOverflow: 'ellipsis',
                                             display: '-webkit-box',
-                                            WebkitLineClamp: 2,
-                                            WebkitBoxOrient: 'vertical'
+                                            WebkitLineClamp: 3,
+                                            WebkitBoxOrient: 'vertical',
+                                            marginBottom: '12px'
                                         }}>
                                             {costumePrompt}
                                         </div>
-                                    </div>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+
                                         <motion.button
                                             whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)' }}
                                             whileTap={{ scale: 0.95 }}
@@ -261,7 +262,7 @@ export const SexySlider: React.FC = () => {
                                                 gap: '8px',
                                                 cursor: 'pointer',
                                                 transition: 'all 0.3s ease',
-                                                minWidth: '160px'
+                                                width: 'fit-content'
                                             }}
                                         >
                                             {copied ? <Check size={14} /> : <Copy size={14} />}
