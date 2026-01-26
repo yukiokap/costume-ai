@@ -209,12 +209,15 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                             display: 'flex',
                             flexDirection: 'row',
                             alignItems: 'center',
-                            gap: '1rem'
+                            flexWrap: 'wrap',
+                            gap: '1rem',
+                            marginTop: '0.5rem'
                         }}>
                             <div style={{
                                 display: 'flex',
                                 flexDirection: 'row',
                                 alignItems: 'center',
+                                flexWrap: 'wrap',
                                 gap: '1rem',
                                 padding: '0.5rem 1rem',
                                 backgroundColor: 'rgba(255, 255, 255, 0.03)',
