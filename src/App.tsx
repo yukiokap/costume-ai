@@ -21,7 +21,7 @@ import { FooterControls } from './components/layout/FooterControls';
 import { HistoryOverlay } from './components/results/HistoryOverlay';
 import { OnboardingTour } from './components/guide/OnboardingTour';
 import { useSettings } from './contexts/SettingsContext';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 function App() {
   const {
@@ -48,7 +48,8 @@ function App() {
     handleCopyAll,
     handleSetCopyOptions,
     toggleFavorite,
-    removeFromHistory
+    removeFromHistory,
+    hasGeneratedBefore
   } = useAppLogic();
 
   const {
@@ -59,6 +60,17 @@ function App() {
 
   const { hasSeenOnboarding, startTour } = useSettings();
   const [settingsTab, setSettingsTab] = useState<'config' | 'usage' | undefined>(undefined);
+  const prevHasGenerated = useRef(hasGeneratedBefore);
+
+  useEffect(() => {
+    // Trigger Remix tour after first generation
+    if (!prevHasGenerated.current && hasGeneratedBefore) {
+      setTimeout(() => {
+        startTour('remix');
+      }, 3500); // After completion animation
+    }
+    prevHasGenerated.current = hasGeneratedBefore;
+  }, [hasGeneratedBefore, startTour]);
 
   // Reset settings tab only when explicitly closing
   const handleCloseSettings = () => {

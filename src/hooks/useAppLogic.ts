@@ -67,6 +67,9 @@ export const useAppLogic = () => {
     const [abortController, setAbortController] = useState<AbortController | null>(null);
     const [showCompletion, setShowCompletion] = useState(false);
     const [isApiKeyError, setIsApiKeyError] = useState(false);
+    const [hasGeneratedBefore, setHasGeneratedBefore] = useState(() => {
+        return localStorage.getItem('has_generated_before') === 'true';
+    });
 
     // R18 Mode CSS Class
     useEffect(() => {
@@ -248,6 +251,11 @@ export const useAppLogic = () => {
 
             setShowCompletion(true);
             setTimeout(() => setShowCompletion(false), 3000);
+
+            if (!hasGeneratedBefore) {
+                setHasGeneratedBefore(true);
+                localStorage.setItem('has_generated_before', 'true');
+            }
         } catch (error: any) {
             const isAbort = error.name === 'AbortError' || error.message?.toLowerCase().includes('abort');
             if (isAbort) return;
@@ -333,6 +341,11 @@ export const useAppLogic = () => {
 
             setShowCompletion(true);
             setTimeout(() => setShowCompletion(false), 3000);
+
+            if (!hasGeneratedBefore) {
+                setHasGeneratedBefore(true);
+                localStorage.setItem('has_generated_before', 'true');
+            }
         } catch (error: any) {
             const isAbort = error.name === 'AbortError' || error.message?.toLowerCase().includes('abort');
             if (isAbort) return;
@@ -402,6 +415,8 @@ export const useAppLogic = () => {
         showOverlay, setShowOverlay,
         showCompletion,
         isApiKeyError,
+        hasGeneratedBefore,
+        setHasGeneratedBefore,
 
         // Contexts & Settings
         t,

@@ -22,7 +22,9 @@ interface SettingsContextType {
     setHasSeenOnboarding: (val: boolean) => void;
     isTourOpen: boolean;
     setIsTourOpen: (val: boolean) => void;
-    startTour: () => void;
+    tourType: 'onboarding' | 'remix';
+    setTourType: (type: 'onboarding' | 'remix') => void;
+    startTour: (type?: 'onboarding' | 'remix') => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -47,13 +49,15 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
         return localStorage.getItem('has_seen_onboarding') === 'true';
     });
     const [isTourOpen, setIsTourOpen] = useState(false);
+    const [tourType, setTourType] = useState<'onboarding' | 'remix'>('onboarding');
 
     const setHasSeenOnboarding = (val: boolean) => {
         setHasSeenOnboardingState(val);
         localStorage.setItem('has_seen_onboarding', val ? 'true' : 'false');
     };
 
-    const startTour = () => {
+    const startTour = (type: 'onboarding' | 'remix' = 'onboarding') => {
+        setTourType(type);
         setIsTourOpen(true);
     };
 
@@ -81,6 +85,8 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
             setHasSeenOnboarding,
             isTourOpen,
             setIsTourOpen,
+            tourType,
+            setTourType,
             startTour
         }}>
             {children}

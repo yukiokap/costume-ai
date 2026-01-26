@@ -319,6 +319,7 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                         }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                                                 <button
+                                                    id={index === 0 ? "tour-remix-btn" : undefined}
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         if (historyItem) applyRemix(historyItem);

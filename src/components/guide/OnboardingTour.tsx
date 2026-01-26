@@ -11,7 +11,7 @@ interface Step {
     position: 'top' | 'bottom' | 'left' | 'right' | 'center';
 }
 
-const STEPS: Step[] = [
+const ONBOARDING_STEPS: Step[] = [
     { targetId: 'none', titleKey: 'results.tour.welcome_title', descKey: 'results.tour.welcome_desc', position: 'center' },
     { targetId: 'tour-settings-btn', titleKey: 'results.tour.step1_title', descKey: 'results.tour.step1_desc', position: 'bottom' },
     { targetId: 'tour-main-input', titleKey: 'results.tour.step2_title', descKey: 'results.tour.step2_desc', position: 'bottom' },
@@ -22,15 +22,23 @@ const STEPS: Step[] = [
     { targetId: 'tour-history-btn', titleKey: 'results.tour.step6_title', descKey: 'results.tour.step6_desc', position: 'bottom' },
 ];
 
+const REMIX_STEPS: Step[] = [
+    { targetId: 'none', titleKey: 'results.tour.first_gen_title', descKey: 'results.tour.first_gen_desc', position: 'center' },
+    { targetId: 'tour-remix-btn', titleKey: 'results.tour.remix_title', descKey: 'results.tour.remix_desc', position: 'bottom' },
+];
+
 interface OnboardingTourProps {
     onFinish?: () => void;
+    tourType?: 'onboarding' | 'remix';
 }
 
 export const OnboardingTour: React.FC<OnboardingTourProps> = ({ onFinish }) => {
     const { t } = useLanguage();
-    const { isTourOpen, setIsTourOpen, setHasSeenOnboarding } = useSettings();
+    const { isTourOpen, setIsTourOpen, setHasSeenOnboarding, tourType } = useSettings();
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
+
+    const steps = tourType === 'remix' ? REMIX_STEPS : ONBOARDING_STEPS;
 
     // Reset when tour opens
     useEffect(() => {
@@ -46,7 +54,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ onFinish }) => {
         let animationFrameId: number;
 
         const updateRect = () => {
-            const step = STEPS[currentStepIndex];
+            const step = steps[currentStepIndex];
             if (step.targetId === 'none') {
                 setTargetRect(null);
             } else {
@@ -73,7 +81,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ onFinish }) => {
         updateRect();
 
         // Scroll into view when step changes
-        const step = STEPS[currentStepIndex];
+        const step = steps[currentStepIndex];
         if (step.targetId !== 'none') {
             const element = document.getElementById(step.targetId);
             if (element) {
@@ -89,7 +97,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ onFinish }) => {
     }, [isTourOpen, currentStepIndex]);
 
     const handleNext = () => {
-        if (currentStepIndex < STEPS.length - 1) {
+        if (currentStepIndex < steps.length - 1) {
             setCurrentStepIndex(prev => prev + 1);
         } else {
             handleClose();
@@ -104,8 +112,8 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ onFinish }) => {
 
     if (!isTourOpen) return null;
 
-    const currentStep = STEPS[currentStepIndex];
-    const isLastStep = currentStepIndex === STEPS.length - 1;
+    const currentStep = steps[currentStepIndex];
+    const isLastStep = currentStepIndex === steps.length - 1;
 
     // tooltip position logic
     const getTooltipStyle = () => {
@@ -279,7 +287,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ onFinish }) => {
                                     color: 'var(--cyan)',
                                     letterSpacing: '0.1em'
                                 }}>
-                                    SYSTEM_GUIDE // STEP {currentStepIndex + 1}/{STEPS.length}
+                                    SYSTEM_GUIDE // STEP {currentStepIndex + 1}/{steps.length}
                                 </span>
                             </div>
                             <button
@@ -317,7 +325,7 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ onFinish }) => {
 
                         {/* Progress Dots moved to below text for better spacing */}
                         <div style={{ display: 'flex', gap: '4px', marginBottom: '8px' }}>
-                            {STEPS.map((_, idx) => (
+                            {steps.map((_: any, idx: number) => (
                                 <div
                                     key={idx}
                                     style={{

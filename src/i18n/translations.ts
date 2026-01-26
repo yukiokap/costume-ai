@@ -231,6 +231,10 @@ export const translations = {
                 step5_desc: '全ての準備が整ったら、中央のボタンをタップして生成シーケンスを開始します。',
                 step6_title: '履歴と派生 (Remix)',
                 step6_desc: '生成履歴やお気に入りはこちらから。各履歴の「派生（✨）」ボタンで、似たコンセプトの別Verも作れます。',
+                first_gen_title: '生成成功おめでとう！',
+                first_gen_desc: '初めての衣装生成プロトコルが完了しました。素晴らしいデザインの誕生です。',
+                remix_title: '無限のバリエーション',
+                remix_desc: '「派生」ボタンを押すと、その衣装のコンセプトを引き継ぎつつ、新しいデザインを生成できます。',
                 next: '次へ / NEXT',
                 finish: '完了 / FINISH',
                 skip: 'スキップ / SKIP'
@@ -489,6 +493,10 @@ export const translations = {
                 step5_desc: 'When ready, tap the center button to initiate the prompt generation sequence.',
                 step6_title: 'Archive & Remix',
                 step6_desc: 'Access history here. Use the "Remix (✨)" button on any result to generate a new variation.',
+                first_gen_title: 'GENERATION SUCCESS!',
+                first_gen_desc: 'Your first costume synthesis is complete. A stunning new design has been born.',
+                remix_title: 'Infinite Variations',
+                remix_desc: 'Tap "Remix" to generate new designs that inherit the core concept of this specific result.',
                 next: 'NEXT',
                 finish: 'FINISH',
                 skip: 'SKIP'
