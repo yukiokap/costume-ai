@@ -415,123 +415,120 @@ export const SexySlider: React.FC = () => {
                                     )}
                                 </div>
                             </div>
-                        </div>
-                    </div>
                         </motion.div>
-        </motion.div>
-    )
-}
-            </AnimatePresence >
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-    {/* Selected Sample Zoom Modal */ }
-    <AnimatePresence>
-{
-    selectedSample && (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            style={{
-                position: 'fixed',
-                inset: 0,
-                backgroundColor: 'rgba(0, 0, 0, 0.98)',
-                zIndex: 10001,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '20px',
-                backdropFilter: 'blur(30px)'
-            }}
-            onClick={() => setSelectedSample(null)}
-        >
-            <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                onClick={(e) => e.stopPropagation()}
-                style={{
-                    width: '100%',
-                    maxWidth: '500px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '20px',
-                    alignItems: 'center'
-                }}
-            >
-                <div style={{
-                    position: 'relative',
-                    width: '100%',
-                    aspectRatio: '3/4.5',
-                    borderRadius: '20px',
-                    overflow: 'hidden',
-                    boxShadow: `0 0 50px ${selectedSample.color}40`,
-                    border: `2px solid ${selectedSample.color}66`
-                }}>
-                    <img
-                        src={selectedSample.img}
-                        alt={selectedSample.label}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
-                    <div style={{
-                        position: 'absolute',
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        background: 'linear-gradient(transparent, rgba(0,0,0,0.9))',
-                        padding: '30px 20px 20px',
-                        textAlign: 'center'
-                    }}>
-                        <h2 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 900, letterSpacing: '0.1em', marginBottom: '4px' }}>{selectedSample.label}</h2>
-                        <div style={{ color: selectedSample.color, fontWeight: 700, fontSize: '0.9rem' }}>
-                            SEXY: {selectedSample.sexy} / DECO: {selectedSample.accessory}
-                        </div>
-                    </div>
-                    {selectedSample.r18 && (
-                        <div style={{ position: 'absolute', top: '20px', right: '20px', backgroundColor: '#f43f5e', color: '#fff', fontSize: '0.8rem', fontWeight: 900, padding: '4px 10px', borderRadius: '6px' }}>
-                            <Zap size={14} fill="currentColor" /> R18
-                        </div>
-                    )}
-                </div>
+            {/* Selected Sample Zoom Modal */}
+            <AnimatePresence>
+                {
+                    selectedSample && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            style={{
+                                position: 'fixed',
+                                inset: 0,
+                                backgroundColor: 'rgba(0, 0, 0, 0.98)',
+                                zIndex: 10001,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '20px',
+                                backdropFilter: 'blur(30px)'
+                            }}
+                            onClick={() => setSelectedSample(null)}
+                        >
+                            <motion.div
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.9, opacity: 0 }}
+                                onClick={(e) => e.stopPropagation()}
+                                style={{
+                                    width: '100%',
+                                    maxWidth: '500px',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '20px',
+                                    alignItems: 'center'
+                                }}
+                            >
+                                <div style={{
+                                    position: 'relative',
+                                    width: '100%',
+                                    aspectRatio: '3/4.5',
+                                    borderRadius: '20px',
+                                    overflow: 'hidden',
+                                    boxShadow: `0 0 50px ${selectedSample.color}40`,
+                                    border: `2px solid ${selectedSample.color}66`
+                                }}>
+                                    <img
+                                        src={selectedSample.img}
+                                        alt={selectedSample.label}
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                    />
+                                    <div style={{
+                                        position: 'absolute',
+                                        bottom: 0,
+                                        left: 0,
+                                        right: 0,
+                                        background: 'linear-gradient(transparent, rgba(0,0,0,0.9))',
+                                        padding: '30px 20px 20px',
+                                        textAlign: 'center'
+                                    }}>
+                                        <h2 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 900, letterSpacing: '0.1em', marginBottom: '4px' }}>{selectedSample.label}</h2>
+                                        <div style={{ color: selectedSample.color, fontWeight: 700, fontSize: '0.9rem' }}>
+                                            SEXY: {selectedSample.sexy} / DECO: {selectedSample.accessory}
+                                        </div>
+                                    </div>
+                                    {selectedSample.r18 && (
+                                        <div style={{ position: 'absolute', top: '20px', right: '20px', backgroundColor: '#f43f5e', color: '#fff', fontSize: '0.8rem', fontWeight: 900, padding: '4px 10px', borderRadius: '6px' }}>
+                                            <Zap size={14} fill="currentColor" /> R18
+                                        </div>
+                                    )}
+                                </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', width: '100%' }}>
-                    <motion.button
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setSelectedSample(null)}
-                        style={{
-                            padding: '16px',
-                            borderRadius: '16px',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            background: 'rgba(255,255,255,0.05)',
-                            color: '#fff',
-                            fontWeight: 900,
-                            fontSize: '0.9rem',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        {t('editor.visual_presets.close')}
-                    </motion.button>
-                    <motion.button
-                        whileTap={{ scale: 0.95 }}
-                        onClick={confirmApplySample}
-                        style={{
-                            padding: '16px',
-                            borderRadius: '16px',
-                            border: 'none',
-                            background: selectedSample.color,
-                            color: '#000',
-                            fontWeight: 900,
-                            fontSize: '0.9rem',
-                            cursor: 'pointer',
-                            boxShadow: `0 0 20px ${selectedSample.color}40`
-                        }}
-                    >
-                        {t('editor.visual_presets.apply_style')}
-                    </motion.button>
-                </div>
-            </motion.div>
-        </motion.div>
-    )
-}
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', width: '100%' }}>
+                                    <motion.button
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => setSelectedSample(null)}
+                                        style={{
+                                            padding: '16px',
+                                            borderRadius: '16px',
+                                            border: '1px solid rgba(255,255,255,0.1)',
+                                            background: 'rgba(255,255,255,0.05)',
+                                            color: '#fff',
+                                            fontWeight: 900,
+                                            fontSize: '0.9rem',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        {t('editor.visual_presets.close')}
+                                    </motion.button>
+                                    <motion.button
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={confirmApplySample}
+                                        style={{
+                                            padding: '16px',
+                                            borderRadius: '16px',
+                                            border: 'none',
+                                            background: selectedSample.color,
+                                            color: '#000',
+                                            fontWeight: 900,
+                                            fontSize: '0.9rem',
+                                            cursor: 'pointer',
+                                            boxShadow: `0 0 20px ${selectedSample.color}40`
+                                        }}
+                                    >
+                                        {t('editor.visual_presets.apply_style')}
+                                    </motion.button>
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    )
+                }
             </AnimatePresence >
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
