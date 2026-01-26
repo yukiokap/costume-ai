@@ -150,13 +150,15 @@ export const SexySlider: React.FC = () => {
                             }}
                             style={{
                                 width: '100%',
-                                height: '100%',
+                                maxWidth: '1000px',
+                                maxHeight: '95vh',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 gap: '1rem',
                                 overflowY: 'auto',
-                                padding: '40px 20px 20px',
-                                position: 'relative'
+                                padding: '20px',
+                                position: 'relative',
+                                margin: 'auto'
                             }}
                         >
                             <button
@@ -450,10 +452,12 @@ export const SexySlider: React.FC = () => {
                                 style={{
                                     width: '100%',
                                     maxWidth: '500px',
+                                    maxHeight: '100%',
                                     display: 'flex',
                                     flexDirection: 'column',
                                     gap: '20px',
-                                    alignItems: 'center'
+                                    alignItems: 'center',
+                                    margin: 'auto'
                                 }}
                             >
                                 <div style={{
