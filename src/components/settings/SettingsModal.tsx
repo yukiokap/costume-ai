@@ -38,23 +38,38 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     const [activeTab, setActiveTab] = useState<'config' | 'usage'>(initialTab || 'config');
     const inputRef = useRef<HTMLInputElement>(null);
 
+    // Initialize state when modal opens
     useEffect(() => {
         if (isOpen) {
             setLocalKey(apiKey);
+
+            // Determine which tab should be active
+            let targetTab: 'config' | 'usage' = 'config';
             if (hasError) {
-                setActiveTab('config');
-                setTimeout(() => inputRef.current?.focus(), 100);
+                targetTab = 'config';
             } else if (initialTab) {
-                setActiveTab(initialTab);
+                targetTab = initialTab;
             } else if (!apiKey) {
-                // Config tab now has the instructions, so it's better to default there
-                setActiveTab('config');
-                setTimeout(() => inputRef.current?.focus(), 100);
-            } else {
-                setActiveTab('config');
+                targetTab = 'config';
             }
+
+            setActiveTab(targetTab);
         }
     }, [isOpen, initialTab, hasError, apiKey]);
+
+    // Handle auto-focus separately to ensure it runs after tab switch/render
+    useEffect(() => {
+        if (isOpen && activeTab === 'config') {
+            // Auto-focus if there's an error OR if the key is missing (onboarding flow)
+            // We use a timeout to allow for the modal entry animation and tab switching to complete
+            if (hasError || !apiKey) {
+                const timer = setTimeout(() => {
+                    inputRef.current?.focus();
+                }, 400);
+                return () => clearTimeout(timer);
+            }
+        }
+    }, [isOpen, activeTab, hasError, apiKey]);
 
     const handleSave = () => {
         setIsSaving(true);
