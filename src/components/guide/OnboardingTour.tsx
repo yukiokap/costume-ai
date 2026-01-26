@@ -15,7 +15,7 @@ const STEPS: Step[] = [
     { targetId: 'none', titleKey: 'results.tour.welcome_title', descKey: 'results.tour.welcome_desc', position: 'center' },
     { targetId: 'tour-settings-btn', titleKey: 'results.tour.step1_title', descKey: 'results.tour.step1_desc', position: 'bottom' },
     { targetId: 'tour-main-input', titleKey: 'results.tour.step2_title', descKey: 'results.tour.step2_desc', position: 'bottom' },
-    { targetId: 'tour-sliders', titleKey: 'results.tour.step3_title', descKey: 'results.tour.step3_desc', position: 'top' },
+    { targetId: 'tour-sliders', titleKey: 'results.tour.step3_title', descKey: 'results.tour.step3_desc', position: 'bottom' },
     { targetId: 'tour-generate-btn', titleKey: 'results.tour.step4_title', descKey: 'results.tour.step4_desc', position: 'bottom' },
 ];
 
