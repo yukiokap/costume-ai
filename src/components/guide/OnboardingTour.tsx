@@ -19,7 +19,11 @@ const STEPS: Step[] = [
     { targetId: 'tour-generate-btn', titleKey: 'results.tour.step4_title', descKey: 'results.tour.step4_desc', position: 'top' },
 ];
 
-export const OnboardingTour: React.FC = () => {
+interface OnboardingTourProps {
+    onFinish?: () => void;
+}
+
+export const OnboardingTour: React.FC<OnboardingTourProps> = ({ onFinish }) => {
     const { t } = useLanguage();
     const { isTourOpen, setIsTourOpen, setHasSeenOnboarding } = useSettings();
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -92,6 +96,7 @@ export const OnboardingTour: React.FC = () => {
     const handleClose = () => {
         setIsTourOpen(false);
         setHasSeenOnboarding(true);
+        if (onFinish) onFinish();
     };
 
     if (!isTourOpen) return null;

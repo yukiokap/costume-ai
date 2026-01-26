@@ -98,7 +98,11 @@ function App() {
         )}
       </AnimatePresence>
 
-      <OnboardingTour />
+      <OnboardingTour
+        onFinish={() => {
+          setTimeout(() => setShowSettings(true), 500);
+        }}
+      />
 
       <Header
         showSettings={showSettings}
