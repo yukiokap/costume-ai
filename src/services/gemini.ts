@@ -156,12 +156,14 @@ export const generateCostumePrompts = async (
       *CRITICAL*: DO NOT output "camera" or "shot". Output only comma-separated tags.
       If the user says "海" for scene, output descriptive sea tags like "on beach, turquoise ocean, white sand, summer" in the [[SCENE]] block.
   
-      ${parts.theme === 'anime' ? `[ANIME FIDELITY RULE]
-      Since Theme is ANIME, you MUST prioritize the MANDATORY BASE DESIGN above all else.
-      CRITICAL: Output character information (character name, series name, hair, eyes, physical features) in the [[CHARACTER]] block.
-      The [[COSTUME]] block should ONLY contain clothing and accessories.
-      Ensure every iconic detail mentioned in the base design is reflected accurately. 
-      Do not change the colors or core structure of the character's signature look.` : ''}
+      ${parts.isCharacterMode ? `[CHARACTER FIDELITY PROTOCOL]
+      The user is requesting a SPECIFIC CHARACTER. Accuracy is the HIGHEST priority.
+      - RECALL: Recall the OFFICIAL design of the character (e.g., Hatsune Miku = turquoise hair/eyes).
+      - PERSISTENCE: Hair color, hair style, eye color, and unique physical features MUST remain 100% faithful to the source material.
+      - NO ALTERATIONS: NEVER change the character's signature traits (like changing turquoise hair to pink) unless explicitly instructed in the Concept.
+      - CHARACTER BLOCK: Place all physical traits (hair/eyes/skin/features) in the [[CHARACTER]] block.
+      - COSTUME BLOCK: Place ONLY the clothing and accessories in the [[COSTUME]] block.
+      - DESIGN PRIORITY: If a MANDATORY BASE DESIGN is provided, treat it as the absolute truth for the character's appearance.` : ''}
 
       ${sanitizedBaseDesign ? `[STRICT REMIX FIDELITY RULE]
       You are performing a DERIVATION (Remix).

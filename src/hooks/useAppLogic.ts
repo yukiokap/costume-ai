@@ -178,6 +178,26 @@ export const useAppLogic = () => {
         runSynthesisLogs();
 
         try {
+            // --- Character Fidelity Enhancement ---
+            // If the user manually types a known character name, fetch their predefined traits
+            // to prevent hallucinations (like Hatsune Miku having pink hair).
+            let characterFidelityDesign = '';
+            if (isCharacterMode && characterInput) {
+                const searchName = characterInput.toLowerCase().trim();
+                const matchedCharacter = ANIME_ITEMS.find(item =>
+                    item.jp.toLowerCase().includes(searchName) ||
+                    item.en.toLowerCase().includes(searchName) ||
+                    // Check for common variations like just "Miku" or "Hatsune"
+                    (searchName.length > 3 && (
+                        item.en.toLowerCase().includes(searchName) ||
+                        item.jp.toLowerCase().includes(searchName)
+                    ))
+                );
+                if (matchedCharacter) {
+                    characterFidelityDesign = matchedCharacter.en;
+                }
+            }
+
             const parts: DesignParts = {
                 theme: isCharacterMode ? 'anime' : theme,
                 concept: isCharacterMode ? (
@@ -185,7 +205,7 @@ export const useAppLogic = () => {
                         ? (characterCostume ? `${characterInput} wearing ${characterCostume}` : characterInput)
                         : getEffectiveConcept(false)
                 ) : getEffectiveConcept(false),
-                remixBaseDesign: remixBase?.costume || '',
+                remixBaseDesign: characterFidelityDesign || (remixBase?.costume || ''),
                 poseStanceId: selectedPoseStance,
                 poseStance: getEnhancedPosePool(selectedPoseStance, POSE_MOOD_DATA, POSE_STANCE_DATA, numPrompts),
                 expressionId: selectedExpression,
