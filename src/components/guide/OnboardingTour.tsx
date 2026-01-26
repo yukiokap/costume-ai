@@ -32,37 +32,52 @@ export const OnboardingTour: React.FC = () => {
         }
     }, [isTourOpen]);
 
-    // Track target position
+    // Track target position with requestAnimationFrame for smooth tracking during animations
     useEffect(() => {
         if (!isTourOpen) return;
+
+        let animationFrameId: number;
 
         const updateRect = () => {
             const step = STEPS[currentStepIndex];
             if (step.targetId === 'none') {
                 setTargetRect(null);
-                return;
-            }
-
-            const element = document.getElementById(step.targetId);
-            if (element) {
-                const rect = element.getBoundingClientRect();
-                setTargetRect(rect);
-                // Scroll if needed (simple)
-                if (rect.top < 0 || rect.bottom > window.innerHeight) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
             } else {
-                setTargetRect(null);
+                const element = document.getElementById(step.targetId);
+                if (element) {
+                    const rect = element.getBoundingClientRect();
+                    // Only update needs update to prevent excessive renders if values haven't changed
+                    setTargetRect(prev => {
+                        if (!prev) return rect;
+                        if (prev.top !== rect.top || prev.left !== rect.left || prev.width !== rect.width || prev.height !== rect.height) {
+                            return rect;
+                        }
+                        return prev;
+                    });
+                } else {
+                    // If target not found yet (e.g. modal opening), keep searching but don't clear unless intentional
+                    // setTargetRect(null); 
+                }
             }
+            animationFrameId = requestAnimationFrame(updateRect);
         };
 
+        // Start tracking
         updateRect();
-        window.addEventListener('resize', updateRect);
-        window.addEventListener('scroll', updateRect, true);
+
+        // Scroll into view when step changes
+        const step = STEPS[currentStepIndex];
+        if (step.targetId !== 'none') {
+            const element = document.getElementById(step.targetId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
 
         return () => {
-            window.removeEventListener('resize', updateRect);
-            window.removeEventListener('scroll', updateRect, true);
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
         };
     }, [isTourOpen, currentStepIndex]);
 
