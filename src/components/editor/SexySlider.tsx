@@ -663,9 +663,38 @@ export const SexySlider: React.FC = () => {
             </div>
 
             <div className="sexy-slider-header" style={{ position: 'relative', display: 'flex', alignItems: 'center', marginTop: '8px', flexWrap: 'wrap', gap: '8px' }}>
-                <label className="sexy-slider-label" style={{ flex: '1 1 auto', fontSize: '13px', minWidth: '200px' }}>
+                <label className="sexy-slider-label" style={{ flex: '1 1 auto', fontSize: '13px', minWidth: '200px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <Flame size={16} className="icon-orange" />
-                    SEXY_LEVEL / {t('editor.sexy_level')}
+                    <span>SEXY_LEVEL / {t('editor.sexy_level')}</span>
+                    <div className="overdrive-tooltip-container" style={{
+                        position: 'relative',
+                        '--tooltip-accent': 'var(--magenta)',
+                        '--tooltip-accent-rgb': '255, 0, 255'
+                    }}>
+                        <div style={{
+                            width: '16px',
+                            height: '16px',
+                            borderRadius: '50%',
+                            border: '1px solid rgba(255,255,255,0.2)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '10px',
+                            cursor: 'help',
+                            opacity: 0.6
+                        }}>?</div>
+                        <div className="overdrive-tooltip-bubble left-aligned" style={{
+                            width: 'min(300px, 80vw)',
+                            whiteSpace: 'normal',
+                            bottom: 'calc(100% + 15px)',
+                            left: '0',
+                            transform: 'none',
+                            pointerEvents: 'none'
+                        }}>
+                            <div className="tooltip-glitch-line" />
+                            {t('editor.sexy_tip')}
+                        </div>
+                    </div>
                 </label>
 
                 <div className="flex items-center gap-4" style={{ flex: '1 1 auto', justifyContent: 'flex-end', flexWrap: 'wrap' }}>

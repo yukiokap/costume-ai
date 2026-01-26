@@ -130,6 +130,8 @@ export const translations = {
             accessory_hint_low: 'L1-3: シンプル・純粋',
             accessory_hint_mid: 'L4-7: 華やか・装飾的',
             accessory_hint_high: 'L8-10: 豪華・絢爛な装飾',
+            sexy_tip: '【生成のコツ】\nレベル10の極端な露出を狙う場合、単にレベルを上げるだけでなく、「コンセプト」欄に胸部や下半身の特定の状態（例：microskirt, pasties）を追記すると、AIがより意図を汲み取りやすくなります。',
+            accessory_tip: '【生成のコツ】\nレベル10に設定すると、衣装本体よりもアクセサリーの主張が激しくなることがあります。特定の小物を狙いたい場合は、レベル5〜7程度に抑えつつ、「コンセプト」欄にその単語（例：garter belt, anklet）を入力するとバランスが良くなります。',
             overdrive_hint: 'リミッターを解除し、より過激で直接的な表現（R18）の生成を許可します。',
             batch_count: '生成枚数',
             scene_presets: {
@@ -379,6 +381,8 @@ export const translations = {
             accessory_hint_low: 'L1-3: Simple & Pure',
             accessory_hint_mid: 'L4-7: Ornate & Decorative',
             accessory_hint_high: 'L8-10: Luxurious & Extravagant',
+            sexy_tip: '[Pro Tip]\nFor extreme exposure at Level 10, try adding specific keywords like "microskirt" or "pasties" to the primary Concept field. This helps the AI focus on your specific vision while maintaining high intensity.',
+            accessory_tip: '[Pro Tip]\nAt Level 10, accessories might overpower the outfit. To target specific items (e.g., garter belt), try keeping Level at 5-7 and adding the specific word to the Concept field for a better balance.',
             overdrive_hint: 'Disable safety protocols for explicit aesthetic synthesis (R18 mode).',
             batch_count: 'Batch Count',
             scene_presets: {

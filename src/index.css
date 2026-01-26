@@ -1310,7 +1310,7 @@ body {
   transform: translateX(-50%) translateY(-10px);
   background: rgba(10, 2, 8, 0.95);
   backdrop-filter: blur(10px);
-  border: 1px solid var(--magenta);
+  border: 1px solid var(--tooltip-accent, var(--magenta));
   padding: 0.75rem 1rem;
   border-radius: 8px;
   width: 220px;
@@ -1322,7 +1322,7 @@ body {
   opacity: 0;
   transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
   z-index: 1000;
-  box-shadow: 0 10px 30px rgba(255, 0, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(var(--tooltip-accent-rgb, 255, 0, 255), 0.2);
 }
 
 .overdrive-tooltip-container:hover .overdrive-tooltip-bubble {
@@ -1336,8 +1336,8 @@ body {
   left: 10px;
   width: 30px;
   height: 2px;
-  background: var(--magenta);
-  box-shadow: 0 0 10px var(--magenta);
+  background: var(--tooltip-accent, var(--magenta));
+  box-shadow: 0 0 10px var(--tooltip-accent, var(--magenta));
 }
 
 .overdrive-tooltip-bubble::after {
@@ -1348,7 +1348,12 @@ body {
   transform: translateX(-50%);
   border-width: 6px;
   border-style: solid;
-  border-color: var(--magenta) transparent transparent transparent;
+  border-color: var(--tooltip-accent, var(--magenta)) transparent transparent transparent;
+}
+
+.overdrive-tooltip-bubble.left-aligned::after {
+  left: 10px;
+  transform: none;
 }
 
 /* Compact Mode Toggle */

@@ -11,9 +11,39 @@ export const AccessorySlider: React.FC = () => {
     return (
         <div className="sexy-slider-container">
             <div className="sexy-slider-header" style={{ position: 'relative', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-                <label className="sexy-slider-label" style={{ color: '#f59e0b', flex: '1 1 auto', fontSize: '13px', minWidth: '200px' }}>
+                <label className="sexy-slider-label" style={{ color: '#f59e0b', flex: '1 1 auto', fontSize: '13px', minWidth: '200px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <Gem size={16} className="icon-orange" style={{ color: '#f59e0b' }} />
-                    DECORATIVE_LEVEL / {t('editor.accessory_level')}
+                    <span>DECORATIVE_LEVEL / {t('editor.accessory_level')}</span>
+                    <div className="overdrive-tooltip-container" style={{
+                        position: 'relative',
+                        // @ts-ignore
+                        '--tooltip-accent': '#f59e0b',
+                        '--tooltip-accent-rgb': '245, 158, 11'
+                    } as any}>
+                        <div style={{
+                            width: '16px',
+                            height: '16px',
+                            borderRadius: '50%',
+                            border: '1px solid rgba(245, 158, 11, 0.3)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '10px',
+                            cursor: 'help',
+                            opacity: 0.8,
+                            color: '#f59e0b'
+                        }}>?</div>
+                        <div className="overdrive-tooltip-bubble left-aligned" style={{
+                            width: 'min(300px, 80vw)',
+                            whiteSpace: 'normal',
+                            bottom: 'calc(100% + 15px)',
+                            left: '0',
+                            transform: 'none'
+                        }}>
+                            <div className="tooltip-glitch-line" />
+                            {t('editor.accessory_tip')}
+                        </div>
+                    </div>
                 </label>
 
                 <div className="flex items-center gap-4" style={{ flex: '1 1 auto', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
