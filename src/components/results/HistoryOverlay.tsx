@@ -573,6 +573,11 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                                 {item.description.replace(/^[:\s\u30fb]+/, '')}
                                             </h3>
 
+                                            <div style={{ fontSize: '9px', fontWeight: 900, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.05em', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                <div style={{ width: '8px', height: '1px', backgroundColor: 'rgba(255,255,255,0.2)' }} />
+                                                {t('editor.visual_presets.recipe_title').toUpperCase()}
+                                            </div>
+
                                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
                                                 {item.isCharacterMode && item.character && (
                                                     <div className="tag-container" style={{ margin: 0 }}>

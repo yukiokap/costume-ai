@@ -235,23 +235,6 @@ export const SexySlider: React.FC = () => {
                                             <div style={{ fontSize: '18px', fontWeight: 900, color: '#fff', marginBottom: '8px', lineHeight: 1.2 }}>
                                                 {costumeName}
                                             </div>
-                                            <div style={{
-                                                fontSize: '11px',
-                                                opacity: 0.5,
-                                                fontStyle: 'italic',
-                                                lineHeight: '1.4',
-                                                color: 'rgba(255,255,255,0.7)',
-                                                maxHeight: '60px',
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis',
-                                                display: '-webkit-box',
-                                                WebkitLineClamp: 3,
-                                                WebkitBoxOrient: 'vertical',
-                                                marginBottom: '12px'
-                                            }}>
-                                                {costumePrompt}
-                                            </div>
-
                                             <motion.button
                                                 whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)' }}
                                                 whileTap={{ scale: 0.95 }}
@@ -269,7 +252,8 @@ export const SexySlider: React.FC = () => {
                                                     gap: '8px',
                                                     cursor: 'pointer',
                                                     transition: 'all 0.3s ease',
-                                                    width: 'fit-content'
+                                                    width: 'fit-content',
+                                                    marginTop: '8px'
                                                 }}
                                             >
                                                 {copied ? <Check size={14} /> : <Copy size={14} />}
@@ -279,6 +263,12 @@ export const SexySlider: React.FC = () => {
                                     </div>
 
                                     {/* Generation Settings (Recipe) */}
+                                    <div style={{ textAlign: 'left', marginLeft: '5px', marginBottom: '8px' }}>
+                                        <div style={{ fontSize: '11px', fontWeight: 900, color: '#f0abfc', letterSpacing: '0.1em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                            <div style={{ width: '12px', height: '2px', backgroundColor: '#f0abfc', borderRadius: '1px' }} />
+                                            {t('editor.visual_presets.recipe_title')}
+                                        </div>
+                                    </div>
                                     <div style={{
                                         display: 'grid',
                                         gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',

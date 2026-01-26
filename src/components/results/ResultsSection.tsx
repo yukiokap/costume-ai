@@ -429,6 +429,11 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                                     {item.description.replace(/^[:\s\u30fb]+/, '')}
                                                 </h3>
 
+                                                <div style={{ fontSize: '9px', fontWeight: 900, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.05em', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                    <div style={{ width: '8px', height: '1px', backgroundColor: 'rgba(255,255,255,0.2)' }} />
+                                                    {t('editor.visual_presets.recipe_title').toUpperCase()}
+                                                </div>
+
                                                 {item.isCharacterMode && item.character && (
                                                     <div className="tag-container" style={{ marginBottom: '0.5rem' }}>
                                                         <span style={{ fontSize: '0.55rem', color: 'rgba(255, 0, 128, 0.5)', fontWeight: 900, letterSpacing: '0.05em', marginRight: '0.5rem' }}>{t('results.tags.character')}</span>
