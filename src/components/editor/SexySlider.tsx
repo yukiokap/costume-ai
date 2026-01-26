@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Flame, Info, Heart, Eye, Sparkles, Zap, Lock, Shirt, Copy, Check, X } from 'lucide-react';
+import { Flame, Info, Heart, Eye, Sparkles, Zap, Lock, X } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useEditor } from '../../contexts/EditorContext';
 
@@ -56,8 +56,7 @@ export const SexySlider: React.FC = () => {
     const { sexyLevel: value, setSexyLevel: onChange, setAccessoryLevel: onAccChange, isR18Mode, setIsR18Mode: onR18Change } = useEditor();
     const [showLaser, setShowLaser] = useState(false);
     const [showPreview, setShowPreview] = useState(false);
-    const [selectedSample, setSelectedSample] = useState<typeof normalSamples[0] | null>(null);
-    const [copied, setCopied] = useState(false);
+    const [selectedSample, setSelectedSample] = useState<any>(null);
 
     useEffect(() => {
         if (isR18Mode) {
@@ -68,9 +67,6 @@ export const SexySlider: React.FC = () => {
             setShowLaser(false);
         }
     }, [isR18Mode]);
-
-    const costumeName = t('editor.visual_presets.sample_costume_name');
-    const costumePrompt = "modest, high-neck, chunky cable knit sweater, floor-length wool skirt, long sleeves, terracotta color, heavy fabric, full coverage, from front, arm raised high, cheering, big smile, stoic expression, firm lips, upper body, from front, simple background, white background";
 
     const normalSamples = [
         { id: 'base', label: 'NORMAL', sexy: 1, accessory: 1, img: "/samples/sexy_level_1.jpg", color: 'var(--cyan)', r18: false },
@@ -86,7 +82,7 @@ export const SexySlider: React.FC = () => {
         { id: 'r18_ultra', label: 'R18 OVERDRIVE', sexy: 10, accessory: 10, img: "/samples/sexy_10_accessory_10_r18.jpg", color: '#ff00ff', r18: true },
     ];
 
-    const handleApplySample = (sample: typeof normalSamples[0]) => {
+    const handleApplySample = (sample: any) => {
         setSelectedSample(sample);
     };
 
@@ -101,11 +97,6 @@ export const SexySlider: React.FC = () => {
         setShowPreview(false);
     };
 
-    const handleCopyPrompt = () => {
-        navigator.clipboard.writeText(costumePrompt);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-    };
 
     return (
         <div className="sexy-slider-container" style={{ display: 'flex', flexDirection: 'column', gap: '8px', position: 'relative' }}>
@@ -200,67 +191,7 @@ export const SexySlider: React.FC = () => {
                                         <Sparkles color="#fbbf24" size={24} />
                                     </div>
 
-                                    {/* Costume Information Area */}
-                                    <div style={{
-                                        backgroundColor: 'rgba(255,255,255,0.03)',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        borderRadius: '16px',
-                                        padding: '16px',
-                                        maxWidth: '900px',
-                                        margin: '5px auto 15px',
-                                        textAlign: 'left',
-                                        display: 'flex',
-                                        alignItems: 'flex-start',
-                                        gap: '16px',
-                                        position: 'relative',
-                                        flexWrap: 'wrap'
-                                    }}>
-                                        <div style={{
-                                            width: '50px',
-                                            height: '50px',
-                                            borderRadius: '14px',
-                                            backgroundColor: 'rgba(34, 211, 238, 0.1)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            flexShrink: 0,
-                                            border: '1px solid var(--cyan)'
-                                        }}>
-                                            <Shirt size={24} color="var(--cyan)" />
-                                        </div>
-                                        <div style={{ flex: 1, minWidth: '200px' }}>
-                                            <div style={{ fontSize: '14px', fontWeight: 900, color: 'var(--cyan)', letterSpacing: '0.12em', marginBottom: '4px' }}>
-                                                {t('editor.visual_presets.current_asset')}
-                                            </div>
-                                            <div style={{ fontSize: '18px', fontWeight: 900, color: '#fff', marginBottom: '8px', lineHeight: 1.2 }}>
-                                                {costumeName}
-                                            </div>
-                                            <motion.button
-                                                whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)' }}
-                                                whileTap={{ scale: 0.95 }}
-                                                onClick={handleCopyPrompt}
-                                                style={{
-                                                    padding: '8px 16px',
-                                                    borderRadius: '10px',
-                                                    backgroundColor: copied ? '#4ade80' : 'rgba(255,255,255,0.05)',
-                                                    border: `1px solid ${copied ? '#4ade80' : 'rgba(255,255,255,0.2)'}`,
-                                                    color: copied ? '#000' : '#fff',
-                                                    fontSize: '11px',
-                                                    fontWeight: 900,
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: '8px',
-                                                    cursor: 'pointer',
-                                                    transition: 'all 0.3s ease',
-                                                    width: 'fit-content',
-                                                    marginTop: '8px'
-                                                }}
-                                            >
-                                                {copied ? <Check size={14} /> : <Copy size={14} />}
-                                                {copied ? t('editor.visual_presets.prompt_copied') : t('editor.visual_presets.copy_prompt')}
-                                            </motion.button>
-                                        </div>
-                                    </div>
+
 
                                     {/* Generation Settings (Recipe) */}
                                     <div style={{ textAlign: 'left', marginLeft: '5px', marginBottom: '8px' }}>
