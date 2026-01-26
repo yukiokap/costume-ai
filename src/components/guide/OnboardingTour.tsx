@@ -285,62 +285,62 @@ export const OnboardingTour: React.FC = () => {
                             </p>
                         </div>
 
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
-                            <div style={{ display: 'flex', gap: '4px' }}>
-                                {STEPS.map((_, idx) => (
-                                    <div
-                                        key={idx}
-                                        style={{
-                                            width: idx === currentStepIndex ? '20px' : '6px',
-                                            height: '4px',
-                                            backgroundColor: idx === currentStepIndex ? 'var(--cyan)' : 'rgba(255,255,255,0.1)',
-                                            borderRadius: '2px',
-                                            transition: 'all 0.3s'
-                                        }}
-                                    />
-                                ))}
-                            </div>
+                        {/* Progress Dots moved to below text for better spacing */}
+                        <div style={{ display: 'flex', gap: '4px', marginBottom: '8px' }}>
+                            {STEPS.map((_, idx) => (
+                                <div
+                                    key={idx}
+                                    style={{
+                                        width: idx === currentStepIndex ? '20px' : '6px',
+                                        height: '3px',
+                                        backgroundColor: idx === currentStepIndex ? 'var(--cyan)' : 'rgba(255,255,255,0.1)',
+                                        borderRadius: '2px',
+                                        transition: 'all 0.3s'
+                                    }}
+                                />
+                            ))}
+                        </div>
 
-                            <div style={{ display: 'flex', gap: '12px' }}>
-                                <button
-                                    onClick={handleClose}
-                                    style={{
-                                        fontSize: '11px',
-                                        fontWeight: 700,
-                                        color: 'rgba(255,255,255,0.4)',
-                                        background: 'transparent',
-                                        border: 'none',
-                                        cursor: 'pointer'
-                                    }}
-                                >
-                                    {t('results.tour.skip')}
-                                </button>
-                                <button
-                                    onClick={handleNext}
-                                    style={{
-                                        fontSize: '11px',
-                                        fontWeight: 900,
-                                        color: '#000',
-                                        background: 'var(--cyan)',
-                                        border: 'none',
-                                        padding: '8px 16px',
-                                        borderRadius: '8px',
-                                        cursor: 'pointer',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '6px',
-                                        boxShadow: '0 0 15px rgba(0, 242, 255, 0.4)'
-                                    }}
-                                >
-                                    {isLastStep ? t('results.tour.finish') : t('results.tour.next')}
-                                    {!isLastStep && <ChevronRight size={14} />}
-                                    {isLastStep && <Zap size={14} fill="black" />}
-                                </button>
-                            </div>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '4px', gap: '16px' }}>
+                            <button
+                                onClick={handleClose}
+                                style={{
+                                    fontSize: '11px',
+                                    fontWeight: 700,
+                                    color: 'rgba(255,255,255,0.4)',
+                                    background: 'transparent',
+                                    border: 'none',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                {t('results.tour.skip')}
+                            </button>
+                            <button
+                                onClick={handleNext}
+                                style={{
+                                    fontSize: '11px',
+                                    fontWeight: 900,
+                                    color: '#000',
+                                    background: 'var(--cyan)',
+                                    border: 'none',
+                                    padding: '8px 20px',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    boxShadow: '0 0 15px rgba(0, 242, 255, 0.4)',
+                                    whiteSpace: 'nowrap'
+                                }}
+                            >
+                                {isLastStep ? t('results.tour.finish') : t('results.tour.next')}
+                                {!isLastStep && <ChevronRight size={14} />}
+                                {isLastStep && <Zap size={14} fill="black" />}
+                            </button>
                         </div>
                     </motion.div>
                 </motion.div>
             )}
-        </AnimatePresence>
+        </AnimatePresence >
     );
 };
