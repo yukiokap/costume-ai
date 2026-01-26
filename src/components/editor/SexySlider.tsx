@@ -52,7 +52,7 @@ const HeartbeatWave: React.FC<{ intensity: number; isR18: boolean }> = ({ intens
 
 export const SexySlider: React.FC = () => {
     const { t } = useLanguage();
-    const { sexyLevel: value, setSexyLevel: onChange, accessoryLevel: accValue, setAccessoryLevel: onAccChange, isR18Mode, setIsR18Mode: onR18Change } = useEditor();
+    const { sexyLevel: value, setSexyLevel: onChange, setAccessoryLevel: onAccChange, isR18Mode, setIsR18Mode: onR18Change } = useEditor();
     const [showLaser, setShowLaser] = useState(false);
     const [showPreview, setShowPreview] = useState(false);
     const [copied, setCopied] = useState(false);

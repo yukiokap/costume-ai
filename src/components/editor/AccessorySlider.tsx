@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { Gem } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useEditor } from '../../contexts/EditorContext';
 
 export const AccessorySlider: React.FC = () => {
     const { t } = useLanguage();
-    const { accessoryLevel: value, setAccessoryLevel: onChange, sexyLevel } = useEditor();
-    const [showPreview, setShowPreview] = useState(false);
+    const { accessoryLevel: value, setAccessoryLevel: onChange } = useEditor();
 
     return (
         <div className="sexy-slider-container">
