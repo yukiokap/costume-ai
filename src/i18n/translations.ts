@@ -140,6 +140,29 @@ export const translations = {
                 fantasy: 'ファンタジー',
                 scifi: 'SF',
                 abstract: '抽象的'
+            },
+            visual_presets: {
+                title: 'サンプルビジュアル',
+                subtitle: 'VISUAL_PRESETS_GALLERY',
+                current_asset: '現在の衣装アセット',
+                copy_prompt: 'プロンプトをコピー',
+                prompt_copied: 'コピーしました！',
+                recipe_title: '生成レシピ',
+                label_costume: '衣装',
+                val_random: 'おまかせ',
+                label_concept: 'コンセプト',
+                val_autumn: '秋の装い',
+                label_pose: 'ポーズ',
+                label_expression: '表情',
+                label_framing: '構図',
+                val_upper_front: '胸上 / 正面',
+                label_scene: '背景',
+                val_white_bg: '白背景',
+                standard_styles: 'スタンダード・スタイル',
+                overdrive_styles: 'オーバードライブ (R18)',
+                locked_title: 'ロックされています',
+                locked_desc: 'OVERDRIVEモードを有効にすると表示されます',
+                close_hint: '外側をタップして閉じる'
             }
         },
         settings: {
@@ -340,6 +363,29 @@ export const translations = {
                 fantasy: 'Fantasy',
                 scifi: 'Sci-Fi',
                 abstract: 'Abstract'
+            },
+            visual_presets: {
+                title: 'Sample Visuals',
+                subtitle: 'VISUAL_PRESETS_GALLERY',
+                current_asset: 'Current Costume Asset',
+                copy_prompt: 'Copy Prompt',
+                prompt_copied: 'Copied!',
+                recipe_title: 'Generation Recipe',
+                label_costume: 'Costume',
+                val_random: 'Auto / Random',
+                label_concept: 'Concept',
+                val_autumn: 'Autumn Outfit',
+                label_pose: 'Pose',
+                label_expression: 'Expression',
+                label_framing: 'Framing',
+                val_upper_front: 'Upper Body / Front',
+                label_scene: 'Scene',
+                val_white_bg: 'White Background',
+                standard_styles: 'Standard Styles',
+                overdrive_styles: 'Overdrive Styles (R18)',
+                locked_title: 'Locked Content',
+                locked_desc: 'Activate OVERDRIVE_MODE to view',
+                close_hint: 'Tap anywhere outside to close'
             }
         },
         settings: {

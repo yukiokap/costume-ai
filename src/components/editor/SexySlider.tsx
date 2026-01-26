@@ -1,13 +1,61 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Flame, Info } from 'lucide-react';
+import { Flame, Info, Heart, Eye, Sparkles, Zap, Lock, Shirt, Copy, Check, X } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useEditor } from '../../contexts/EditorContext';
 
+const HeartbeatWave: React.FC<{ intensity: number; isR18: boolean }> = ({ intensity, isR18 }) => {
+    const color = isR18 ? '#ff00ff' : '#f43f5e';
+    // Smooth transition of speed and height based on intensity
+    const duration = intensity === 3 ? 0.8 : (intensity === 2 ? 1.5 : 2.5);
+    const scaleY = intensity === 3 ? 1.5 : (intensity === 2 ? 1.0 : 0.5);
+
+    return (
+        <div style={{
+            position: 'absolute',
+            inset: 0,
+            overflow: 'hidden',
+            pointerEvents: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            zIndex: 1,
+            maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
+            WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)'
+        }}>
+            <motion.div
+                style={{ display: 'flex', width: '200%', height: '100%', alignItems: 'center' }}
+                animate={{ x: ['0%', '-50%'] }}
+                transition={{ duration, repeat: Infinity, ease: "linear" }}
+            >
+                {[1, 2].map((i) => (
+                    <svg key={i} viewBox="0 0 200 60" preserveAspectRatio="none" style={{ width: '50%', height: '100%', overflow: 'visible' }}>
+                        <motion.path
+                            d="M 0 30 L 40 30 L 45 25 L 50 30 L 55 30 L 60 5 L 65 55 L 70 30 L 75 30 L 80 35 L 85 30 L 125 30 L 130 25 L 135 30 L 140 30 L 145 0 L 150 60 L 155 30 L 160 30 L 165 35 L 170 30 L 200 30"
+                            fill="none"
+                            stroke={color}
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            initial={{ scaleY: 0.6 }}
+                            animate={{ scaleY }}
+                            style={{
+                                filter: `drop-shadow(0 0 8px ${color})`,
+                                transformOrigin: 'center'
+                            }}
+                        />
+                    </svg>
+                ))}
+            </motion.div>
+        </div>
+    );
+};
+
 export const SexySlider: React.FC = () => {
     const { t } = useLanguage();
-    const { sexyLevel: value, setSexyLevel: onChange, isR18Mode, setIsR18Mode: onR18Change } = useEditor();
+    const { sexyLevel: value, setSexyLevel: onChange, accessoryLevel: accValue, setAccessoryLevel: onAccChange, isR18Mode, setIsR18Mode: onR18Change } = useEditor();
     const [showLaser, setShowLaser] = useState(false);
+    const [showPreview, setShowPreview] = useState(false);
+    const [copied, setCopied] = useState(false);
 
     useEffect(() => {
         if (isR18Mode) {
@@ -18,6 +66,38 @@ export const SexySlider: React.FC = () => {
             setShowLaser(false);
         }
     }, [isR18Mode]);
+
+    const costumeName = "ケーブルニットのマキシアンサンブル";
+    const costumePrompt = "modest, high-neck, chunky cable knit sweater, floor-length wool skirt, long sleeves, terracotta color, heavy fabric, full coverage, from front, arm raised high, cheering, big smile, stoic expression, firm lips, upper body, from front, simple background, white background";
+
+    const normalSamples = [
+        { id: 'base', label: 'NORMAL', sexy: 1, accessory: 1, img: "/samples/sexy_level_1.jpg", color: 'var(--cyan)', r18: false },
+        { id: 'sexy_max', label: 'SEXY MAX', sexy: 10, accessory: 1, img: "/samples/sexy_level_10.jpg", color: '#f43f5e', r18: false },
+        { id: 'deco_max', label: 'DECO MAX', sexy: 1, accessory: 10, img: "/samples/accessory_level_10_sexy_1.jpg", color: '#fbbf24', r18: false },
+        { id: 'ultra_max', label: 'ULTRA MAX', sexy: 10, accessory: 10, img: "/samples/sexy_10_accessory_10.jpg", color: '#ff00ff', r18: false },
+    ];
+
+    const r18Samples = [
+        { id: 'r18_start', label: 'R18 START', sexy: 1, accessory: 1, img: "/samples/sexy_1_accessory_1_r18.jpg", color: '#f43f5e', r18: true },
+        { id: 'r18_sexy', label: 'R18 SEXY', sexy: 10, accessory: 1, img: "/samples/sexy_10_accessory_1_r18.jpg", color: '#f43f5e', r18: true },
+        { id: 'r18_deco', label: 'R18 DECO', sexy: 1, accessory: 10, img: "/samples/sexy_1_accessory_10_r18.jpg", color: '#fbbf24', r18: true },
+        { id: 'r18_ultra', label: 'R18 OVERDRIVE', sexy: 10, accessory: 10, img: "/samples/sexy_10_accessory_10_r18.jpg", color: '#ff00ff', r18: true },
+    ];
+
+    const handleApplySample = (sample: typeof normalSamples[0]) => {
+        onChange(sample.sexy);
+        onAccChange(sample.accessory);
+        if (sample.r18 !== isR18Mode) {
+            onR18Change(sample.r18);
+        }
+        setShowPreview(false);
+    };
+
+    const handleCopyPrompt = () => {
+        navigator.clipboard.writeText(costumePrompt);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
 
     return (
         <div className="sexy-slider-container" style={{ display: 'flex', flexDirection: 'column', gap: '8px', position: 'relative' }}>
@@ -30,6 +110,305 @@ export const SexySlider: React.FC = () => {
                         exit={{ opacity: 0 }}
                         className="overdrive-laser active"
                     />
+                )}
+            </AnimatePresence>
+
+            {/* Enlarged Modal Overlay (Full Sample Gallery) */}
+            <AnimatePresence>
+                {showPreview && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        style={{
+                            position: 'fixed',
+                            inset: 0,
+                            backgroundColor: 'rgba(0, 0, 0, 0.95)',
+                            zIndex: 10000,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '20px',
+                            backdropFilter: 'blur(20px)'
+                        }}
+                        onClick={() => setShowPreview(false)}
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            onClick={(e) => e.stopPropagation()}
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '1rem',
+                                overflowY: 'auto',
+                                padding: '40px 20px 20px',
+                                position: 'relative'
+                            }}
+                        >
+                            <button
+                                onClick={() => setShowPreview(false)}
+                                style={{
+                                    position: 'absolute',
+                                    top: '20px',
+                                    right: '20px',
+                                    background: 'rgba(255, 255, 255, 0.1)',
+                                    border: 'none',
+                                    borderRadius: '50%',
+                                    width: '40px',
+                                    height: '40px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    cursor: 'pointer',
+                                    zIndex: 10,
+                                    color: '#fff',
+                                    transition: 'background 0.2s'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'}
+                            >
+                                <X size={24} />
+                            </button>
+
+                            <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '8px' }}>
+                                    <Sparkles color="#fbbf24" size={24} />
+                                    <h3 style={{ fontSize: '1.8rem', fontWeight: 900, letterSpacing: '0.25em', color: '#fff', textTransform: 'uppercase' }}>
+                                        {t('editor.visual_presets.subtitle')}
+                                    </h3>
+                                    <Sparkles color="#fbbf24" size={24} />
+                                </div>
+
+                                {/* Costume Information Area */}
+                                <div style={{
+                                    backgroundColor: 'rgba(255,255,255,0.03)',
+                                    border: '1px solid rgba(255,255,255,0.1)',
+                                    borderRadius: '16px',
+                                    padding: '20px 24px',
+                                    maxWidth: '900px',
+                                    margin: '5px auto 15px',
+                                    textAlign: 'left',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '24px',
+                                    position: 'relative'
+                                }}>
+                                    <div style={{
+                                        width: '50px',
+                                        height: '50px',
+                                        borderRadius: '14px',
+                                        backgroundColor: 'rgba(34, 211, 238, 0.1)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        flexShrink: 0,
+                                        border: '1px solid var(--cyan)'
+                                    }}>
+                                        <Shirt size={24} color="var(--cyan)" />
+                                    </div>
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ fontSize: '14px', fontWeight: 900, color: 'var(--cyan)', letterSpacing: '0.12em', marginBottom: '4px' }}>
+                                            {t('editor.visual_presets.current_asset')}
+                                        </div>
+                                        <div style={{ fontSize: '18px', fontWeight: 900, color: '#fff', marginBottom: '8px' }}>
+                                            {costumeName}
+                                        </div>
+                                        <div style={{
+                                            fontSize: '11px',
+                                            opacity: 0.5,
+                                            fontStyle: 'italic',
+                                            lineHeight: '1.4',
+                                            color: 'rgba(255,255,255,0.7)',
+                                            maxHeight: '40px',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            display: '-webkit-box',
+                                            WebkitLineClamp: 2,
+                                            WebkitBoxOrient: 'vertical'
+                                        }}>
+                                            {costumePrompt}
+                                        </div>
+                                    </div>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                        <motion.button
+                                            whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)' }}
+                                            whileTap={{ scale: 0.95 }}
+                                            onClick={handleCopyPrompt}
+                                            style={{
+                                                padding: '8px 16px',
+                                                borderRadius: '10px',
+                                                backgroundColor: copied ? '#4ade80' : 'rgba(255,255,255,0.05)',
+                                                border: `1px solid ${copied ? '#4ade80' : 'rgba(255,255,255,0.2)'}`,
+                                                color: copied ? '#000' : '#fff',
+                                                fontSize: '11px',
+                                                fontWeight: 900,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '8px',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.3s ease',
+                                                minWidth: '160px'
+                                            }}
+                                        >
+                                            {copied ? <Check size={14} /> : <Copy size={14} />}
+                                            {copied ? t('editor.visual_presets.prompt_copied') : t('editor.visual_presets.copy_prompt')}
+                                        </motion.button>
+                                    </div>
+                                </div>
+
+                                {/* Generation Settings (Recipe) */}
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+                                    gap: '8px',
+                                    marginBottom: '20px',
+                                    padding: '0 5px'
+                                }}>
+                                    {[
+                                        { label: t('editor.visual_presets.label_costume'), value: t('editor.visual_presets.val_random'), icon: '🎲' },
+                                        { label: t('editor.visual_presets.label_concept'), value: t('editor.visual_presets.val_autumn'), icon: '🍂' },
+                                        { label: t('editor.visual_presets.label_pose'), value: t('editor.visual_presets.val_random'), icon: '💃' },
+                                        { label: t('editor.visual_presets.label_expression'), value: t('editor.visual_presets.val_random'), icon: '😊' },
+                                        { label: t('editor.visual_presets.label_framing'), value: t('editor.visual_presets.val_upper_front'), icon: '📐' },
+                                        { label: t('editor.visual_presets.label_scene'), value: t('editor.visual_presets.val_white_bg'), icon: '⬜' },
+                                    ].map((item, idx) => (
+                                        <div key={idx} style={{
+                                            backgroundColor: 'rgba(255,255,255,0.03)',
+                                            border: '1px solid rgba(255,255,255,0.1)',
+                                            borderRadius: '12px',
+                                            padding: '8px 10px',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: '4px'
+                                        }}>
+                                            <div style={{ fontSize: '9px', fontWeight: 900, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em' }}>
+                                                {item.icon} {item.label}
+                                            </div>
+                                            <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--cyan)' }}>
+                                                {item.value}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Section 1: Standard Styles */}
+                            <div style={{ marginBottom: '1rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '0.8rem', paddingLeft: '5px' }}>
+                                    <div style={{ width: '4px', height: '16px', backgroundColor: 'var(--cyan)', borderRadius: '2px' }} />
+                                    <span style={{ fontSize: '11px', fontWeight: 900, color: 'var(--cyan)', letterSpacing: '0.2em' }}>{t('editor.visual_presets.standard_styles')}</span>
+                                </div>
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(4, 1fr)',
+                                    gap: '0.8rem'
+                                }}>
+                                    {normalSamples.map((sample) => (
+                                        <motion.div
+                                            key={sample.id}
+                                            whileHover={{ y: -8, scale: 1.02 }}
+                                            onClick={() => handleApplySample(sample)}
+                                            style={{
+                                                backgroundColor: 'rgba(255,255,255,0.02)',
+                                                borderRadius: '16px',
+                                                overflow: 'hidden',
+                                                border: `2px solid ${sample.color}33`,
+                                                cursor: 'pointer',
+                                                position: 'relative',
+                                                transition: 'all 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
+                                                boxShadow: '0 8px 25px rgba(0,0,0,0.4)',
+                                                aspectRatio: '3/4.5'
+                                            }}
+                                        >
+                                            <img src={sample.img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={sample.label} />
+                                            <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 40%, transparent 70%)` }} />
+                                            <div style={{ position: 'absolute', bottom: '0.8rem', width: '100%', textAlign: 'center', padding: '0 8px' }}>
+                                                <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#fff', letterSpacing: '0.1em', display: 'block' }}>{sample.label}</span>
+                                                <div style={{ fontSize: '0.55rem', fontWeight: 800, color: sample.color, marginTop: '2px' }}>S:{sample.sexy} / D:{sample.accessory}</div>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Section 2: Overdrive Styles (R18) */}
+                            <div style={{ position: 'relative' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '0.8rem', paddingLeft: '5px' }}>
+                                    <div style={{ width: '4px', height: '16px', backgroundColor: '#f43f5e', borderRadius: '2px' }} />
+                                    <span style={{ fontSize: '11px', fontWeight: 900, color: '#f43f5e', letterSpacing: '0.2em' }}>{t('editor.visual_presets.overdrive_styles')}</span>
+                                </div>
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(4, 1fr)',
+                                    gap: '0.8rem',
+                                    position: 'relative'
+                                }}>
+                                    {r18Samples.map((sample) => (
+                                        <motion.div
+                                            key={sample.id}
+                                            whileHover={isR18Mode ? { y: -8, scale: 1.02 } : {}}
+                                            onClick={() => isR18Mode && handleApplySample(sample)}
+                                            style={{
+                                                backgroundColor: 'rgba(244, 63, 94, 0.05)',
+                                                borderRadius: '16px',
+                                                overflow: 'hidden',
+                                                border: `2px solid ${isR18Mode ? 'rgba(244, 63, 94, 0.4)' : 'rgba(255,255,255,0.05)'}`,
+                                                cursor: isR18Mode ? 'pointer' : 'default',
+                                                position: 'relative',
+                                                transition: 'all 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
+                                                boxShadow: isR18Mode ? '0 8px 25px rgba(244, 63, 94, 0.2)' : 'none',
+                                                aspectRatio: '3/4.5',
+                                                filter: isR18Mode ? 'none' : 'blur(4px) grayscale(0.2)'
+                                            }}
+                                        >
+                                            <img src={sample.img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={sample.label} />
+                                            {isR18Mode && (
+                                                <>
+                                                    <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 40%, transparent 70%)` }} />
+                                                    <div style={{ position: 'absolute', bottom: '0.8rem', width: '100%', textAlign: 'center', padding: '0 8px' }}>
+                                                        <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#fff', letterSpacing: '0.1em', display: 'block' }}>{sample.label}</span>
+                                                        <div style={{ fontSize: '0.55rem', fontWeight: 800, color: sample.color, marginTop: '2px' }}>S:{sample.sexy} / D:{sample.accessory}</div>
+                                                    </div>
+                                                    <div style={{ position: 'absolute', top: '0.6rem', right: '0.6rem', backgroundColor: '#f43f5e', color: '#fff', fontSize: '0.6rem', fontWeight: 900, padding: '2px 6px', borderRadius: '4px' }}>
+                                                        <Zap size={8} fill="currentColor" /> R18
+                                                    </div>
+                                                </>
+                                            )}
+                                        </motion.div>
+                                    ))}
+
+                                    {!isR18Mode && (
+                                        <div style={{
+                                            position: 'absolute',
+                                            inset: 0,
+                                            backgroundColor: 'rgba(0,0,0,0.5)',
+                                            backdropFilter: 'blur(2px)',
+                                            zIndex: 5,
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            borderRadius: '16px',
+                                            gap: '10px',
+                                            border: '1px dashed rgba(244, 63, 94, 0.4)'
+                                        }}>
+                                            <Lock size={20} color="#f43f5e" />
+                                            <div style={{ textAlign: 'center' }}>
+                                                <div style={{ color: '#f43f5e', fontSize: '12px', fontWeight: 900, letterSpacing: '0.1em' }}>{t('editor.visual_presets.locked_title')}</div>
+                                                <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '9px', marginTop: '2px' }}>{t('editor.visual_presets.locked_desc')}</div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div style={{ textAlign: 'center', fontSize: '0.75rem', opacity: 0.3, letterSpacing: '0.1em', marginTop: '0.5rem' }}>{t('editor.visual_presets.close_hint')}</div>
+                        </motion.div>
+                    </motion.div>
                 )}
             </AnimatePresence>
 
@@ -154,17 +533,103 @@ export const SexySlider: React.FC = () => {
                 </label>
 
                 <div className="flex items-center gap-4">
+                    {/* Visual Catalog Trigger Button */}
+                    <motion.button
+                        whileHover={{
+                            scale: 1.05,
+                            backgroundColor: 'rgba(255,255,255,0.1)',
+                            borderColor: 'var(--cyan)'
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setShowPreview(true)}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '10px 18px',
+                            background: 'rgba(255,255,255,0.03)',
+                            border: '1px solid rgba(255,255,255,0.08)',
+                            borderRadius: '14px',
+                            cursor: 'pointer',
+                            color: '#fff',
+                            fontSize: '11px',
+                            fontWeight: 900,
+                            letterSpacing: '0.15em',
+                            transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
+                            boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+                        }}
+                    >
+                        <Eye size={16} color="var(--cyan)" />
+                        {t('editor.visual_presets.title')}
+                    </motion.button>
+
                     <div className="sexy-slider-value-group" style={{ minWidth: '280px', justifyContent: 'flex-end', marginRight: '0.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span className={`sexy-slider-number ${value === 10 ? 'level-11-glitch' : ''}`} style={{ textAlign: 'right', display: 'inline-block', minWidth: '150px', fontSize: value === 10 ? '2.2rem' : '1.8rem', whiteSpace: 'nowrap' }}>
-                            {value === 10 ? 'CRITICAL' : value}
-                        </span>
+                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            {value === 10 && (
+                                <>
+                                    <motion.div
+                                        animate={{
+                                            scale: [1, 1.4, 1],
+                                            opacity: [0.6, 1, 0.6],
+                                            rotate: [-10, 10, -10]
+                                        }}
+                                        transition={{ duration: 0.8, repeat: Infinity }}
+                                        style={{ position: 'absolute', left: '-30px', color: '#f43f5e' }}
+                                    >
+                                        <Heart size={20} fill="#f43f5e" />
+                                    </motion.div>
+                                    <motion.div
+                                        animate={{
+                                            scale: [1, 1.2, 1],
+                                            opacity: [0.4, 0.8, 0.4],
+                                            rotate: [20, -20, 20]
+                                        }}
+                                        transition={{ duration: 1.2, repeat: Infinity, delay: 0.2 }}
+                                        style={{ position: 'absolute', right: '-25px', top: '-15px', color: '#ff00ff' }}
+                                    >
+                                        <Heart size={16} fill="#ff00ff" />
+                                    </motion.div>
+                                    <motion.div
+                                        animate={{
+                                            scale: [0, 1.5, 0],
+                                            opacity: [0, 1, 0]
+                                        }}
+                                        transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
+                                        style={{ position: 'absolute', bottom: '-20px', right: '0', color: '#f43f5e', fontSize: '10px' }}
+                                    >
+                                        ❤️
+                                    </motion.div>
+                                </>
+                            )}
+                            <span
+                                className={`sexy-slider-number ${value === 10 ? 'sexy-max-glitter' : ''}`}
+                                style={{
+                                    textAlign: 'right',
+                                    display: 'inline-block',
+                                    minWidth: '220px',
+                                    fontSize: value === 10 ? '1.8rem' : '1.8rem',
+                                    whiteSpace: 'nowrap',
+                                    paddingRight: value === 10 ? '10px' : '0',
+                                    color: value === 10 ? '#f43f5e' : '#fff',
+                                    textShadow: value === 10 ? '0 0 20px rgba(244, 63, 94, 0.6)' : 'none',
+                                    fontWeight: 900
+                                }}
+                            >
+                                {value === 10 ? 'ULTRA_SEXY' : value}
+                            </span>
+                        </div>
                         <span className="sexy-slider-intensity" style={{ fontSize: '11px', whiteSpace: 'nowrap', opacity: 0.6 }}>INTENSITY {value * 10}%</span>
                     </div>
                 </div>
             </div>
 
-            <div className={`sexy-slider-track-area ${value >= 9 ? 'sexy-slider-critical-bg' : ''} ${isR18Mode ? 'r18-pulse-bg' : ''}`} style={{ overflow: 'visible' }}>
-                {value >= 9 && <div className="placeholder-scan-line" style={{ background: isR18Mode ? 'linear-gradient(90deg, transparent, var(--magenta), transparent)' : 'linear-gradient(90deg, transparent, #f43f5e, transparent)' }} />}
+            <div className={`sexy-slider-track-area ${value >= 7 ? 'sexy-slider-critical-bg' : ''} ${isR18Mode ? 'r18-pulse-bg' : ''}`} style={{ overflow: 'visible' }}>
+                {value >= 7 && (
+                    <HeartbeatWave
+                        intensity={value === 10 ? 3 : (value >= 9 ? 2 : 1)}
+                        isR18={isR18Mode}
+                    />
+                )}
                 <div className="sexy-slider-track-bg" style={{ overflow: 'visible' }}>
                     <motion.div
                         initial={false}
@@ -223,6 +688,6 @@ export const SexySlider: React.FC = () => {
                     <span>{t('editor.sexy_hint_high')}</span>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
