@@ -683,15 +683,16 @@ export const SexySlider: React.FC = () => {
                             cursor: 'help',
                             opacity: 0.6
                         }}>?</div>
-                        <div className="overdrive-tooltip-bubble left-aligned" style={{
+                        <div className="overdrive-tooltip-bubble right-aligned" style={{
                             width: 'min(300px, 80vw)',
                             whiteSpace: 'normal',
                             bottom: 'calc(100% + 15px)',
-                            left: '0',
+                            right: '0',
+                            left: 'auto',
                             transform: 'none',
                             pointerEvents: 'none'
                         }}>
-                            <div className="tooltip-glitch-line" />
+                            <div className="tooltip-glitch-line" style={{ left: 'auto', right: '10px' }} />
                             {t('editor.sexy_tip')}
                         </div>
                     </div>

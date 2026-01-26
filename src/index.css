@@ -1356,6 +1356,12 @@ body {
   transform: none;
 }
 
+.overdrive-tooltip-bubble.right-aligned::after {
+  right: 10px;
+  left: auto;
+  transform: none;
+}
+
 /* Compact Mode Toggle */
 .mode-toggle-compact {
   display: flex !important;
