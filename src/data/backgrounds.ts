@@ -20,7 +20,7 @@ export const BACKGROUND_CATEGORIES = [
 export const ALL_BACKGROUNDS: BackgroundItem[] = [
     // --- BASIC ---
     { id: 'none', label: '指定なし', category: 'basic', prompt: '' },
-    { id: 'simple_white', label: '純白の背景', category: 'basic', prompt: 'simple background, white background' },
+    { id: 'white', label: '純白の背景', category: 'basic', prompt: 'simple background, white background' },
     { id: 'simple_black', label: '暗黒の背景', category: 'basic', prompt: 'simple background, black background' },
     { id: 'simple_gray', label: 'グレーの背景', category: 'basic', prompt: 'simple background, grey background' },
     { id: 'studio_light', label: '撮影スタジオ (白羽)', category: 'basic', prompt: 'photo studio, bright soft lighting, high-end photography' },

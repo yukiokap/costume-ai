@@ -5,7 +5,7 @@
 .results-grid {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
-    gap: 1.5rem;
+    gap: 1rem;
     margin-top: 1rem;
 }
 
@@ -17,15 +17,23 @@
 
 @media (min-width: 1024px) {
     .results-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (min-width: 1536px) {
-    .results-grid {
         grid-template-columns: repeat(3, 1fr);
     }
 }
+
+@media (min-width: 1400px) {
+    .results-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 1800px) {
+    .results-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+/* ... */
 
 .results-wrapper {
     width: 100%;
@@ -85,6 +93,7 @@
     color: #000;
 }
 
+
 /* Card Styles */
 .result-card {
     background: #0f172a;
@@ -95,7 +104,7 @@
     display: flex;
     flex-direction: column;
     transition: all 0.3s ease;
-    min-height: 280px;
+    min-height: 220px;
 }
 
 .result-card:hover {
@@ -261,4 +270,27 @@
     to {
         transform: rotate(360deg);
     }
+}
+
+/* Character Mode Styles */
+.result-card.character-mode {
+    border-color: rgba(255, 0, 128, 0.3);
+    background: linear-gradient(180deg, #0f172a 0%, rgba(255, 0, 128, 0.05) 100%);
+}
+
+.result-card.character-mode:hover {
+    border-color: #ff0080;
+    box-shadow: 0 10px 30px rgba(255, 0, 128, 0.2);
+}
+
+.result-card.character-mode .card-number {
+    color: rgba(255, 0, 128, 0.03);
+}
+
+.result-card.character-mode:hover .card-number {
+    color: rgba(255, 0, 128, 0.1);
+}
+
+.result-card.character-mode:hover .card-desc {
+    color: #ffcae8;
 }

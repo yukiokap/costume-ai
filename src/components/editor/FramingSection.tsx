@@ -1,36 +1,27 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Quote, ChevronLeft, ChevronRight, Maximize, Zap, Edit3, LayoutGrid } from 'lucide-react';
 import { SHOT_TYPES, SHOT_ANGLES } from '../../data/framing';
 import { SectionDivider } from '../ui/SectionDivider';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useEditor } from '../../contexts/EditorContext';
 
-interface FramingSectionProps {
-    selectedShotType: string;
-    setSelectedShotType: (val: string) => void;
-    selectedShotAngle: string;
-    setSelectedShotAngle: (val: string) => void;
-    framingDescription: string;
-    setFramingDescription: (val: string) => void;
-}
-
-export const FramingSection: React.FC<FramingSectionProps> = ({
-    selectedShotType,
-    setSelectedShotType,
-    selectedShotAngle,
-    setSelectedShotAngle,
-    framingDescription,
-    setFramingDescription
-}) => {
+export const FramingSection: React.FC = () => {
     const { t } = useLanguage();
-    const typeRef = React.useRef<HTMLDivElement>(null);
-    const angleRef = React.useRef<HTMLDivElement>(null);
-    const [inputMode, setInputMode] = React.useState<'card' | 'text'>('card');
-    const [draftText, setDraftText] = React.useState(framingDescription || '');
+    const {
+        selectedShotType, setSelectedShotType,
+        selectedShotAngle, setSelectedShotAngle,
+        framingDescription, setFramingDescription
+    } = useEditor();
+
+    const typeRef = useRef<HTMLDivElement>(null);
+    const angleRef = useRef<HTMLDivElement>(null);
+    const [inputMode, setInputMode] = useState<'card' | 'text'>(framingDescription ? 'text' : 'card');
+    const [draftText, setDraftText] = useState(framingDescription || '');
 
     // Draft states for framing
-    const [draftShot, setDraftShot] = React.useState(selectedShotType);
-    const [draftAngle, setDraftAngle] = React.useState(selectedShotAngle);
+    const [draftShot, setDraftShot] = useState(selectedShotType);
+    const [draftAngle, setDraftAngle] = useState(selectedShotAngle);
 
     const handleToggleMode = () => {
         if (inputMode === 'text') {
@@ -62,41 +53,30 @@ export const FramingSection: React.FC<FramingSectionProps> = ({
             <div className="flex items-center justify-between">
                 <SectionDivider label={t('editor.section_framing_title')} color="violet" />
 
-                {/* Enhanced Mode Toggle */}
-                <div className="flex bg-black/40 p-1 rounded-xl border border-white/5 relative overflow-hidden h-[34px] w-[140px]">
-                    <motion.div
-                        className="absolute top-1 bottom-1 rounded-lg bg-violet-500/20 border border-violet-500/30"
-                        initial={false}
-                        animate={{
-                            left: inputMode === 'card' ? '4px' : '72px',
-                            right: inputMode === 'card' ? '72px' : '4px'
-                        }}
-                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    />
-                    <button
-                        onClick={() => inputMode !== 'card' && handleToggleMode()}
-                        className={`flex-1 flex items-center justify-center gap-1.5 z-10 transition-colors ${inputMode === 'card' ? 'text-violet-400' : 'text-white/40 hover:text-white/60'}`}
-                    >
-                        <LayoutGrid size={12} />
-                        <span className="text-[9px] font-black uppercase tracking-wider">Preset</span>
-                    </button>
-                    <button
-                        onClick={() => inputMode !== 'text' && handleToggleMode()}
-                        className={`flex-1 flex items-center justify-center gap-1.5 z-10 transition-colors ${inputMode === 'text' ? 'text-violet-400' : 'text-white/40 hover:text-white/60'}`}
-                    >
-                        <Edit3 size={12} />
-                        <span className="text-[9px] font-black uppercase tracking-wider">Manual</span>
-                    </button>
-                </div>
+                {/* Optimized Compact Toggle */}
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleToggleMode}
+                    className={`mode-toggle-compact mode-violet ${inputMode === 'card' ? 'active-btn' : ''}`}
+                >
+                    <div className={`mode-toggle-icon ${inputMode === 'card' ? 'active-icon' : ''}`}>
+                        {inputMode === 'card' ? <LayoutGrid size={12} /> : <Edit3 size={12} />}
+                    </div>
+
+                    <span className="mode-toggle-label">
+                        {inputMode === 'card' ? t('common.mode_preset') : t('common.mode_manual')}
+                    </span>
+
+                    <div className="mode-toggle-indicator">
+                        <div className={`indicator-dot ${inputMode === 'card' ? 'active' : ''}`} />
+                        <div className={`indicator-dot ${inputMode === 'text' ? 'active' : ''}`} />
+                    </div>
+                </motion.button>
             </div>
 
             {inputMode === 'card' ? (
-                <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="space-y-6"
-                >
+                <div className="space-y-6">
                     {/* Shot Type Selection */}
                     <div className="space-y-4">
                         <div className="flex items-center gap-2 field-label !text-violet-400">
@@ -184,7 +164,7 @@ export const FramingSection: React.FC<FramingSectionProps> = ({
                             </button>
                         </div>
                     </div>
-                </motion.div>
+                </div>
             ) : (
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}

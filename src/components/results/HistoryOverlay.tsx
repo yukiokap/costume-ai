@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Clock, Heart, Trash2, Copy, Check, ChevronLeft } from 'lucide-react';
 import { type HistoryItem } from '../../types';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useEditor } from '../../contexts/EditorContext';
 import './Results.css';
 
 interface HistoryOverlayProps {
@@ -13,10 +14,11 @@ interface HistoryOverlayProps {
     onToggleFavorite: (id: string) => void;
     onDelete: (id: string) => void;
     onCopy: (text: string, index: number) => void;
-    onRemix: (item: HistoryItem) => void;
     isCopied: number | null;
-    copyOptions: { costume: boolean; pose: boolean; framing: boolean; scene: boolean };
-    setCopyOptions: React.Dispatch<React.SetStateAction<{ costume: boolean; pose: boolean; framing: boolean; scene: boolean }>>;
+    copyOptions: { costume: boolean; character: boolean; pose: boolean; framing: boolean; scene: boolean };
+    setCopyOptions: React.Dispatch<React.SetStateAction<{ costume: boolean; character: boolean; pose: boolean; framing: boolean; scene: boolean }>>;
+    onClearHistory?: () => void;
+    onModeChange?: (mode: 'history' | 'favorites') => void;
 }
 
 const DETAIL_LABELS: Record<string, string> = {
@@ -26,8 +28,8 @@ const DETAIL_LABELS: Record<string, string> = {
     c04: '04: 構図の設定 / FRAMING',
 };
 
-const DetailRow: React.FC<{ detail: { label: string; val: any; type: string }; t: any }> = ({ detail, t }) => {
-    const [isExpanded, setIsExpanded] = React.useState(false);
+const DetailRow: React.FC<{ detail: { label: string; val: any; type: string }; t: any }> = memo(({ detail, t }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
     const { val, type, label } = detail;
 
     let displayVal = String(val);
@@ -75,7 +77,7 @@ const DetailRow: React.FC<{ detail: { label: string; val: any; type: string }; t
             <span style={{ fontSize: '9px', fontWeight: 700, color: '#fff', textAlign: 'right', maxWidth: '75%', wordBreak: 'break-all' }}>{displayVal}</span>
         </div>
     );
-};
+});
 
 export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
     isOpen,
@@ -85,13 +87,15 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
     onToggleFavorite,
     onDelete,
     onCopy,
-    onRemix,
     isCopied,
     copyOptions,
-    setCopyOptions
+    setCopyOptions,
+    onClearHistory,
+    onModeChange
 }) => {
     const { t } = useLanguage();
-    const [expandedDetails, setExpandedDetails] = React.useState<Record<string, boolean>>({});
+    const { applyRemix } = useEditor();
+    const [expandedDetails, setExpandedDetails] = useState<Record<string, boolean>>({});
 
     const toggleDetails = (id: string) => {
         setExpandedDetails(prev => ({ ...prev, [id]: !prev[id] }));
@@ -100,14 +104,12 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
     const title = mode === 'history' ? 'GENERATE HISTORY' : 'FAVORITE PROMPTS';
     const Icon = mode === 'history' ? Clock : Heart;
 
-    // Theme Colors
     const themeColor = mode === 'favorites' ? '#f43f5e' : '#00f2ff';
 
     const filteredList = mode === 'favorites'
         ? history.filter(item => item.isFavorite)
-        : history;
+        : history.filter(item => !item.isFavorite);
 
-    // ESC key to close
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => {
             if (e.key === 'Escape') onClose();
@@ -118,6 +120,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
 
     const handleSingleCopy = (item: HistoryItem, index: number) => {
         const parts = [];
+        if (copyOptions.character && item.character) parts.push(item.character.replace(/\n/g, ' '));
         if (copyOptions.costume && item.costume) parts.push(item.costume.replace(/\n/g, ' '));
         if (copyOptions.pose && item.composition) parts.push(item.composition.replace(/\n/g, ' '));
         if (copyOptions.framing && item.framing) parts.push(item.framing.replace(/\n/g, ' '));
@@ -125,6 +128,11 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
 
         const textToCopy = parts.length > 0 ? parts.join(', ') : item.prompt.replace(/\n/g, ' ');
         onCopy(textToCopy, index + 40000);
+    };
+
+    const handleRemixAction = (item: HistoryItem) => {
+        applyRemix(item);
+        onClose();
     };
 
     return (
@@ -146,7 +154,6 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                         overflow: 'hidden'
                     }}
                 >
-                    {/* Background Grid Pattern */}
                     <div style={{
                         position: 'absolute',
                         inset: 0,
@@ -155,138 +162,253 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                         pointerEvents: 'none'
                     }} />
 
-                    {/* Header */}
                     <header style={{
                         padding: '2rem 4rem',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
                         borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
                         position: 'relative',
                         zIndex: 10,
                         backgroundColor: 'rgba(2, 4, 6, 0.5)'
                     }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-                            <button
-                                onClick={onClose}
-                                style={{
-                                    background: 'rgba(255, 255, 255, 0.05)',
-                                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                                    borderRadius: '12px',
-                                    padding: '0.75rem 1.25rem',
-                                    cursor: 'pointer',
-                                    color: '#fff',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '0.75rem',
-                                    fontSize: '0.75rem',
-                                    fontWeight: 900,
-                                    letterSpacing: '0.1em',
-                                    textTransform: 'uppercase',
-                                    transition: 'all 0.3s ease'
-                                }}
-                            >
-                                <ChevronLeft size={18} />
-                                {t('common.back')}
-                            </button>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-                                <Icon size={28} color={themeColor} />
-                                <div>
-                                    <h2 style={{
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+                                <button
+                                    onClick={onClose}
+                                    style={{
+                                        background: 'rgba(255, 255, 255, 0.05)',
+                                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                                        borderRadius: '12px',
+                                        padding: '0.75rem 1.25rem',
+                                        cursor: 'pointer',
                                         color: '#fff',
-                                        fontSize: '1.5rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.75rem',
+                                        fontSize: '0.75rem',
                                         fontWeight: 900,
-                                        letterSpacing: '0.3em',
+                                        letterSpacing: '0.1em',
                                         textTransform: 'uppercase',
-                                        margin: 0,
-                                        fontStyle: 'italic'
-                                    }}>
-                                        {title}
-                                    </h2>
-                                    <p style={{ margin: '4px 0 0', fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', fontWeight: 800, letterSpacing: '0.2em' }}>
-                                        {filteredList.length}{t('results.items_found_suffix')}
-                                    </p>
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                >
+                                    <ChevronLeft size={18} />
+                                    {t('common.back')}
+                                </button>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                                    <Icon size={28} color={themeColor} />
+                                    <div>
+                                        <h2 style={{
+                                            color: '#fff',
+                                            fontSize: '1.5rem',
+                                            fontWeight: 900,
+                                            letterSpacing: '0.3em',
+                                            textTransform: 'uppercase',
+                                            margin: 0,
+                                            fontStyle: 'italic'
+                                        }}>
+                                            {title}
+                                        </h2>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '4px' }}>
+                                            <p style={{ margin: 0, fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', fontWeight: 800, letterSpacing: '0.2em' }}>
+                                                {filteredList.length}{t('results.items_found_suffix')}
+                                            </p>
+                                            {mode === 'history' && (
+                                                <>
+                                                    <span style={{ color: 'rgba(255,255,255,0.1)' }}>•</span>
+                                                    <p style={{ margin: 0, fontSize: '0.6rem', color: themeColor, fontWeight: 800, letterSpacing: '0.1em' }}>
+                                                        {t('results.history_count')}: {history.filter(h => !h.isFavorite).length}/100
+                                                    </p>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
+                            </div>
+
+                            {onModeChange && (
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    <button
+                                        onClick={() => onModeChange('history')}
+                                        style={{
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '8px',
+                                            backgroundColor: mode === 'history' ? 'rgba(0, 242, 255, 0.15)' : 'rgba(255, 255, 255, 0.03)',
+                                            border: mode === 'history' ? '1px solid #00f2ff' : '1px solid rgba(255, 255, 255, 0.1)',
+                                            color: mode === 'history' ? '#00f2ff' : 'rgba(255, 255, 255, 0.4)',
+                                            fontSize: '0.7rem',
+                                            fontWeight: 900,
+                                            letterSpacing: '0.05em',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s ease',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.5rem'
+                                        }}
+                                    >
+                                        <Clock size={14} />
+                                        {t('common.history')}
+                                    </button>
+                                    <button
+                                        onClick={() => onModeChange('favorites')}
+                                        style={{
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '8px',
+                                            backgroundColor: mode === 'favorites' ? 'rgba(244, 63, 94, 0.15)' : 'rgba(255, 255, 255, 0.03)',
+                                            border: mode === 'favorites' ? '1px solid #f43f5e' : '1px solid rgba(255, 255, 255, 0.1)',
+                                            color: mode === 'favorites' ? '#f43f5e' : 'rgba(255, 255, 255, 0.4)',
+                                            fontSize: '0.7rem',
+                                            fontWeight: 900,
+                                            letterSpacing: '0.05em',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s ease',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.5rem'
+                                        }}
+                                    >
+                                        <Heart size={14} />
+                                        {t('common.favorites')}
+                                    </button>
+                                </div>
+                            )}
+
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                <div style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    gap: '1.5rem',
+                                    padding: '0.75rem 1.5rem',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                                    borderRadius: '14px',
+                                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                                    backdropFilter: 'blur(10px)'
+                                }}>
+                                    <span style={{ fontSize: '0.65rem', fontWeight: 900, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', marginRight: '0.5rem' }}>{t('results.copy_settings_label')}</span>
+
+                                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                                        <input
+                                            type="checkbox"
+                                            checked={copyOptions.costume}
+                                            onChange={() => setCopyOptions(prev => ({ ...prev, costume: !prev.costume }))}
+                                            style={{ accentColor: themeColor, width: '14px', height: '14px', cursor: 'pointer' }}
+                                        />
+                                        <span style={{ fontSize: '0.75rem', fontWeight: 800, color: copyOptions.costume ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('results.tags.outfit')}</span>
+                                    </label>
+
+                                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                                        <input
+                                            type="checkbox"
+                                            checked={copyOptions.character}
+                                            onChange={() => setCopyOptions(prev => ({ ...prev, character: !prev.character }))}
+                                            style={{ accentColor: themeColor, width: '14px', height: '14px', cursor: 'pointer' }}
+                                        />
+                                        <span style={{ fontSize: '0.75rem', fontWeight: 800, color: copyOptions.character ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('results.tags.character')}</span>
+                                    </label>
+
+                                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                                        <input
+                                            type="checkbox"
+                                            checked={copyOptions.pose}
+                                            onChange={() => setCopyOptions(prev => ({ ...prev, pose: !prev.pose }))}
+                                            style={{ accentColor: themeColor, width: '14px', height: '14px', cursor: 'pointer' }}
+                                        />
+                                        <span style={{ fontSize: '0.75rem', fontWeight: 800, color: copyOptions.pose ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('results.tags.pose')}</span>
+                                    </label>
+
+                                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                                        <input
+                                            type="checkbox"
+                                            checked={copyOptions.framing}
+                                            onChange={() => setCopyOptions(prev => ({ ...prev, framing: !prev.framing }))}
+                                            style={{ accentColor: themeColor, width: '14px', height: '14px', cursor: 'pointer' }}
+                                        />
+                                        <span style={{ fontSize: '0.75rem', fontWeight: 800, color: copyOptions.framing ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('results.tags.framing')}</span>
+                                    </label>
+
+                                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                                        <input
+                                            type="checkbox"
+                                            checked={copyOptions.scene}
+                                            onChange={() => setCopyOptions(prev => ({ ...prev, scene: !prev.scene }))}
+                                            style={{ accentColor: themeColor, width: '14px', height: '14px', cursor: 'pointer' }}
+                                        />
+                                        <span style={{ fontSize: '0.75rem', fontWeight: 800, color: copyOptions.scene ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('results.tags.scene')}</span>
+                                    </label>
+                                </div>
+
+                                <button
+                                    onClick={onClose}
+                                    style={{
+                                        width: '45px',
+                                        height: '45px',
+                                        borderRadius: '50%',
+                                        background: 'rgba(255, 255, 255, 0.05)',
+                                        border: 'none',
+                                        color: '#fff',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s'
+                                    }}
+                                    className="hover:rotate-90 hover:bg-white/10"
+                                >
+                                    <X size={24} />
+                                </button>
                             </div>
                         </div>
 
-                        {/* Copy Options in Header */}
-                        <div style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            gap: '1.5rem',
-                            padding: '0.75rem 1.5rem',
-                            backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                            borderRadius: '14px',
-                            border: '1px solid rgba(255, 255, 255, 0.05)',
-                            backdropFilter: 'blur(10px)'
-                        }}>
-                            <span style={{ fontSize: '0.65rem', fontWeight: 900, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', marginRight: '0.5rem' }}>{t('results.copy_settings_label')}</span>
+                        {mode === 'history' && history.length > 0 && onClearHistory && (
+                            <div style={{ paddingLeft: '11rem' }}>
+                                <button
+                                    onClick={() => {
+                                        if (window.confirm(t('common.confirm_clear_history') || 'Are you sure you want to clear all history?')) {
+                                            onClearHistory();
+                                        }
+                                    }}
+                                    style={{
+                                        background: 'rgba(239, 68, 68, 0.1)',
+                                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                                        borderRadius: '12px',
+                                        padding: '0.5rem 1rem',
+                                        cursor: 'pointer',
+                                        color: '#ef4444',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.5rem',
+                                        fontSize: '0.7rem',
+                                        fontWeight: 900,
+                                        letterSpacing: '0.1em',
+                                        textTransform: 'uppercase',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                    className="hover:bg-red-500/20"
+                                >
+                                    <Trash2 size={14} />
+                                    {t('results.delete_all_history')}
+                                </button>
 
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                                <input
-                                    type="checkbox"
-                                    checked={copyOptions.costume}
-                                    onChange={() => setCopyOptions(prev => ({ ...prev, costume: !prev.costume }))}
-                                    style={{ accentColor: themeColor, width: '14px', height: '14px', cursor: 'pointer' }}
-                                />
-                                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: copyOptions.costume ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('common.costume')}</span>
-                            </label>
-
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                                <input
-                                    type="checkbox"
-                                    checked={copyOptions.pose}
-                                    onChange={() => setCopyOptions(prev => ({ ...prev, pose: !prev.pose }))}
-                                    style={{ accentColor: themeColor, width: '14px', height: '14px', cursor: 'pointer' }}
-                                />
-                                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: copyOptions.pose ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('editor.pose')}</span>
-                            </label>
-
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                                <input
-                                    type="checkbox"
-                                    checked={copyOptions.framing}
-                                    onChange={() => setCopyOptions(prev => ({ ...prev, framing: !prev.framing }))}
-                                    style={{ accentColor: themeColor, width: '14px', height: '14px', cursor: 'pointer' }}
-                                />
-                                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: copyOptions.framing ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('editor.framing')}</span>
-                            </label>
-
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                                <input
-                                    type="checkbox"
-                                    checked={copyOptions.scene}
-                                    onChange={() => setCopyOptions(prev => ({ ...prev, scene: !prev.scene }))}
-                                    style={{ accentColor: themeColor, width: '14px', height: '14px', cursor: 'pointer' }}
-                                />
-                                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: copyOptions.scene ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>SCENE</span>
-                            </label>
-                        </div>
-
-                        <button
-                            onClick={onClose}
-                            style={{
-                                width: '45px',
-                                height: '45px',
-                                borderRadius: '50%',
-                                background: 'rgba(255, 255, 255, 0.05)',
-                                border: 'none',
-                                color: '#fff',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                cursor: 'pointer',
-                                transition: 'all 0.3s'
-                            }}
-                            className="hover:rotate-90 hover:bg-white/10"
-                        >
-                            <X size={24} />
-                        </button>
+                                <div style={{
+                                    marginTop: '1rem',
+                                    padding: '0.75rem 1rem',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                                    borderRadius: '8px',
+                                    fontSize: '0.65rem',
+                                    color: 'rgba(255, 255, 255, 0.4)',
+                                    lineHeight: '1.5'
+                                }}>
+                                    <div style={{ marginBottom: '0.25rem' }}>
+                                        💡 {t('results.history_limit_warning')}
+                                    </div>
+                                    <div style={{ color: themeColor, fontWeight: 600 }}>
+                                        ⭐ {t('results.favorites_unlimited')}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </header>
 
-                    {/* Vertical Grid Content */}
                     <main style={{
                         flex: 1,
                         overflowY: 'auto',
@@ -317,7 +439,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                         initial={{ opacity: 0, scale: 0.9 }}
                                         animate={{ opacity: 1, scale: 1 }}
                                         transition={{ delay: idx * 0.03 }}
-                                        className={`result-card ${item.isR18Mode ? 'r18-card-glow' : ''}`}
+                                        className={`result-card ${item.isR18Mode ? 'r18-card-glow' : ''} ${item.isCharacterMode ? 'character-mode' : ''}`}
                                         style={{
                                             borderTop: `4px solid ${themeColor}`,
                                             borderColor: item.isFavorite && mode === 'history' ? '#f43f5e' : undefined
@@ -327,7 +449,6 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                             {String(idx + 1).padStart(2, '0')}
                                         </div>
 
-                                        {/* Card Actions Row (Non-absolute to prevent overlap) */}
                                         <div style={{
                                             padding: '1rem 1.25rem 0',
                                             display: 'flex',
@@ -338,7 +459,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                         }}>
                                             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                                                 <button
-                                                    onClick={() => onRemix(item)}
+                                                    onClick={() => handleRemixAction(item)}
                                                     style={{
                                                         background: 'rgba(234, 179, 8, 0.12)',
                                                         border: '1px solid rgba(234, 179, 8, 0.3)',
@@ -413,7 +534,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                                         alignItems: 'center',
                                                         minWidth: '38px'
                                                     }}>
-                                                        <span style={{ fontSize: '0.4rem', color: '#ff00ff', fontWeight: 900, textTransform: 'uppercase' }}>OVERDRIVE</span>
+                                                        <span style={{ fontSize: '0.45rem', color: '#ff00ff', fontWeight: 900, textTransform: 'uppercase' }}>OVERDRIVE</span>
                                                         <span style={{ fontSize: '0.9rem', color: '#fff', fontWeight: 900, lineHeight: 1 }}>R18</span>
                                                     </div>
                                                 )}
@@ -428,7 +549,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                                         alignItems: 'center',
                                                         minWidth: '38px'
                                                     }}>
-                                                        <span style={{ fontSize: '0.4rem', color: '#f43f5e', fontWeight: 900, textTransform: 'uppercase' }}>SEXY</span>
+                                                        <span style={{ fontSize: '0.45rem', color: '#f43f5e', fontWeight: 900, textTransform: 'uppercase' }}>SEXY</span>
                                                         <span style={{ fontSize: '0.9rem', color: '#fff', fontWeight: 900, lineHeight: 1 }}>{item.sexyLevel}</span>
                                                     </div>
                                                 )}
@@ -443,7 +564,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                                         alignItems: 'center',
                                                         minWidth: '38px'
                                                     }}>
-                                                        <span style={{ fontSize: '0.4rem', color: '#eab308', fontWeight: 900, textTransform: 'uppercase' }}>ACC</span>
+                                                        <span style={{ fontSize: '0.45rem', color: '#eab308', fontWeight: 900, textTransform: 'uppercase' }}>ACC</span>
                                                         <span style={{ fontSize: '0.9rem', color: '#fff', fontWeight: 900, lineHeight: 1 }}>{item.accessoryLevel}</span>
                                                     </div>
                                                 )}
@@ -456,9 +577,17 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                             </h3>
 
                                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
+                                                {item.isCharacterMode && item.character && (
+                                                    <div className="tag-container" style={{ margin: 0 }}>
+                                                        <span style={{ fontSize: '0.45rem', fontWeight: 900, color: 'rgba(255, 0, 128, 0.5)', marginRight: '4px' }}>{t('results.tags.character')}</span>
+                                                        {item.character.split(',').slice(0, 2).map((t, i) => (
+                                                            <span key={i} className="mini-tag" style={{ color: '#ff0080', borderStyle: 'solid' }}>{t.trim()}</span>
+                                                        ))}
+                                                    </div>
+                                                )}
                                                 {item.costume && (
                                                     <div className="tag-container" style={{ margin: 0 }}>
-                                                        <span style={{ fontSize: '0.45rem', fontWeight: 900, color: 'rgba(249, 115, 22, 0.5)', textTransform: 'uppercase', marginRight: '4px' }}>OUTFIT</span>
+                                                        <span style={{ fontSize: '0.45rem', fontWeight: 900, color: 'rgba(249, 115, 22, 0.5)', marginRight: '4px' }}>{t('results.tags.outfit')}</span>
                                                         {item.costume.split(',').slice(0, 2).map((t, i) => (
                                                             <span key={i} className="mini-tag">{t.trim()}</span>
                                                         ))}
@@ -466,7 +595,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                                 )}
                                                 {item.composition && (
                                                     <div className="tag-container" style={{ margin: 0 }}>
-                                                        <span style={{ fontSize: '0.45rem', fontWeight: 900, color: 'rgba(148, 163, 184, 0.5)', textTransform: 'uppercase', marginRight: '4px' }}>POSE</span>
+                                                        <span style={{ fontSize: '0.45rem', fontWeight: 900, color: 'rgba(148, 163, 184, 0.5)', marginRight: '4px' }}>{t('results.tags.pose')}</span>
                                                         {item.composition.split(',').slice(0, 2).map((t, i) => (
                                                             <span key={i} className="mini-tag" style={{ color: '#94a3b8', borderStyle: 'dotted' }}>{t.trim()}</span>
                                                         ))}
@@ -474,7 +603,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                                 )}
                                                 {item.framing && (
                                                     <div className="tag-container" style={{ margin: 0 }}>
-                                                        <span style={{ fontSize: '0.45rem', fontWeight: 900, color: 'rgba(167, 139, 250, 0.5)', textTransform: 'uppercase', marginRight: '4px' }}>FRAMING</span>
+                                                        <span style={{ fontSize: '0.45rem', fontWeight: 900, color: 'rgba(167, 139, 250, 0.5)', marginRight: '4px' }}>{t('results.tags.framing')}</span>
                                                         {item.framing.split(',').slice(0, 2).map((t, i) => (
                                                             <span key={i} className="mini-tag" style={{ color: '#a78bfa', borderStyle: 'dotted' }}>{t.trim()}</span>
                                                         ))}
@@ -482,14 +611,13 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                                 )}
                                                 {item.scene && (
                                                     <div className="tag-container" style={{ margin: 0, marginBottom: '1rem' }}>
-                                                        <span style={{ fontSize: '0.45rem', fontWeight: 900, color: 'rgba(0, 242, 255, 0.5)', textTransform: 'uppercase', marginRight: '4px' }}>SCENE</span>
+                                                        <span style={{ fontSize: '0.45rem', fontWeight: 900, color: 'rgba(0, 242, 255, 0.5)', marginRight: '4px' }}>{t('results.tags.scene')}</span>
                                                         {item.scene.split(',').slice(0, 2).map((t, i) => (
                                                             <span key={i} className="mini-tag" style={{ color: '#00f2ff', borderStyle: 'dotted' }}>{t.trim()}</span>
                                                         ))}
                                                     </div>
                                                 )}
 
-                                                {/* Details Expander (Synchronized with ResultsSection) */}
                                                 <button
                                                     onClick={(e) => {
                                                         e.stopPropagation();
@@ -587,7 +715,6 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                                 </AnimatePresence>
                                             </div>
 
-                                            {/* Primary Copy Selected Action */}
                                             <div style={{ marginTop: 'auto', paddingTop: '1rem' }}>
                                                 <button
                                                     onClick={() => handleSingleCopy(item, idx)}
@@ -621,7 +748,8 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                         )}
                     </main>
                 </motion.div>
-            )}
-        </AnimatePresence>
+            )
+            }
+        </AnimatePresence >
     );
 };

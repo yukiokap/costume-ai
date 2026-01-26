@@ -1,411 +1,58 @@
-import React, { useState, useEffect } from 'react'
 import { ChevronDown, Settings2 } from 'lucide-react'
-import { generateCostumePrompts, generateSexyRangePrompts } from './services/gemini'
-import { type GeneratedPrompt, type HistoryItem } from './types'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useAppLogic } from './hooks/useAppLogic'
+import { useEditor } from './contexts/EditorContext'
+
+// Components
 import { Header } from './components/layout/Header'
 import { ThemeSelector } from './components/editor/ThemeSelector'
 import { ConceptInput } from './components/editor/ConceptInput'
+import { CharacterSection } from './components/editor/CharacterSection'
 import { SexySlider } from './components/editor/SexySlider';
 import { AccessorySlider } from './components/editor/AccessorySlider';
 import { ScenePoseSection } from './components/editor/ScenePoseSection'
 import { ExpressionSection } from './components/editor/ExpressionSection'
 import { FramingSection } from './components/editor/FramingSection';
+import { SceneSection } from './components/editor/SceneSection';
 import { ResultsSection } from './components/results/ResultsSection'
 import { SectionDivider } from './components/ui/SectionDivider'
-import { ALL_ITEMS } from './data/costumes'
-import { EXPRESSION_DATA } from './data/expressions_data'
-import { POSE_STANCE_DATA } from './data/poses_data'
-import { FRAMING_DATA } from './data/framing_data'
 import { SettingsModal } from './components/settings/SettingsModal';
 import { FooterControls } from './components/layout/FooterControls';
 import { HistoryOverlay } from './components/results/HistoryOverlay';
-import { motion, AnimatePresence } from 'framer-motion'
-
-import { useLanguage } from './contexts/LanguageContext'
-import { useHistory } from './contexts/HistoryContext'
-import { useSettings } from './contexts/SettingsContext'
-import { getErrorMessage } from './utils/errorHandler';
-import { getOptionPool, getEnhancedPosePool, getEnhancedExpressionPool } from './utils/promptUtils';
-
-// Fallback ID generator if crypto.randomUUID is missing
-const generateId = () => {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return crypto.randomUUID();
-  }
-  return Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
-};
-
-
 
 function App() {
-  const { t, language: _language } = useLanguage();
   const {
+    // System States
+    isGenerating,
+    generatedPrompts,
+    synthesisLogs,
+    isCopied,
+    isAllCopied,
+    showSettings, setShowSettings,
+    showOverlay, setShowOverlay,
+    showCompletion,
+    isApiKeyError,
+
+    // Context & Settings
+    t,
     history,
-    addToHistory,
+    copyOptions,
+
+    // Handlers
+    handleGenerate,
+    cancelRemix,
+    handleCopy,
+    handleCopyAll,
+    handleSetCopyOptions,
     toggleFavorite,
     removeFromHistory
-  } = useHistory();
+  } = useAppLogic();
+
   const {
-    apiKey,
-    copyOptions,
-    setCopyOptions,
-    enableLighting,
-    setEnableLighting,
-    useWhiteBackground,
-    setUseWhiteBackground
-  } = useSettings();
-
-  const [theme, setTheme] = useState('random')
-  const [concept, setConcept] = useState('')
-  const [sexyLevel, setSexyLevel] = useState(5)
-  const [accessoryLevel, setAccessoryLevel] = useState<number>(5)
-  const [selectedPoseStance, setSelectedPoseStance] = useState('model')
-  const [poseDescription, setPoseDescription] = useState('')
-  const [selectedExpression, setSelectedExpression] = useState('model')
-  const [expressionDescription, setExpressionDescription] = useState('')
-  const [selectedShotType, setSelectedShotType] = useState<string>('full_body')
-  const [selectedShotAngle, setSelectedShotAngle] = useState<string>('front')
-  const [framingDescription, setFramingDescription] = useState<string>('')
-  const [numPrompts, setNumPrompts] = useState(5)
-  const [showAdvanced, setShowAdvanced] = useState(false)
-  const [showCompletion, setShowCompletion] = useState(false)
-  const [isR18Mode, setIsR18Mode] = useState(false);
-
-  const [synthesisLogs, setSynthesisLogs] = useState<string[]>([])
-
-  useEffect(() => {
-    if (isR18Mode) {
-      document.documentElement.classList.add('r18-mode');
-    } else {
-      document.documentElement.classList.remove('r18-mode');
-    }
-  }, [isR18Mode]);
-
-  const [generatedPrompts, setGeneratedPrompts] = useState<GeneratedPrompt[]>([])
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [isCopied, setIsCopied] = useState<number | null>(null)
-  const [isAllCopied, setIsAllCopied] = useState(false)
-  const [showSettings, setShowSettings] = useState(false)
-  const [showOverlay, setShowOverlay] = useState<'none' | 'history' | 'favorites'>('none')
-  const [remixBase, setRemixBase] = useState<HistoryItem | null>(null)
-
-
-  const handleSetCopyOptions = (action: React.SetStateAction<{
-    costume: boolean;
-    pose: boolean;
-    framing: boolean;
-    scene: boolean;
-  }>) => {
-    if (typeof action === 'function') {
-      const next = action(copyOptions);
-      setCopyOptions(next);
-    } else {
-      setCopyOptions(action);
-    }
-  };
-
-  const handleGenerate = async () => {
-    const currentKey = apiKey || localStorage.getItem('gemini_api_key')
-    if (!currentKey) {
-      setShowSettings(true)
-      return
-    }
-
-    setIsGenerating(true)
-    setGeneratedPrompts([])
-
-    const logs = [
-      "NEURAL_LINK: ESTABLISHED",
-      "DATA_POOL: CALIBRATING...",
-      "SYNTHESIZING: STYLISTIC_WEIGHTS",
-      "MAPPING: AESTHETIC_COORDINATES",
-      "UPDATING: TEXTURE_LAYERS",
-      "ANALYZING: POSING_MATRICES",
-      "EXTRACTING: DESIGN_VIBES",
-      "INJECTING: FASHION_DNA",
-      "REFINING: ACCESSORY_NODES",
-      "RANDOMIZING: OUTFIT_VARIATIONS",
-      "VALIDATING: DESIGN_INTEGRITY",
-      "FINALIZING: PROMPT_STRUCTURE",
-      "OUTPUT_STREAM: OPENING"
-    ]
-    setSynthesisLogs([])
-    logs.forEach((log, i) => {
-      setTimeout(() => setSynthesisLogs(prev => [...prev, log]), i * 450)
-    })
-
-    try {
-      const getEffectiveConcept = (isRange: boolean = false) => {
-        if (concept.trim()) return concept;
-
-        let pool = ALL_ITEMS;
-        if (theme !== 'random') {
-          // Try to filter by theme tag
-          const filtered = ALL_ITEMS.filter(item => item.tags.includes(theme));
-          if (filtered.length > 20) { // Ensure enough variety in the filtered pool
-            pool = filtered;
-          }
-        }
-
-        if (isRange) {
-          // For range generation, we need ONE base concept to evolve
-          const randomItem = pool[Math.floor(Math.random() * pool.length)];
-          return randomItem ? `${randomItem.jp} (${randomItem.en})` : '';
-        } else {
-          // For standard generation, pick N different concepts
-          const selected = [];
-          const tempPool = [...pool];
-          for (let i = 0; i < numPrompts; i++) {
-            if (tempPool.length === 0) break;
-            const idx = Math.floor(Math.random() * tempPool.length);
-            const item = tempPool[idx];
-            selected.push(`${item.jp} (${item.en})`);
-            // Remove to prevent duplicates within the same batch
-            tempPool.splice(idx, 1);
-          }
-          return `[DIVERSE_REQUEST: ${selected.join(' | ')}]`;
-        }
-      };
-
-      const parts = {
-        theme,
-        concept: getEffectiveConcept(false),
-        poseStanceId: selectedPoseStance,
-        poseStance: getEnhancedPosePool(selectedPoseStance, theme, POSE_STANCE_DATA),
-        expressionId: selectedExpression,
-        expression: getEnhancedExpressionPool(selectedExpression, theme, EXPRESSION_DATA),
-        shotType: selectedShotType === 'random' ? 'randomly varied' : selectedShotType.replace(/_/g, ' '),
-        shotAngle: selectedShotAngle === 'random' ? 'randomly varied' : getOptionPool(selectedShotAngle, FRAMING_DATA),
-        shotTypeId: selectedShotType,
-        shotAngleId: selectedShotAngle,
-        poseDescription: poseDescription,
-        expressionDescription: expressionDescription,
-        framingDescription: framingDescription,
-        sexyLevel: sexyLevel,
-        accessoryLevel: accessoryLevel,
-        enableLighting: enableLighting,
-        useWhiteBackground: useWhiteBackground,
-        remixBaseDesign: remixBase?.costume,
-        isR18Mode: isR18Mode,
-        // For history tracking
-        originalShotType: selectedShotType,
-        originalShotAngle: selectedShotAngle,
-      }
-      const results = await generateCostumePrompts(apiKey, parts, numPrompts, _language)
-
-      const newHistoryItems: HistoryItem[] = results.map(r => ({
-        ...r,
-        id: generateId(),
-        timestamp: Date.now(),
-        isFavorite: false
-      }))
-
-      // Add each new item to history using context
-      newHistoryItems.forEach(item => addToHistory(item));
-      setGeneratedPrompts(newHistoryItems)
-
-      setTimeout(() => {
-        document.getElementById('archive')?.scrollIntoView({ behavior: 'smooth' })
-      }, 500)
-    } catch (error) {
-      console.error(error);
-      const msg = getErrorMessage(error, t);
-      alert(msg);
-    } finally {
-      setIsGenerating(false)
-      setShowCompletion(true)
-      setTimeout(() => setShowCompletion(false), 3000)
-    }
-  }
-
-  const handleGenerateRange = async (referencePrompt?: string) => {
-    const currentKey = apiKey || localStorage.getItem('gemini_api_key')
-    if (!currentKey) {
-      setShowSettings(true)
-      return
-    }
-
-    setIsGenerating(true)
-    setGeneratedPrompts([])
-
-    const logs = [
-      "INITIALIZING: EVOLUTION_ENGINE",
-      "MAPPING: ATTRIBUTE_GRADIENTS",
-      "SEQ_START: PROPERTY_SHIFT",
-      "ANALYZING: BASE_ARCHETYPE",
-      "CALIBRATING: EXPOSURE_LAYERS",
-      "REFINING: CLOTHING_GEOMETRY",
-      "SYNTHESIZING: STAGE_PROGRESSION",
-      "GENERATING: 10_POINT_SPECTRUM",
-      "VALIDATING: MORPH_INTEGRITY",
-      "OUTPUT_STREAM: OPENING"
-    ]
-    setSynthesisLogs([])
-    logs.forEach((log, i) => {
-      setTimeout(() => setSynthesisLogs(prev => [...prev, log]), i * 450)
-    })
-
-    try {
-      const getEffectiveConcept = (isRange: boolean = false) => {
-        if (concept.trim()) return concept;
-
-        let pool = ALL_ITEMS;
-        if (theme !== 'random') {
-          // Try to filter by theme tag
-          const filtered = ALL_ITEMS.filter(item => item.tags.includes(theme));
-          if (filtered.length > 20) { // Ensure enough variety in the filtered pool
-            pool = filtered;
-          }
-        }
-
-        if (isRange) {
-          // For range generation, we need ONE base concept to evolve
-          const randomItem = pool[Math.floor(Math.random() * pool.length)];
-          return randomItem ? `${randomItem.jp} (${randomItem.en})` : '';
-        } else {
-          // For standard generation, pick N different concepts
-          const selected = [];
-          const tempPool = [...pool];
-          for (let i = 0; i < numPrompts; i++) {
-            if (tempPool.length === 0) break;
-            const idx = Math.floor(Math.random() * tempPool.length);
-            const item = tempPool[idx];
-            selected.push(`${item.jp} (${item.en})`);
-            // Remove to prevent duplicates within the same batch
-            tempPool.splice(idx, 1);
-          }
-          return `[DIVERSE_REQUEST: ${selected.join(' | ')}]`;
-        }
-      };
-
-      // getEffectiveValue moved outside component
-
-      const parts = {
-        theme,
-        concept: getEffectiveConcept(true),
-        poseStanceId: selectedPoseStance,
-        poseStance: getEnhancedPosePool(selectedPoseStance, theme, POSE_STANCE_DATA),
-        expressionId: selectedExpression,
-        expression: getEnhancedExpressionPool(selectedExpression, theme, EXPRESSION_DATA),
-        shotType: selectedShotType === 'random' ? 'randomly varied' : selectedShotType.replace(/_/g, ' '),
-        shotAngle: selectedShotAngle === 'random' ? 'randomly varied' : getOptionPool(selectedShotAngle, FRAMING_DATA),
-        shotTypeId: selectedShotType,
-        shotAngleId: selectedShotAngle,
-        poseDescription: poseDescription,
-        expressionDescription: expressionDescription,
-        framingDescription: framingDescription,
-        sexyLevel: sexyLevel,
-        accessoryLevel: accessoryLevel,
-        enableLighting: enableLighting,
-        useWhiteBackground: useWhiteBackground,
-        remixBaseDesign: remixBase?.costume,
-        isR18Mode: isR18Mode,
-        // For history tracking
-        originalShotType: selectedShotType,
-        originalShotAngle: selectedShotAngle,
-      }
-      const results = await generateSexyRangePrompts(apiKey, parts, referencePrompt, _language)
-
-      const newHistoryItems: HistoryItem[] = results.map(r => ({
-        ...r,
-        id: generateId(),
-        timestamp: Date.now(),
-        isFavorite: false
-      }))
-
-      newHistoryItems.forEach(item => addToHistory(item));
-      setGeneratedPrompts(newHistoryItems)
-
-      setTimeout(() => {
-        document.getElementById('archive')?.scrollIntoView({ behavior: 'smooth' })
-      }, 500)
-    } catch (error) {
-      console.error(error);
-      const msg = getErrorMessage(error, t);
-      alert(msg);
-    } finally {
-      setIsGenerating(false)
-      setShowCompletion(true)
-      setTimeout(() => setShowCompletion(false), 3000)
-    }
-  }
-
-  const handleRemix = (item: HistoryItem) => {
-    // Restore states
-    if (item.originalTheme) setTheme(item.originalTheme);
-    if (item.originalConcept) setConcept(item.originalConcept);
-    if (item.originalPoseStance) setSelectedPoseStance(item.originalPoseStance);
-    if (item.originalPoseDescription) setPoseDescription(item.originalPoseDescription);
-    if (item.originalExpression) setSelectedExpression(item.originalExpression);
-    if (item.originalExpressionDescription) setExpressionDescription(item.originalExpressionDescription);
-    if (item.originalShotType) setSelectedShotType(item.originalShotType);
-    if (item.originalShotAngle) setSelectedShotAngle(item.originalShotAngle);
-    if (item.originalFramingDescription) setFramingDescription(item.originalFramingDescription);
-    if (item.sexyLevel !== undefined) setSexyLevel(item.sexyLevel);
-    if (item.accessoryLevel !== undefined) setAccessoryLevel(item.accessoryLevel);
-
-    setRemixBase(item);
-    setShowOverlay('none');
-
-    // Scroll to top to show settings
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const cancelRemix = () => {
-    setRemixBase(null);
-  };
-
-  const handleReset = () => {
-    // 01: Basics
-    setTheme('random');
-    setConcept('');
-    setSexyLevel(5);
-    setAccessoryLevel(5);
-    setIsR18Mode(false);
-
-    // 02: Advanced - Pose
-    setSelectedPoseStance('model');
-    setPoseDescription('');
-
-    // 03: Advanced - Expression
-    setSelectedExpression('model');
-    setExpressionDescription('');
-
-    // 04: Advanced - Framing
-    setSelectedShotType('full_body');
-    setSelectedShotAngle('front');
-    setFramingDescription('');
-
-    setRemixBase(null);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-
-  const handleCopy = (text: string, index: number) => {
-    navigator.clipboard.writeText(text)
-    setIsCopied(index)
-    setTimeout(() => setIsCopied(null), 2000)
-  }
-
-  const handleCopyAll = () => {
-    if (generatedPrompts.length === 0) return
-
-    const allText = generatedPrompts.map(p => {
-      const parts = [];
-      if (copyOptions.costume && p.costume) parts.push(p.costume.replace(/\n/g, ' '));
-      if (copyOptions.pose && p.composition) parts.push(p.composition.replace(/\n/g, ' '));
-      if (copyOptions.framing && p.framing) parts.push(p.framing.replace(/\n/g, ' ')); // Added
-      if (copyOptions.scene && p.scene) parts.push(p.scene.replace(/\n/g, ' '));
-
-      if (parts.length === 0) return p.prompt.replace(/\n/g, ' ');
-      return parts.join(', ');
-    }).join('\n\n')
-
-    navigator.clipboard.writeText(allText)
-    setIsAllCopied(true)
-    setTimeout(() => setIsAllCopied(false), 2000)
-  }
-
+    showAdvanced, setShowAdvanced,
+    isCharacterMode,
+    remixBase
+  } = useEditor();
 
   return (
     <div className="app-shell min-h-screen relative pb-32" style={{
@@ -444,29 +91,38 @@ function App() {
       <SettingsModal
         isOpen={showSettings}
         onClose={() => setShowSettings(false)}
+        hasError={isApiKeyError}
+        initialTab={isApiKeyError ? "config" : undefined}
       />
 
       <main className="max-w-4xl mx-auto px-6 grid grid-cols-1 gap-12 relative z-10 items-start">
         <div className="studio-panel space-y-12">
           <SectionDivider label={t('editor.section_costume_title')} color="cyan" />
 
-          <div className="space-y-12">
-            <ThemeSelector selectedTheme={theme} onChange={setTheme} />
+          <CharacterSection />
 
-            <ConceptInput value={concept} onChange={setConcept} />
+          <AnimatePresence mode="wait">
+            {!isCharacterMode && (
+              <motion.div
+                key="standard-mode"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-12"
+              >
+                <ThemeSelector />
+                <ConceptInput />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div className="pt-4 border-t border-white/5">
+            <SexySlider />
           </div>
 
           <div className="pt-4 border-t border-white/5">
-            <SexySlider
-              value={sexyLevel}
-              onChange={setSexyLevel}
-              isR18Mode={isR18Mode}
-              onR18Change={setIsR18Mode}
-            />
-          </div>
-
-          <div className="pt-4 border-t border-white/5">
-            <AccessorySlider value={accessoryLevel} onChange={setAccessoryLevel} />
+            <AccessorySlider />
           </div>
 
           <div className="border-t border-white/5 pt-8">
@@ -545,51 +201,23 @@ function App() {
                   exit={{ height: 0, opacity: 0 }}
                   className="overflow-hidden space-y-12 mt-8"
                 >
-                  <ScenePoseSection
-                    selectedPoseStance={selectedPoseStance}
-                    setSelectedPoseStance={setSelectedPoseStance}
-                    poseDescription={poseDescription}
-                    setPoseDescription={setPoseDescription}
-                  />
-
+                  <ScenePoseSection />
                   <div style={{ height: '3px', width: '100%', background: 'linear-gradient(90deg, rgba(16,185,129,0.5), rgba(249,115,22,0.5))', margin: '3rem 0', borderRadius: '2px', boxShadow: '0 0 15px rgba(249,115,22,0.3)' }} />
-
-                  <ExpressionSection
-                    selectedExpression={selectedExpression}
-                    setSelectedExpression={setSelectedExpression}
-                    expressionDescription={expressionDescription}
-                    setExpressionDescription={setExpressionDescription}
-                  />
-
+                  <ExpressionSection />
                   <div style={{ height: '3px', width: '100%', background: 'linear-gradient(90deg, rgba(249,115,22,0.5), rgba(139,92,246,0.5))', margin: '3rem 0', borderRadius: '2px', boxShadow: '0 0 15px rgba(139,92,246,0.3)' }} />
-
-                  <FramingSection
-                    selectedShotType={selectedShotType}
-                    setSelectedShotType={setSelectedShotType}
-                    selectedShotAngle={selectedShotAngle}
-                    setSelectedShotAngle={setSelectedShotAngle}
-                    framingDescription={framingDescription}
-                    setFramingDescription={setFramingDescription}
-                  />
-
+                  <FramingSection />
                   <div style={{ height: '3px', width: '100%', background: 'linear-gradient(90deg, rgba(139,92,246,0.5), rgba(34,211,238,0.5))', margin: '3rem 0', borderRadius: '2px', boxShadow: '0 0 15px rgba(34,211,238,0.3)' }} />
+                  <SceneSection />
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
 
           <FooterControls
-            enableLighting={enableLighting}
-            setEnableLighting={setEnableLighting}
-            useWhiteBackground={useWhiteBackground}
-            setUseWhiteBackground={setUseWhiteBackground}
             isGenerating={isGenerating}
             handleGenerate={handleGenerate}
-            numPrompts={numPrompts}
-            setNumPrompts={setNumPrompts}
             onViewHistory={() => setShowOverlay('history')}
             onViewFavorites={() => setShowOverlay('favorites')}
-            onReset={handleReset}
           />
         </div>
 
@@ -601,10 +229,10 @@ function App() {
           onToggleFavorite={toggleFavorite}
           onDelete={removeFromHistory}
           onCopy={handleCopy}
-          onRemix={handleRemix}
           isCopied={isCopied}
           copyOptions={copyOptions}
           setCopyOptions={handleSetCopyOptions}
+          onModeChange={(mode) => setShowOverlay(mode)}
         />
 
         <ResultsSection
@@ -617,13 +245,9 @@ function App() {
           history={history}
           synthesisLogs={synthesisLogs}
           onToggleFavorite={toggleFavorite}
-          onGenerateRange={handleGenerateRange}
-          onRemix={handleRemix}
           copyOptions={copyOptions}
           setCopyOptions={handleSetCopyOptions}
         />
-
-
       </main >
 
       <AnimatePresence>

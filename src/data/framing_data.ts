@@ -67,7 +67,7 @@ export const FRAMING_DATA: Record<string, string[]> = {
         "clear front view, eye-level perspective, flat and clear",
         "centered framing from the front, balanced and informative",
         "formal frontal pose, clean background composition",
-        "subject facing camera directly, standard reference angle"
+        "subject facing viewer directly, standard reference angle"
     ],
     side: [
         "side profile view, showing character from the side",
@@ -86,13 +86,13 @@ export const FRAMING_DATA: Record<string, string[]> = {
         "full back shot, emphasizing cape or back ornaments",
         "back silhouette against the horizon, looking into distance",
         "reverse angle shot, focus on back details of the costume",
-        "character seen from behind, walking away from camera",
+        "character seen from behind, walking away",
         "dramatic back shot, focus on spine or back accessories"
     ],
     dynamic: [
         "low angle shot, looking up at the character, heroic scale",
         "high angle shot, looking down from above, unique perspective",
-        "extreme dutch angle, tilted camera for dramatic effect",
+        "extreme dutch angle, tilted for dramatic effect",
         "bird's eye view, looking straight down from the ceiling",
         "worm's eye view, looking straight up from the ground",
         "wide angle action framing, sense of speed and scale",

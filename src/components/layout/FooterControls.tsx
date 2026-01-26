@@ -1,65 +1,56 @@
-import React from 'react';
-import { NeonToggle } from '../ui/NeonToggle';
+import React, { memo } from 'react';
 import { Sparkles, Clock, Heart, RotateCcw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { RotaryDial } from '../ui/RotaryDial';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useEditor } from '../../contexts/EditorContext';
 
 interface FooterControlsProps {
-    enableLighting: boolean;
-    setEnableLighting: (val: boolean) => void;
-    useWhiteBackground: boolean;
-    setUseWhiteBackground: (val: boolean) => void;
     isGenerating: boolean;
     handleGenerate: () => void;
-    numPrompts: number;
-    setNumPrompts: (val: number) => void;
     onViewHistory: () => void;
     onViewFavorites: () => void;
-    onReset: () => void;
 }
 
-export const FooterControls: React.FC<FooterControlsProps> = ({
-    enableLighting,
-    setEnableLighting,
-    useWhiteBackground,
-    setUseWhiteBackground,
+export const FooterControls: React.FC<FooterControlsProps> = memo(({
     isGenerating,
     handleGenerate,
-    numPrompts,
-    setNumPrompts,
     onViewHistory,
     onViewFavorites,
-    onReset
 }) => {
     const { t } = useLanguage();
+    const { numPrompts, setNumPrompts, resetEditor } = useEditor();
+
+    const getActiveColor = (val: number) => {
+        if (val <= 3) return '#00f2ff';
+        if (val <= 6) return '#8b5cf6';
+        if (val <= 8) return '#f97316';
+        return '#ef4444';
+    };
+
+    const activeColor = getActiveColor(numPrompts);
 
     return (
         <>
             <footer className="pt-12 border-t border-white/5 flex flex-col items-center gap-12 relative overflow-visible">
-                {/* 上部：トグルスイッチ */}
-                <div className="flex flex-row justify-center gap-12 w-full px-4">
-                    <NeonToggle
-                        label={`${enableLighting ? 'ON' : 'OFF'}`}
-                        description={t('editor.lighting_effect')}
-                        checked={enableLighting}
-                        onChange={setEnableLighting}
-                        color="amber"
-                        layout="top"
-                    />
-
-                    <NeonToggle
-                        label={`${useWhiteBackground ? t('editor.background_white') : t('editor.background_free')}`}
-                        description={t('editor.background_fix')}
-                        checked={useWhiteBackground}
-                        onChange={setUseWhiteBackground}
-                        color="white"
-                        layout="top"
-                    />
-                </div>
-
                 {/* 中央：回転ダイヤル ＆ 生成ボタン */}
-                <div className="relative flex items-center justify-center scale-90 sm:scale-100">
+                <div className="relative flex flex-col items-center justify-center scale-90 sm:scale-100">
+                    <div style={{
+                        fontSize: '11px',
+                        fontWeight: 900,
+                        color: 'rgba(255, 255, 255, 0.4)',
+                        letterSpacing: '0.3em',
+                        textTransform: 'uppercase',
+                        marginBottom: '1.5rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        pointerEvents: 'none'
+                    }}>
+                        <div style={{ height: '1px', width: '30px', background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2))' }} />
+                        {t('editor.batch_count')}
+                        <div style={{ height: '1px', width: '30px', background: 'linear-gradient(90deg, rgba(255, 255, 255, 0.2), transparent)' }} />
+                    </div>
                     <RotaryDial
                         value={numPrompts}
                         onChange={setNumPrompts}
@@ -68,25 +59,26 @@ export const FooterControls: React.FC<FooterControlsProps> = ({
                     >
                         {/* ダイヤルの中央に配置される生成ボタン */}
                         <motion.button
-                            whileHover={!isGenerating ? { scale: 1.05 } : {}}
-                            whileTap={!isGenerating ? { scale: 0.95 } : {}}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 handleGenerate();
                             }}
-                            disabled={isGenerating}
                             style={{
                                 width: '140px',
                                 height: '140px',
                                 borderRadius: '50%',
                                 background: isGenerating
-                                    ? 'rgba(0, 242, 255, 0.1)'
-                                    : 'linear-gradient(135deg, rgba(0, 242, 255, 0.8), rgba(0, 106, 255, 0.8))',
-                                border: '2px solid #00f2ff',
+                                    ? 'rgba(239, 68, 68, 0.1)'
+                                    : `linear-gradient(135deg, ${activeColor}, #000)`,
+                                border: isGenerating
+                                    ? '2px solid #ef4444'
+                                    : `2px solid ${activeColor}`,
                                 boxShadow: isGenerating
-                                    ? '0 0 30px rgba(0, 242, 255, 0.4)'
-                                    : '0 0 30px rgba(0, 242, 255, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.5)',
-                                cursor: isGenerating ? 'not-allowed' : 'pointer',
+                                    ? '0 0 30px rgba(239, 68, 68, 0.4), inset 0 0 10px rgba(239, 68, 68, 0.2)'
+                                    : `0 0 30px ${activeColor}66, inset 0 0 20px rgba(255, 255, 255, 0.5)`,
+                                cursor: 'pointer',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
@@ -99,8 +91,8 @@ export const FooterControls: React.FC<FooterControlsProps> = ({
                             <span style={{
                                 fontSize: '32px',
                                 fontWeight: 900,
-                                color: isGenerating ? '#fff' : '#000',
-                                textShadow: isGenerating ? '0 0 10px rgba(0, 242, 255, 0.5)' : 'none',
+                                color: isGenerating ? '#ef4444' : (numPrompts <= 3 ? '#000' : '#fff'),
+                                textShadow: isGenerating ? '0 0 10px rgba(239, 68, 68, 0.5)' : 'none',
                                 lineHeight: 1
                             }}>
                                 {numPrompts}
@@ -110,25 +102,81 @@ export const FooterControls: React.FC<FooterControlsProps> = ({
                                     animate={{ rotate: 360 }}
                                     transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                                 >
-                                    <Sparkles size={20} color="#00f2ff" />
+                                    <span style={{ display: 'flex' }}><Sparkles size={20} color="#ef4444" /></span>
                                 </motion.div>
                             ) : (
-                                <Sparkles size={20} color="#000" />
+                                <Sparkles size={20} color={numPrompts <= 3 ? '#000' : '#fff'} />
                             )}
                             <span style={{
                                 fontSize: '16px',
                                 fontWeight: 900,
                                 letterSpacing: '0.15em',
-                                color: isGenerating ? '#00f2ff' : '#ffffff',
+                                color: isGenerating ? '#ef4444' : (numPrompts <= 3 ? '#000' : '#ffffff'),
                                 textShadow: isGenerating
-                                    ? '0 0 8px rgba(0, 242, 255, 0.6)'
+                                    ? '0 0 8px rgba(239, 68, 68, 0.6)'
                                     : '0 2px 4px rgba(0, 0, 0, 0.4)',
                                 textTransform: 'uppercase'
                             }}>
-                                {isGenerating ? 'WAIT' : 'TAP!'}
+                                {isGenerating ? 'STOP' : 'TAP!'}
                             </span>
                         </motion.button>
                     </RotaryDial>
+                </div>
+
+                {/* 水平スライダー（ダイアルと連動） */}
+                <div style={{
+                    width: '100%',
+                    maxWidth: '300px',
+                    padding: '0 20px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '12px',
+                    marginTop: '-20px',
+                    zIndex: 10
+                }}>
+                    <input
+                        type="range"
+                        min="1"
+                        max="10"
+                        value={numPrompts}
+                        onChange={(e) => setNumPrompts(parseInt(e.target.value))}
+                        disabled={isGenerating}
+                        style={{
+                            width: '100%',
+                            height: '4px',
+                            background: `linear-gradient(90deg, ${activeColor} ${(numPrompts - 1) * 11.11}%, rgba(255, 255, 255, 0.1) ${(numPrompts - 1) * 11.11}%)`,
+                            borderRadius: '2px',
+                            appearance: 'none',
+                            cursor: 'pointer',
+                            outline: 'none',
+                            "--thumb-color": activeColor
+                        } as React.CSSProperties}
+                        className="cyber-slider"
+                    />
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        width: '100%',
+                        padding: '0 4px'
+                    }}>
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => (
+                            <span
+                                key={n}
+                                onClick={() => !isGenerating && setNumPrompts(n)}
+                                style={{
+                                    fontSize: '10px',
+                                    fontWeight: 900,
+                                    color: n === numPrompts ? getActiveColor(n) : 'rgba(255,255,255,0.2)',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s',
+                                    textShadow: n === numPrompts ? `0 0 8px ${getActiveColor(n)}` : 'none'
+                                }}
+                            >
+                                {n}
+                            </span>
+                        ))}
+                    </div>
                 </div>
 
                 {/* 下部：補助ボタン */}
@@ -136,7 +184,7 @@ export const FooterControls: React.FC<FooterControlsProps> = ({
                     <motion.button
                         whileHover={{ scale: 1.02, backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={onReset}
+                        onClick={resetEditor}
                         style={{
                             padding: '1rem',
                             background: 'rgba(0, 0, 0, 0.2)',
@@ -219,7 +267,34 @@ export const FooterControls: React.FC<FooterControlsProps> = ({
                     from { transform: rotate(0deg); }
                     to { transform: rotate(360deg); }
                 }
+
+                .cyber-slider::-webkit-slider-thumb {
+                    appearance: none;
+                    width: 16px;
+                    height: 16px;
+                    border-radius: 50%;
+                    background: var(--thumb-color, #00f2ff);
+                    cursor: pointer;
+                    box-shadow: 0 0 10px var(--thumb-color, #00f2ff);
+                    border: 2px solid #fff;
+                    transition: all 0.2s;
+                }
+
+                .cyber-slider::-webkit-slider-thumb:hover {
+                    transform: scale(1.2);
+                    box-shadow: 0 0 15px var(--thumb-color, #00f2ff);
+                }
+
+                .cyber-slider::-moz-range-thumb {
+                    width: 16px;
+                    height: 16px;
+                    border-radius: 50%;
+                    background: var(--thumb-color, #00f2ff);
+                    cursor: pointer;
+                    box-shadow: 0 0 10px var(--thumb-color, #00f2ff);
+                    border: 2px solid #fff;
+                }
             `}} />
         </>
     );
-};
+});

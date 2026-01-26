@@ -1,19 +1,17 @@
 import React from 'react';
 import { Quote } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useEditor } from '../../contexts/EditorContext';
+import { STANDARD_ITEMS } from '../../data/costumes';
 
-interface ConceptInputProps {
-    value: string;
-    onChange: (value: string) => void;
-}
-
-import { ALL_ITEMS } from '../../data/costumes';
-
-export const ConceptInput: React.FC<ConceptInputProps> = ({ value, onChange }) => {
+export const ConceptInput: React.FC = () => {
     const { t } = useLanguage();
+    const { concept: value, setConcept: onChange, remixBase } = useEditor();
+    const disabled = !!remixBase;
 
     const handleRandomIdea = () => {
-        const item = ALL_ITEMS[Math.floor(Math.random() * ALL_ITEMS.length)];
+        if (disabled) return;
+        const item = STANDARD_ITEMS[Math.floor(Math.random() * STANDARD_ITEMS.length)];
         if (item) {
             onChange(`${item.jp} (${item.en})`);
         }
@@ -28,6 +26,8 @@ export const ConceptInput: React.FC<ConceptInputProps> = ({ value, onChange }) =
                 <button
                     onClick={handleRandomIdea}
                     className="idea-dice-btn"
+                    disabled={disabled}
+                    style={{ opacity: disabled ? 0.5 : 1, cursor: disabled ? 'not-allowed' : 'pointer' }}
                 >
                     <Quote size={10} style={{ transform: 'rotate(180deg)' }} />
                     RANDOM_IDEA
@@ -40,6 +40,8 @@ export const ConceptInput: React.FC<ConceptInputProps> = ({ value, onChange }) =
                     onChange={(e) => onChange(e.target.value)}
                     placeholder={t('editor.concept_placeholder')}
                     className="premium-textarea focus:border-cyan-500/50"
+                    disabled={disabled}
+                    style={{ opacity: disabled ? 0.5 : 1, cursor: disabled ? 'not-allowed' : 'text' }}
                 />
             </div>
         </div>

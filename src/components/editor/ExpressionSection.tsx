@@ -1,28 +1,22 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Quote, ChevronLeft, ChevronRight, Edit3, LayoutGrid, Smile } from 'lucide-react';
 import { EXPRESSION_ARCHETYPES } from '../../data/expressions';
 import { SectionDivider } from '../ui/SectionDivider';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useEditor } from '../../contexts/EditorContext';
 
-interface ExpressionSectionProps {
-    selectedExpression: string;
-    setSelectedExpression: (val: string) => void;
-    expressionDescription: string;
-    setExpressionDescription: (val: string) => void;
-}
-
-export const ExpressionSection: React.FC<ExpressionSectionProps> = ({
-    selectedExpression,
-    setSelectedExpression,
-    expressionDescription,
-    setExpressionDescription
-}) => {
+export const ExpressionSection: React.FC = () => {
     const { t } = useLanguage();
-    const scrollRef = React.useRef<HTMLDivElement>(null);
-    const [inputMode, setInputMode] = React.useState<'card' | 'text'>('card');
-    const [draftText, setDraftText] = React.useState(expressionDescription || '');
-    const [draftExpr, setDraftExpr] = React.useState(selectedExpression);
+    const {
+        selectedExpression, setSelectedExpression,
+        expressionDescription, setExpressionDescription
+    } = useEditor();
+
+    const scrollRef = useRef<HTMLDivElement>(null);
+    const [inputMode, setInputMode] = useState<'card' | 'text'>(expressionDescription ? 'text' : 'card');
+    const [draftText, setDraftText] = useState(expressionDescription || '');
+    const [draftExpr, setDraftExpr] = useState(selectedExpression);
 
     const handleToggleMode = () => {
         if (inputMode === 'text') {
@@ -50,41 +44,30 @@ export const ExpressionSection: React.FC<ExpressionSectionProps> = ({
             <div className="flex items-center justify-between">
                 <SectionDivider label={t('editor.section_expression_title')} color="orange" />
 
-                {/* Enhanced Mode Toggle */}
-                <div className="flex bg-black/40 p-1 rounded-xl border border-white/5 relative overflow-hidden h-[34px] w-[140px]">
-                    <motion.div
-                        className="absolute top-1 bottom-1 rounded-lg bg-orange-500/20 border border-orange-500/30"
-                        initial={false}
-                        animate={{
-                            left: inputMode === 'card' ? '4px' : '72px',
-                            right: inputMode === 'card' ? '72px' : '4px'
-                        }}
-                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    />
-                    <button
-                        onClick={() => inputMode !== 'card' && handleToggleMode()}
-                        className={`flex-1 flex items-center justify-center gap-1.5 z-10 transition-colors ${inputMode === 'card' ? 'text-orange-400' : 'text-white/40 hover:text-white/60'}`}
-                    >
-                        <LayoutGrid size={12} />
-                        <span className="text-[9px] font-black uppercase tracking-wider">Preset</span>
-                    </button>
-                    <button
-                        onClick={() => inputMode !== 'text' && handleToggleMode()}
-                        className={`flex-1 flex items-center justify-center gap-1.5 z-10 transition-colors ${inputMode === 'text' ? 'text-orange-400' : 'text-white/40 hover:text-white/60'}`}
-                    >
-                        <Edit3 size={12} />
-                        <span className="text-[9px] font-black uppercase tracking-wider">Manual</span>
-                    </button>
-                </div>
+                {/* Optimized Compact Toggle */}
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleToggleMode}
+                    className={`mode-toggle-compact mode-orange ${inputMode === 'card' ? 'active-btn' : ''}`}
+                >
+                    <div className={`mode-toggle-icon ${inputMode === 'card' ? 'active-icon' : ''}`}>
+                        {inputMode === 'card' ? <LayoutGrid size={12} /> : <Edit3 size={12} />}
+                    </div>
+
+                    <span className="mode-toggle-label">
+                        {inputMode === 'card' ? t('common.mode_preset') : t('common.mode_manual')}
+                    </span>
+
+                    <div className="mode-toggle-indicator">
+                        <div className={`indicator-dot ${inputMode === 'card' ? 'active' : ''}`} />
+                        <div className={`indicator-dot ${inputMode === 'text' ? 'active' : ''}`} />
+                    </div>
+                </motion.button>
             </div>
 
             {inputMode === 'card' ? (
-                <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="space-y-6 pt-2"
-                >
+                <div className="space-y-6 pt-2">
                     <div className="space-y-4">
                         <div className="flex items-center gap-2 field-label !text-orange-400">
                             <Smile size={14} />
@@ -126,7 +109,7 @@ export const ExpressionSection: React.FC<ExpressionSectionProps> = ({
                             </button>
                         </div>
                     </div>
-                </motion.div>
+                </div>
             ) : (
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}

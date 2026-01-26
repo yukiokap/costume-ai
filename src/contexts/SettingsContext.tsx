@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, type ReactNode } from 'reac
 
 interface CopyOptions {
     costume: boolean;
+    character: boolean;
     pose: boolean;
     framing: boolean;
     scene: boolean;
@@ -32,11 +33,11 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
                 console.error("Failed to parse copy options", e);
             }
         }
-        return { costume: true, pose: true, framing: true, scene: true };
+        return { costume: true, character: true, pose: true, framing: true, scene: true };
     });
 
     const [enableLighting, setEnableLighting] = useState(false);
-    const [useWhiteBackground, setUseWhiteBackground] = useState(true);
+    const [useWhiteBackground, setUseWhiteBackground] = useState(false);
 
     const saveApiKey = (key: string) => {
         setApiKey(key);

@@ -1,14 +1,14 @@
-import React from 'react';
+import { useRef, memo } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Moon, Heart, Flame, Activity, Shirt, Wand2, Scissors, Music, Ghost, Gem, ChevronLeft, ChevronRight, Tv } from 'lucide-react';
+import { Wand2, Scissors, Music, Ghost, Gem, ChevronLeft, ChevronRight, Sparkles, Moon, Heart, Flame, Activity, Shirt } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useEditor } from '../../contexts/EditorContext';
 
-export const ThemeSelector = React.memo<{
-    selectedTheme: string;
-    onChange: (theme: string) => void;
-}>(({ selectedTheme, onChange }) => {
+export const ThemeSelector = memo(() => {
     const { t } = useLanguage();
-    const scrollRef = React.useRef<HTMLDivElement>(null);
+    const { theme: selectedTheme, setTheme: onChange, remixBase } = useEditor();
+    const scrollRef = useRef<HTMLDivElement>(null);
+    const disabled = !!remixBase;
 
     const scroll = (direction: 'left' | 'right') => {
         if (scrollRef.current) {
@@ -29,7 +29,6 @@ export const ThemeSelector = React.memo<{
         { id: 'fetish', label: t('editor.themes.fetish'), icon: Scissors },
         { id: 'pop', label: t('editor.themes.pop'), icon: Music },
         { id: 'dark', label: t('editor.themes.dark'), icon: Ghost },
-        { id: 'anime', label: t('editor.themes.anime'), icon: Tv },
     ];
 
     return (
@@ -40,8 +39,8 @@ export const ThemeSelector = React.memo<{
                 </label>
             </div>
 
-            <div className="scroll-nav-container">
-                <button className="scroll-arrow scroll-arrow-left" onClick={() => scroll('left')}>
+            <div className={`scroll-nav-container ${disabled ? 'opacity-50 pointer-events-none' : ''}`}>
+                <button className="scroll-arrow scroll-arrow-left" onClick={() => scroll('left')} disabled={disabled}>
                     <ChevronLeft size={16} />
                 </button>
                 <div className="premium-grid" ref={scrollRef}>
@@ -52,10 +51,12 @@ export const ThemeSelector = React.memo<{
                         return (
                             <motion.button
                                 key={theme.id}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => onChange(theme.id)}
+                                whileHover={disabled ? {} : { scale: 1.05 }}
+                                whileTap={disabled ? {} : { scale: 0.95 }}
+                                onClick={() => !disabled && onChange(theme.id)}
                                 className={`theme-card theme-${theme.id} ${isSelected ? 'selected' : ''}`}
+                                disabled={disabled}
+                                style={{ cursor: disabled ? 'not-allowed' : 'pointer' }}
                             >
                                 <div className="premium-icon-box !p-2">
                                     <Icon size={18} />
@@ -69,7 +70,7 @@ export const ThemeSelector = React.memo<{
                         );
                     })}
                 </div>
-                <button className="scroll-arrow scroll-arrow-right" onClick={() => scroll('right')}>
+                <button className="scroll-arrow scroll-arrow-right" onClick={() => scroll('right')} disabled={disabled}>
                     <ChevronRight size={16} />
                 </button>
             </div>

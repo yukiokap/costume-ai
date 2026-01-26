@@ -90,7 +90,7 @@ export const POSE_STANCE_DATA: Record<string, string[]> = {
         "feet apart, hands on hips, power pose",
         "wide stance, hands behind back",
         "leaning forward on one leg",
-        "standing sideways, looking at camera"
+        "standing sideways, looking at viewer"
     ],
     sitting: [
         "sitting on office chair, one leg over the other",

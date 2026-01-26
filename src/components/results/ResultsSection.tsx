@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useRef, useState, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Copy, Check, Sparkles, Heart } from 'lucide-react';
 import { type GeneratedPrompt, type HistoryItem } from '../../types';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useEditor } from '../../contexts/EditorContext';
 import './Results.css';
 
 interface ResultsSectionProps {
@@ -15,10 +16,8 @@ interface ResultsSectionProps {
     onCopyAll: () => void;
     onCopy: (text: string, index: number) => void;
     onToggleFavorite: (id: string) => void;
-    onGenerateRange: (referencePrompt: string) => void;
-    onRemix: (item: HistoryItem) => void;
-    copyOptions: { costume: boolean; pose: boolean; framing: boolean; scene: boolean };
-    setCopyOptions: React.Dispatch<React.SetStateAction<{ costume: boolean; pose: boolean; framing: boolean; scene: boolean }>>;
+    copyOptions: { costume: boolean; character: boolean; pose: boolean; framing: boolean; scene: boolean };
+    setCopyOptions: React.Dispatch<React.SetStateAction<{ costume: boolean; character: boolean; pose: boolean; framing: boolean; scene: boolean }>>;
 }
 
 const DETAIL_LABELS: Record<string, string> = {
@@ -26,10 +25,11 @@ const DETAIL_LABELS: Record<string, string> = {
     c02: '02: 具体的な姿勢 / POSE STANCE',
     c03: '03: 表情・感情の設定 / EXPRESSION',
     c04: '04: 構図の設定 / FRAMING',
+    c05: '05: 背景の設定 / SCENE',
 };
 
-const DetailRow: React.FC<{ detail: { label: string; val: any; type: string }; t: any }> = ({ detail, t }) => {
-    const [isExpanded, setIsExpanded] = React.useState(false);
+const DetailRow: React.FC<{ detail: { label: string; val: any; type: string }; t: any }> = memo(({ detail, t }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
     const { val, type, label } = detail;
 
     let displayVal = String(val);
@@ -48,6 +48,8 @@ const DetailRow: React.FC<{ detail: { label: string; val: any; type: string }; t
         displayVal = (t(`editor.shot_type_presets.${displayVal}`) || displayVal);
     } else if (type === 'shot_angle') {
         displayVal = (t(`editor.shot_angle_presets.${displayVal}`) || displayVal);
+    } else if (type === 'scene') {
+        displayVal = (t(`editor.scene_presets.${displayVal}`) || displayVal);
     }
 
     if (type === 'text') {
@@ -77,7 +79,7 @@ const DetailRow: React.FC<{ detail: { label: string; val: any; type: string }; t
             <span style={{ fontSize: '9px', fontWeight: 700, color: '#fff', textAlign: 'right', maxWidth: '75%', wordBreak: 'break-all' }}>{displayVal}</span>
         </div>
     );
-};
+});
 
 export const ResultsSection: React.FC<ResultsSectionProps> = ({
     generatedPrompts,
@@ -89,27 +91,22 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
     history,
     synthesisLogs,
     onToggleFavorite,
-    onRemix,
     copyOptions,
     setCopyOptions
 }) => {
     const { t } = useLanguage();
-    const [expandedDetails, setExpandedDetails] = React.useState<Record<string, boolean>>({});
+    const { applyRemix } = useEditor();
+    const [expandedDetails, setExpandedDetails] = useState<Record<string, boolean>>({});
 
     const toggleDetails = (id: string) => {
         setExpandedDetails(prev => ({ ...prev, [id]: !prev[id] }));
     };
 
-    const logEndRef = React.useRef<HTMLDivElement>(null);
-
-    React.useEffect(() => {
-        if (isGenerating && logEndRef.current) {
-            logEndRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
-    }, [synthesisLogs, isGenerating]);
+    const logEndRef = useRef<HTMLDivElement>(null);
 
     const handleSingleCopy = (item: GeneratedPrompt, index: number) => {
         const parts = [];
+        if (copyOptions.character && item.character) parts.push(item.character.replace(/\n/g, ' '));
         if (copyOptions.costume && item.costume) parts.push(item.costume.replace(/\n/g, ' '));
         if (copyOptions.pose && item.composition) parts.push(item.composition.replace(/\n/g, ' '));
         if (copyOptions.framing && item.framing) parts.push(item.framing.replace(/\n/g, ' '));
@@ -195,7 +192,6 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
 
             {!isGenerating && generatedPrompts.length > 0 && (
                 <div className="flex flex-col gap-6">
-                    {/* Header */}
                     <div className="results-header" style={{
                         display: 'flex',
                         flexDirection: 'row',
@@ -236,7 +232,17 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                         onChange={() => setCopyOptions(prev => ({ ...prev, costume: !prev.costume }))}
                                         style={{ accentColor: '#f97316', width: '14px', height: '14px', cursor: 'pointer' }}
                                     />
-                                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: copyOptions.costume ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('common.costume')}</span>
+                                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: copyOptions.costume ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('results.tags.outfit')}</span>
+                                </label>
+
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={copyOptions.character}
+                                        onChange={() => setCopyOptions(prev => ({ ...prev, character: !prev.character }))}
+                                        style={{ accentColor: '#f97316', width: '14px', height: '14px', cursor: 'pointer' }}
+                                    />
+                                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: copyOptions.character ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('results.tags.character')}</span>
                                 </label>
 
                                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
@@ -246,7 +252,7 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                         onChange={() => setCopyOptions(prev => ({ ...prev, pose: !prev.pose }))}
                                         style={{ accentColor: '#f97316', width: '14px', height: '14px', cursor: 'pointer' }}
                                     />
-                                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: copyOptions.pose ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('editor.pose')}</span>
+                                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: copyOptions.pose ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('results.tags.pose')}</span>
                                 </label>
 
                                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
@@ -256,7 +262,7 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                         onChange={() => setCopyOptions(prev => ({ ...prev, framing: !prev.framing }))}
                                         style={{ accentColor: '#f97316', width: '14px', height: '14px', cursor: 'pointer' }}
                                     />
-                                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: copyOptions.framing ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('editor.framing')}</span>
+                                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: copyOptions.framing ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('results.tags.framing')}</span>
                                 </label>
 
                                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
@@ -266,7 +272,7 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                         onChange={() => setCopyOptions(prev => ({ ...prev, scene: !prev.scene }))}
                                         style={{ accentColor: '#f97316', width: '14px', height: '14px', cursor: 'pointer' }}
                                     />
-                                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: copyOptions.scene ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>SCENE</span>
+                                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: copyOptions.scene ? '#fff' : 'rgba(255,255,255,0.3)', whiteSpace: 'nowrap' }}>{t('results.tags.scene')}</span>
                                 </label>
                             </div>
 
@@ -281,7 +287,6 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                         </div>
                     </div>
 
-                    {/* Grid */}
                     <div className="results-grid">
                         <AnimatePresence>
                             {generatedPrompts.map((item, index) => {
@@ -294,13 +299,12 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.1 }}
-                                        className={`result-card ${item.isR18Mode ? 'r18-card-glow' : ''}`}
+                                        className={`result-card ${item.isR18Mode ? 'r18-card-glow' : ''} ${item.isCharacterMode ? 'character-mode' : ''}`}
                                     >
                                         <div className="card-number">
                                             {String(index + 1).padStart(2, '0')}
                                         </div>
 
-                                        {/* Result Card Header (Actions Row) */}
                                         <div style={{
                                             padding: '1rem 1.25rem 0',
                                             display: 'flex',
@@ -312,7 +316,7 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                                 <button
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        if (historyItem) onRemix(historyItem);
+                                                        if (historyItem) applyRemix(historyItem);
                                                     }}
                                                     style={{
                                                         background: 'rgba(234, 179, 8, 0.12)',
@@ -415,23 +419,31 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                                     {item.description.replace(/^[:\s\u30fb]+/, '')}
                                                 </h3>
 
-                                                {/* Tags */}
+                                                {item.isCharacterMode && item.character && (
+                                                    <div className="tag-container" style={{ marginBottom: '0.5rem' }}>
+                                                        <span style={{ fontSize: '0.55rem', color: 'rgba(255, 0, 128, 0.5)', fontWeight: 900, letterSpacing: '0.05em', marginRight: '0.5rem' }}>{t('results.tags.character')}</span>
+                                                        {item.character.split(',').slice(0, 3).map((tag, i) => (
+                                                            <span key={i} className="mini-tag" style={{ color: '#ff0080', borderColor: 'rgba(255, 0, 128, 0.2)' }}>{tag.trim()}</span>
+                                                        ))}
+                                                    </div>
+                                                )}
+
                                                 <div className="tag-container" style={{ marginBottom: '0.5rem' }}>
-                                                    <span style={{ fontSize: '0.55rem', color: 'rgba(249, 115, 22, 0.5)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', marginRight: '0.5rem' }}>OUTFIT</span>
+                                                    <span style={{ fontSize: '0.55rem', color: 'rgba(249, 115, 22, 0.5)', fontWeight: 900, letterSpacing: '0.05em', marginRight: '0.5rem' }}>{t('results.tags.outfit')}</span>
                                                     {item.costume?.split(',').slice(0, 3).map((tag, i) => (
                                                         <span key={i} className="mini-tag">{tag.trim()}</span>
                                                     ))}
                                                 </div>
 
                                                 <div className="tag-container" style={{ marginBottom: '0.5rem' }}>
-                                                    <span style={{ fontSize: '0.55rem', color: 'rgba(148, 163, 184, 0.5)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', marginRight: '0.5rem' }}>POSE</span>
+                                                    <span style={{ fontSize: '0.55rem', color: 'rgba(148, 163, 184, 0.5)', fontWeight: 900, letterSpacing: '0.05em', marginRight: '0.5rem' }}>{t('results.tags.pose')}</span>
                                                     {item.composition?.split(',').slice(0, 3).map((tag, i) => (
                                                         <span key={i} className="mini-tag" style={{ color: '#94a3b8', borderColor: 'rgba(255,255,255,0.05)' }}>{tag.trim()}</span>
                                                     ))}
                                                 </div>
 
                                                 <div className="tag-container" style={{ marginBottom: '0.5rem' }}>
-                                                    <span style={{ fontSize: '0.55rem', color: 'rgba(167, 139, 250, 0.5)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', marginRight: '0.5rem' }}>FRAMING</span>
+                                                    <span style={{ fontSize: '0.55rem', color: 'rgba(167, 139, 250, 0.5)', fontWeight: 900, letterSpacing: '0.05em', marginRight: '0.5rem' }}>{t('results.tags.framing')}</span>
                                                     {item.framing?.split(',').slice(0, 3).map((tag, i) => (
                                                         <span key={i} className="mini-tag" style={{ color: '#a78bfa', borderColor: 'rgba(167, 139, 250, 0.1)' }}>{tag.trim()}</span>
                                                     ))}
@@ -439,14 +451,13 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
 
                                                 {item.scene && (
                                                     <div className="tag-container" style={{ marginBottom: '1rem' }}>
-                                                        <span style={{ fontSize: '0.55rem', color: 'rgba(10, 242, 255, 0.5)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', marginRight: '0.5rem' }}>SCENE</span>
+                                                        <span style={{ fontSize: '0.55rem', color: 'rgba(10, 242, 255, 0.5)', fontWeight: 900, letterSpacing: '0.05em', marginRight: '0.5rem' }}>{t('results.tags.scene')}</span>
                                                         {item.scene?.split(',').slice(0, 3).map((tag, i) => (
                                                             <span key={i} className="mini-tag" style={{ color: '#00f2ff', borderColor: 'rgba(0, 242, 255, 0.1)' }}>{tag.trim()}</span>
                                                         ))}
                                                     </div>
                                                 )}
 
-                                                {/* Details Expander */}
                                                 <button
                                                     onClick={() => toggleDetails(item.id || String(index))}
                                                     style={{
@@ -518,9 +529,16 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                                                             { label: 'アングル', val: item.originalShotAngle, type: 'shot_angle' },
                                                                             { label: '自由記述', val: item.originalFramingDescription, type: 'text' }
                                                                         ]
+                                                                    },
+                                                                    {
+                                                                        section: 'c05',
+                                                                        items: [
+                                                                            { label: '背景設定', val: item.originalSceneId, type: 'scene' },
+                                                                            { label: '自由記述', val: item.originalSceneDescription, type: 'text' }
+                                                                        ]
                                                                     }
                                                                 ].map((group, gIdx) => (
-                                                                    <div key={gIdx} style={{ borderBottom: gIdx < 3 ? '1px solid rgba(255,255,255,0.05)' : 'none', paddingBottom: gIdx < 3 ? '8px' : '0' }}>
+                                                                    <div key={gIdx} style={{ borderBottom: gIdx < 4 ? '1px solid rgba(255,255,255,0.05)' : 'none', paddingBottom: gIdx < 4 ? '8px' : '0' }}>
                                                                         <div style={{ fontSize: '9px', fontWeight: 900, color: 'var(--cyan)', letterSpacing: '0.05em', marginBottom: '6px' }}>
                                                                             {DETAIL_LABELS[group.section]}
                                                                         </div>
@@ -541,7 +559,6 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                                 </AnimatePresence>
                                             </div>
 
-                                            {/* Primary Copy Selected Action */}
                                             <div style={{ marginTop: 'auto', paddingTop: '1.5rem' }}>
                                                 <button
                                                     onClick={() => handleSingleCopy(item, index)}

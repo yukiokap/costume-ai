@@ -1,40 +1,57 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     X,
     Terminal,
     ExternalLink,
+    Check,
+    HelpCircle,
+    Cpu,
     Zap,
-    Check
+    Layers,
+    Copy,
+    AlertCircle,
+    ShieldAlert,
+    ChevronRight,
+    ArrowRight
 } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useSettings } from '../../contexts/SettingsContext';
-import { useHistory } from '../../contexts/HistoryContext';
 
 interface SettingsModalProps {
     isOpen: boolean;
     onClose: () => void;
+    initialTab?: 'config' | 'usage';
+    hasError?: boolean;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
     isOpen,
-    onClose
+    onClose,
+    initialTab = 'config',
+    hasError = false
 }) => {
     const { t, language, setLanguage } = useLanguage();
-    const { apiKey, saveApiKey, copyOptions, setCopyOptions } = useSettings();
-    const { clearHistory } = useHistory();
+    const { apiKey, saveApiKey } = useSettings();
 
     const [localKey, setLocalKey] = useState(apiKey);
     const [isSaving, setIsSaving] = useState(false);
-    const [wipeConfirm, setWipeConfirm] = useState(false);
+    const [activeTab, setActiveTab] = useState<'config' | 'usage'>(initialTab);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (isOpen) {
             setLocalKey(apiKey);
-            setWipeConfirm(false);
+            if (hasError) {
+                setActiveTab('config');
+                setTimeout(() => inputRef.current?.focus(), 100);
+            } else if (!apiKey) {
+                setActiveTab('usage');
+            } else {
+                setActiveTab(initialTab);
+            }
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isOpen]); // Only sync when modal opens
+    }, [isOpen, initialTab, hasError, apiKey]);
 
     const handleSave = () => {
         setIsSaving(true);
@@ -45,49 +62,153 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         }, 600);
     };
 
-    const handleWipe = () => {
-        if (wipeConfirm) {
-            clearHistory();
-            onClose();
-        } else {
-            setWipeConfirm(true);
-            setTimeout(() => setWipeConfirm(false), 3000);
-        }
-    };
+    const UsageStep = ({ icon: Icon, title, desc, step, isFirst }: { icon: any, title: string, desc: string, step: string, isFirst?: boolean }) => (
+        <div
+            style={{
+                display: 'flex',
+                gap: '16px',
+                padding: '20px',
+                backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                borderRadius: '16px',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                position: 'relative',
+                overflow: 'hidden'
+            }}
+        >
+            <div style={{
+                position: 'absolute',
+                top: '-5px',
+                right: '-5px',
+                fontSize: '48px',
+                fontWeight: 900,
+                color: 'rgba(255, 255, 255, 0.03)',
+                pointerEvents: 'none',
+                fontFamily: "'Space Grotesk', sans-serif"
+            }}>
+                {step}
+            </div>
+            <div style={{
+                width: '44px',
+                height: '44px',
+                borderRadius: '12px',
+                backgroundColor: isFirst ? 'rgba(0, 242, 255, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+                color: isFirst ? 'var(--cyan)' : 'rgba(255,255,255,0.4)',
+                border: isFirst ? '1px solid var(--cyan)' : '1px solid transparent'
+            }}>
+                <Icon size={22} />
+            </div>
+            <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '14px', fontWeight: 900, color: '#fff', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {title}
+                </div>
+                <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.5)', lineHeight: '1.6' }}>{desc}</div>
 
-    const toggleCopyOption = (key: string) => {
-        const k = key as keyof typeof copyOptions;
-        setCopyOptions({
-            ...copyOptions,
-            [k]: !copyOptions[k]
-        });
-    };
+                {isFirst && (
+                    <button
+                        onClick={() => setActiveTab('config')}
+                        style={{
+                            marginTop: '12px',
+                            fontSize: '10px',
+                            fontWeight: 900,
+                            color: 'var(--cyan)',
+                            background: 'rgba(0, 242, 255, 0.1)',
+                            border: '1px solid var(--cyan)',
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                        }}
+                    >
+                        GO TO SETTINGS <ChevronRight size={12} />
+                    </button>
+                )}
+            </div>
+        </div>
+    );
 
     return (
         <AnimatePresence>
             {isOpen && (
                 <div
                     className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
-                    style={{ backgroundColor: 'rgba(5, 5, 8, 0.85)', backdropFilter: 'blur(12px)' }}
+                    style={{ backgroundColor: 'rgba(5, 5, 8, 0.95)', backdropFilter: 'blur(30px)' }}
                 >
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: 30 }}
+                        initial={{ opacity: 0, scale: 0.9, y: 40 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                        exit={{ opacity: 0, scale: 0.9, y: 30 }}
                         className="studio-panel w-full max-w-2xl relative max-h-[90vh] overflow-y-auto"
-                        style={{ padding: '3rem' }}
+                        style={{
+                            padding: '3rem',
+                            border: hasError ? '2px solid #ef4444' : (!apiKey ? '1px solid #eab308' : '1px solid rgba(255, 255, 255, 0.1)'),
+                            boxShadow: hasError ? '0 0 60px rgba(239, 68, 68, 0.2)' : (!apiKey ? '0 0 60px rgba(234, 179, 8, 0.15)' : '0 30px 60px rgba(0, 0, 0, 0.8)'),
+                            backgroundColor: 'rgba(13, 13, 18, 0.98)'
+                        }}
                     >
-                        {/* Scanning Line Effect */}
                         <div className="scanning-line" />
 
-                        {/* Header Area */}
+                        <AnimatePresence>
+                            {hasError ? (
+                                <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: 'auto', opacity: 1 }}
+                                    style={{
+                                        backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                                        border: '1px solid #ef4444',
+                                        borderRadius: '12px',
+                                        padding: '16px 20px',
+                                        marginBottom: '32px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '16px',
+                                        color: '#ff4d4d',
+                                        boxShadow: '0 0 20px rgba(239, 68, 68, 0.1)'
+                                    }}
+                                >
+                                    <ShieldAlert size={28} />
+                                    <div>
+                                        <div style={{ fontSize: '14px', fontWeight: 900, marginBottom: '2px' }}>CRITICAL: API_KEY_INVALID</div>
+                                        <div style={{ fontSize: '11px', opacity: 0.8 }}>{t('results.errors.api_key_invalid')}</div>
+                                    </div>
+                                </motion.div>
+                            ) : !apiKey && (
+                                <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: 'auto', opacity: 1 }}
+                                    style={{
+                                        backgroundColor: 'rgba(234, 179, 8, 0.1)',
+                                        border: '1px solid #eab308',
+                                        borderRadius: '12px',
+                                        padding: '16px 20px',
+                                        marginBottom: '32px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '16px',
+                                        color: '#eab308'
+                                    }}
+                                >
+                                    <AlertCircle size={28} />
+                                    <div>
+                                        <div style={{ fontSize: '14px', fontWeight: 900, marginBottom: '2px' }}>SYSTEM_HALT: API_REQUIRED</div>
+                                        <div style={{ fontSize: '11px', opacity: 0.8 }}>{t('settings.api_required_notice')}</div>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
                         <div className="flex justify-between items-start mb-12">
                             <div>
-                                <div className="title-sub">
+                                <div className="title-sub" style={{ fontSize: '10px' }}>
                                     <Terminal size={12} style={{ color: 'var(--cyan)' }} />
-                                    SYSTEM ACCESS UNIT
+                                    SYSTEM ACCESS UNIT / CORE_v3
                                 </div>
-                                <h2 className="text-3xl font-black uppercase tracking-tighter" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                                <h2 className="text-4xl font-black uppercase tracking-tighter" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                                     {t('common.settings').split(' ')[0]} <span style={{ color: 'var(--cyan)' }}>{t('common.settings').split(' ')[1] || ''}</span>
                                 </h2>
                             </div>
@@ -95,218 +216,263 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                 onClick={onClose}
                                 className="p-2 hover:bg-white/10 rounded-full transition-colors"
                             >
-                                <X size={24} style={{ color: 'rgba(255,255,255,0.3)' }} />
+                                <X size={28} style={{ color: 'rgba(255,255,255,0.3)' }} />
                             </button>
                         </div>
 
-                        {/* Language Selection */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '48px' }}>
-                            <div style={{ borderLeft: '4px solid #8b5cf6', paddingLeft: '20px' }}>
-                                <div style={{ fontSize: '12px', fontWeight: '900', color: '#8b5cf6', letterSpacing: '0.3em', marginBottom: '4px' }}>
-                                    00_LANGUAGE_LOCALE
-                                </div>
-                                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>
-                                    {t('settings.language_interface')}
-                                </div>
-                            </div>
-
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                                <button
-                                    onClick={() => setLanguage('ja')}
-                                    style={{
-                                        padding: '12px',
-                                        borderRadius: '10px',
-                                        backgroundColor: language === 'ja' ? 'rgba(139, 92, 246, 0.15)' : 'rgba(255, 255, 255, 0.03)',
-                                        border: language === 'ja' ? '1px solid #8b5cf6' : '1px solid rgba(255, 255, 255, 0.08)',
-                                        color: language === 'ja' ? '#8b5cf6' : 'rgba(255, 255, 255, 0.4)',
-                                        fontSize: '11px',
-                                        fontWeight: '900',
-                                        transition: 'all 0.2s ease'
-                                    }}
-                                >
-                                    日本語 (JA)
-                                </button>
-                                <button
-                                    onClick={() => setLanguage('en')}
-                                    style={{
-                                        padding: '12px',
-                                        borderRadius: '10px',
-                                        backgroundColor: language === 'en' ? 'rgba(139, 92, 246, 0.15)' : 'rgba(255, 255, 255, 0.03)',
-                                        border: language === 'en' ? '1px solid #8b5cf6' : '1px solid rgba(255, 255, 255, 0.08)',
-                                        color: language === 'en' ? '#8b5cf6' : 'rgba(255, 255, 255, 0.4)',
-                                        fontSize: '11px',
-                                        fontWeight: '900',
-                                        transition: 'all 0.2s ease'
-                                    }}
-                                >
-                                    ENGLISH (EN)
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Section 01: API Access */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginBottom: '48px' }}>
-                            <div style={{ borderLeft: '4px solid var(--cyan)', paddingLeft: '20px' }}>
-                                <div style={{ fontSize: '12px', fontWeight: '900', color: 'var(--cyan)', letterSpacing: '0.3em', marginBottom: '4px' }}>
-                                    01_API_CONFIGURATION
-                                </div>
-                                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>
-                                    {t('settings.api_key')}
-                                </div>
-                            </div>
-
-                            <div style={{ position: 'relative' }}>
-                                <div style={{
-                                    position: 'absolute',
-                                    left: '20px',
-                                    top: '50%',
-                                    transform: 'translateY(-50%)',
-                                    color: 'var(--cyan)',
-                                    opacity: '0.5'
-                                }}>
-                                    <Terminal size={18} />
-                                </div>
-                                <input
-                                    type="password"
-                                    value={localKey}
-                                    onChange={(e) => setLocalKey(e.target.value)}
-                                    placeholder={t('settings.api_key_placeholder')}
-                                    style={{
-                                        width: '100%',
-                                        backgroundColor: 'rgba(0,0,0,0.5)',
-                                        border: '1px solid rgba(0, 242, 255, 0.2)',
-                                        borderRadius: '12px',
-                                        padding: '16px 16px 16px 54px',
-                                        fontSize: '16px',
-                                        color: '#fff',
-                                        fontFamily: "'JetBrains Mono', monospace",
-                                        outline: 'none',
-                                    }}
-                                />
-                            </div>
-
-                            <a
-                                href="https://aistudio.google.com/app/apikey"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                    fontSize: '10px',
-                                    color: 'var(--cyan)',
-                                    textDecoration: 'none',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '6px',
-                                    opacity: 0.7
-                                }}
-                                className="hover:opacity-100 transition-opacity"
-                            >
-                                <ExternalLink size={12} />
-                                {t('settings.get_api_key')}
-                            </a>
-                        </div>
-
-                        {/* Section 02: Default Copy Options */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '48px' }}>
-                            <div style={{ borderLeft: '4px solid #f97316', paddingLeft: '20px' }}>
-                                <div style={{ fontSize: '12px', fontWeight: '900', color: '#f97316', letterSpacing: '0.3em', marginBottom: '4px' }}>
-                                    02_COPY_BEHAVIOR
-                                </div>
-                                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>
-                                    {t('settings.copy_options')}
-                                </div>
-                            </div>
-
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                                {[
-                                    { id: 'costume', label: t('settings.copy_costume') },
-                                    { id: 'pose', label: t('settings.copy_pose') },
-                                    { id: 'framing', label: t('settings.copy_framing') },
-                                    { id: 'scene', label: t('settings.copy_scene') }
-                                ].map((opt) => (
-                                    <button
-                                        key={opt.id}
-                                        onClick={() => toggleCopyOption(opt.id)}
-                                        style={{
-                                            padding: '12px 16px',
-                                            borderRadius: '10px',
-                                            backgroundColor: copyOptions[opt.id as keyof typeof copyOptions] ? 'rgba(249, 115, 22, 0.15)' : 'rgba(255, 255, 255, 0.03)',
-                                            border: copyOptions[opt.id as keyof typeof copyOptions] ? '1px solid #f97316' : '1px solid rgba(255, 255, 255, 0.08)',
-                                            color: copyOptions[opt.id as keyof typeof copyOptions] ? '#f97316' : 'rgba(255, 255, 255, 0.4)',
-                                            fontSize: '11px',
-                                            fontWeight: '900',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            transition: 'all 0.2s ease'
-                                        }}
-                                    >
-                                        <span className="truncate">{opt.label}</span>
-                                        {copyOptions[opt.id as keyof typeof copyOptions] && <Check size={12} />}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Section 03: Data Maintenance */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '48px' }}>
-                            <div style={{ borderLeft: '4px solid #ef4444', paddingLeft: '20px' }}>
-                                <div style={{ fontSize: '12px', fontWeight: '900', color: '#ef4444', letterSpacing: '0.3em', marginBottom: '4px' }}>
-                                    03_DATA_MAINTENANCE
-                                </div>
-                                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>
-                                    {t('settings.system_purge')}
-                                </div>
-                            </div>
-
+                        <div style={{ display: 'flex', gap: '8px', marginBottom: '40px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', paddingBottom: '12px' }}>
                             <button
-                                onClick={handleWipe}
+                                onClick={() => setActiveTab('config')}
                                 style={{
-                                    width: '100%',
-                                    padding: '20px',
-                                    borderRadius: '12px',
-                                    backgroundColor: wipeConfirm ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255, 255, 255, 0.03)',
-                                    border: wipeConfirm ? '2px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.1)',
-                                    color: wipeConfirm ? '#ef4444' : 'rgba(255, 255, 255, 0.4)',
+                                    padding: '12px 24px',
                                     fontSize: '11px',
-                                    fontWeight: '900',
-                                    letterSpacing: '0.05em',
-                                    transition: 'all 0.3s ease',
+                                    fontWeight: 900,
+                                    color: activeTab === 'config' ? 'var(--cyan)' : 'rgba(255, 255, 255, 0.3)',
+                                    backgroundColor: activeTab === 'config' ? 'rgba(0, 242, 255, 0.08)' : 'transparent',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.3s',
+                                    position: 'relative',
                                     display: 'flex',
-                                    flexDirection: 'column',
                                     alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '12px',
-                                    textAlign: 'center',
-                                    lineHeight: '1.4'
+                                    gap: '8px'
                                 }}
                             >
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                    <Zap size={16} />
-                                    <span style={{ textTransform: 'uppercase' }}>
-                                        {wipeConfirm ? 'DANGER: DATA_DELETION_REQD' : t('settings.purge_description')}
-                                    </span>
-                                </div>
-                                {wipeConfirm && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 5 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        style={{ fontSize: '9px', fontWeight: '500', maxWidth: '80%' }}
-                                    >
-                                        {t('settings.purge_confirm')}
-                                    </motion.div>
+                                <Cpu size={14} />
+                                CONFIGURATION
+                                {activeTab === 'config' && (
+                                    <motion.div layoutId="tab-underline" className="absolute bottom-[-13px] left-0 right-0 h={3px} bg-cyan-400 shadow-[0_0_10px_var(--cyan)]" />
+                                )}
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('usage')}
+                                style={{
+                                    padding: '12px 24px',
+                                    fontSize: '11px',
+                                    fontWeight: 900,
+                                    color: activeTab === 'usage' ? 'var(--cyan)' : 'rgba(255, 255, 255, 0.3)',
+                                    backgroundColor: activeTab === 'usage' ? 'rgba(0, 242, 255, 0.08)' : 'transparent',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.3s',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px',
+                                    position: 'relative'
+                                }}
+                            >
+                                <HelpCircle size={14} />
+                                USER_GUIDE
+                                {activeTab === 'usage' && (
+                                    <motion.div layoutId="tab-underline" className="absolute bottom-[-13px] left-0 right-0 h={3px} bg-cyan-400 shadow-[0_0_10px_var(--cyan)]" />
                                 )}
                             </button>
                         </div>
 
-                        {/* Footer Actions */}
+                        <AnimatePresence mode="wait">
+                            {activeTab === 'config' ? (
+                                <motion.div
+                                    key="config"
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: 20 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    {/* API HOW-TO: Integrated directly above input */}
+                                    <div style={{
+                                        marginBottom: '32px',
+                                        padding: '20px',
+                                        backgroundColor: 'rgba(0, 242, 255, 0.03)',
+                                        borderRadius: '16px',
+                                        border: '1px solid rgba(0, 242, 255, 0.15)',
+                                        position: 'relative'
+                                    }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                                            <div style={{ background: 'var(--cyan)', color: '#000', borderRadius: '4px', padding: '2px 6px', fontSize: '10px', fontWeight: 900 }}>HOW_TO</div>
+                                            <span style={{ fontSize: '11px', fontWeight: 900, color: 'var(--cyan)', letterSpacing: '0.1em' }}>APIキー取得ステップ</span>
+                                        </div>
+
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                            {[1, 2, 3, 4].map(num => (
+                                                <div key={num} style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)', display: 'flex', gap: '8px', lineHeight: '1.4' }}>
+                                                    <span style={{ color: 'var(--cyan)', fontWeight: 900 }}>{num}.</span>
+                                                    <span>{t(`settings.usage_step_1_detail_${num}` as any).replace(/^\d\.\s/, '')}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <div style={{ marginTop: '20px' }}>
+                                            <a
+                                                href="https://aistudio.google.com/app/apikey"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                style={{
+                                                    fontSize: '11px',
+                                                    fontWeight: 900,
+                                                    color: '#000',
+                                                    background: 'var(--cyan)',
+                                                    border: 'none',
+                                                    padding: '10px 20px',
+                                                    borderRadius: '8px',
+                                                    cursor: 'pointer',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    gap: '8px',
+                                                    textDecoration: 'none',
+                                                    boxShadow: '0 0 15px rgba(0, 242, 255, 0.2)'
+                                                }}
+                                            >
+                                                <ExternalLink size={14} /> Google AI Studio でキーを取得
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    {/* Section 01: API Access */}
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginBottom: '48px' }}>
+                                        <div style={{ borderLeft: '4px solid var(--cyan)', paddingLeft: '20px' }}>
+                                            <div style={{ fontSize: '11px', fontWeight: '900', color: 'var(--cyan)', letterSpacing: '0.3em', marginBottom: '4px' }}>
+                                                01_API_CONFIGURATION
+                                            </div>
+                                            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>
+                                                {t('settings.api_key')}
+                                            </div>
+                                        </div>
+
+                                        <div style={{ position: 'relative' }}>
+                                            <div style={{
+                                                position: 'absolute',
+                                                left: '20px',
+                                                top: '50%',
+                                                transform: 'translateY(-50%)',
+                                                color: hasError ? '#ef4444' : 'var(--cyan)',
+                                                opacity: '0.8',
+                                                zIndex: 10
+                                            }}>
+                                                {hasError ? <ShieldAlert size={20} /> : <Terminal size={20} />}
+                                            </div>
+                                            <input
+                                                ref={inputRef}
+                                                type="text"
+                                                value={localKey}
+                                                onChange={(e) => setLocalKey(e.target.value)}
+                                                placeholder={t('settings.api_key_placeholder')}
+                                                style={{
+                                                    width: '100%',
+                                                    backgroundColor: 'rgba(0,0,0,0.6)',
+                                                    border: hasError ? '2px solid #ef4444' : (!apiKey ? '2px solid #eab308' : '1px solid rgba(0, 242, 255, 0.3)'),
+                                                    borderRadius: '16px',
+                                                    padding: '20px 20px 20px 60px',
+                                                    fontSize: '15px',
+                                                    color: '#fff',
+                                                    fontFamily: "'JetBrains Mono', monospace",
+                                                    outline: 'none',
+                                                    boxShadow: hasError ? '0 0 20px rgba(239, 68, 68, 0.15)' : (!apiKey ? '0 0 20px rgba(234, 179, 8, 0.1)' : 'none'),
+                                                    transition: 'all 0.3s ease'
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '48px' }}>
+                                        <div style={{ borderLeft: '4px solid #8b5cf6', paddingLeft: '20px' }}>
+                                            <div style={{ fontSize: '11px', fontWeight: '900', color: '#8b5cf6', letterSpacing: '0.3em', marginBottom: '4px' }}>
+                                                02_LANGUAGE_LOCALE
+                                            </div>
+                                            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' }}>
+                                                {t('settings.language_interface')}
+                                            </div>
+                                        </div>
+
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                            <button
+                                                onClick={() => setLanguage('ja')}
+                                                style={{
+                                                    padding: '16px',
+                                                    borderRadius: '12px',
+                                                    backgroundColor: language === 'ja' ? 'rgba(139, 92, 246, 0.15)' : 'rgba(255, 255, 255, 0.03)',
+                                                    border: language === 'ja' ? '1px solid #8b5cf6' : '1px solid rgba(255, 255, 255, 0.1)',
+                                                    color: language === 'ja' ? '#fff' : 'rgba(255, 255, 255, 0.4)',
+                                                    fontSize: '12px',
+                                                    fontWeight: '900',
+                                                    transition: 'all 0.3s ease'
+                                                }}
+                                            >
+                                                日本語 (JA)
+                                            </button>
+                                            <button
+                                                onClick={() => setLanguage('en')}
+                                                style={{
+                                                    padding: '16px',
+                                                    borderRadius: '12px',
+                                                    backgroundColor: language === 'en' ? 'rgba(139, 92, 246, 0.15)' : 'rgba(255, 255, 255, 0.03)',
+                                                    border: language === 'en' ? '1px solid #8b5cf6' : '1px solid rgba(255, 255, 255, 0.1)',
+                                                    color: language === 'en' ? '#fff' : 'rgba(255, 255, 255, 0.4)',
+                                                    fontSize: '12px',
+                                                    fontWeight: '900',
+                                                    transition: 'all 0.3s ease'
+                                                }}
+                                            >
+                                                ENGLISH (EN)
+                                            </button>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    key="usage"
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -20 }}
+                                    transition={{ duration: 0.3 }}
+                                    style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '40px' }}
+                                >
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                                        <HelpCircle size={20} color="var(--cyan)" />
+                                        <h3 style={{ fontSize: '16px', fontWeight: 900, color: '#fff', letterSpacing: '0.05em' }}>
+                                            {t('settings.usage_guide_title')}
+                                        </h3>
+                                    </div>
+
+                                    <UsageStep
+                                        isFirst={true}
+                                        step="01"
+                                        icon={Cpu}
+                                        title={t('settings.usage_step_1')}
+                                        desc={t('settings.usage_step_1_desc')}
+                                    />
+                                    <UsageStep
+                                        step="02"
+                                        icon={Layers}
+                                        title={t('settings.usage_step_2')}
+                                        desc={t('settings.usage_step_2_desc')}
+                                    />
+                                    <UsageStep
+                                        step="03"
+                                        icon={Zap}
+                                        title={t('settings.usage_step_3')}
+                                        desc={t('settings.usage_step_3_desc')}
+                                    />
+                                    <UsageStep
+                                        step="04"
+                                        icon={Copy}
+                                        title={t('settings.usage_step_4')}
+                                        desc={t('settings.usage_step_4_desc')}
+                                    />
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px', paddingTop: '32px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                             <button
                                 onClick={handleSave}
                                 disabled={isSaving}
                                 className="btn-tailor"
                                 style={{
-                                    padding: '20px',
-                                    fontSize: '13px',
+                                    padding: '24px',
+                                    fontSize: '14px',
                                     margin: 0,
                                     display: 'flex',
                                     alignItems: 'center',
@@ -314,18 +480,20 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                     gap: '12px',
                                     opacity: isSaving ? 0.7 : 1,
                                     cursor: isSaving ? 'wait' : 'pointer',
-                                    background: 'linear-gradient(135deg, var(--cyan), #006aff)'
+                                    background: localKey ? 'linear-gradient(135deg, var(--cyan), #006aff)' : 'rgba(255,255,255,0.05)',
+                                    color: localKey ? '#000' : 'rgba(255,255,255,0.3)',
+                                    border: localKey ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                                    boxShadow: localKey ? '0 10px 30px rgba(0, 242, 255, 0.3)' : 'none'
                                 }}
                             >
-                                <Check size={18} />
+                                <Check size={20} />
                                 {isSaving ? 'CONFIG_UPDATING...' : t('common.save_close')}
                             </button>
                         </div>
 
-                        {/* Small decorative corner info */}
-                        <div className="absolute bottom-6 right-8 text-[8px] font-mono text-slate-700 uppercase tracking-tighter flex items-center gap-4">
-                            <span>SysRef_v3: {localKey ? 'AUTH_OK' : 'AUTH_REQD'}</span>
-                            <span className="w-1 h-1 rounded-full" style={{ backgroundColor: localKey ? 'var(--cyan)' : '#ef4444' }} />
+                        <div className="absolute bottom-6 right-8 text-[9px] font-mono text-slate-700 uppercase tracking-tighter flex items-center gap-4">
+                            <span>SysRef_active: {localKey ? 'AUTH_OK' : 'AUTH_REQD'}</span>
+                            <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: localKey ? 'var(--cyan)' : '#ef4444' }} />
                         </div>
                     </motion.div>
                 </div>

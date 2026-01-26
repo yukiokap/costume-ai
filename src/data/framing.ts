@@ -10,6 +10,13 @@ export interface FramingItem {
 
 export const SHOT_TYPES: FramingItem[] = [
     {
+        id: 'random',
+        label: 'おまかせ',
+        description: 'Auto Framing',
+        icon: Zap,
+        prompt: ''
+    },
+    {
         id: 'full_body',
         label: '全身',
         description: 'Full Body',
@@ -47,6 +54,13 @@ export const SHOT_TYPES: FramingItem[] = [
 ];
 
 export const SHOT_ANGLES: FramingItem[] = [
+    {
+        id: 'random',
+        label: 'おまかせ',
+        description: 'Auto Angle',
+        icon: Zap,
+        prompt: ''
+    },
     {
         id: 'front',
         label: '正面',

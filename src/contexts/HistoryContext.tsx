@@ -12,6 +12,8 @@ interface HistoryContextType {
 
 const HistoryContext = createContext<HistoryContextType | undefined>(undefined);
 
+const MAX_HISTORY = 100; // 履歴の最大保持数（お気に入りは除外）
+
 export const HistoryProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [history, setHistory] = useState<HistoryItem[]>(() => {
         const saved = localStorage.getItem('costume_history');
@@ -32,7 +34,20 @@ export const HistoryProvider: React.FC<{ children: ReactNode }> = ({ children })
     }, [history]);
 
     const addToHistory = (item: HistoryItem) => {
-        setHistory(prev => [item, ...prev]);
+        setHistory(prev => {
+            const newHistory = [item, ...prev];
+
+            // お気に入りと通常の履歴を分離
+            const favorites = newHistory.filter(h => h.isFavorite);
+            const nonFavorites = newHistory.filter(h => !h.isFavorite);
+
+            // 通常の履歴は最大MAX_HISTORY件まで
+            const trimmedNonFavorites = nonFavorites.slice(0, MAX_HISTORY);
+
+            // お気に入りは無制限、通常履歴は制限付き
+            return [...favorites, ...trimmedNonFavorites]
+                .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        });
     };
 
     const removeFromHistory = (id: string) => {

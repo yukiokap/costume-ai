@@ -5,13 +5,16 @@ import App from './App.tsx'
 import { LanguageProvider } from './contexts/LanguageContext'
 import { HistoryProvider } from './contexts/HistoryContext'
 import { SettingsProvider } from './contexts/SettingsContext'
+import { EditorProvider } from './contexts/EditorContext'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <LanguageProvider>
       <SettingsProvider>
         <HistoryProvider>
-          <App />
+          <EditorProvider>
+            <App />
+          </EditorProvider>
         </HistoryProvider>
       </SettingsProvider>
     </LanguageProvider>

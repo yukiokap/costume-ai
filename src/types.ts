@@ -3,6 +3,7 @@ export interface GeneratedPrompt {
     description: string;
     prompt: string;
     costume?: string;
+    character?: string;
     composition?: string;
     scene?: string;
     framing?: string;
@@ -18,7 +19,12 @@ export interface GeneratedPrompt {
     originalPoseDescription?: string;
     originalExpressionDescription?: string;
     originalFramingDescription?: string;
+    originalSceneId?: string;
+    originalSceneDescription?: string;
     isR18Mode?: boolean;
+    isCharacterMode?: boolean;
+    characterName?: string;
+    characterCostume?: string;
 }
 
 export interface HistoryItem extends GeneratedPrompt {
@@ -55,4 +61,9 @@ export interface DesignParts {
     background?: string;
     remixBaseDesign?: string;
     isR18Mode?: boolean;
+    isCharacterMode?: boolean;
+    characterName?: string;
+    characterCostume?: string;
+    selectedSceneId?: string;
+    sceneDescription?: string;
 }

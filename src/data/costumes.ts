@@ -29,13 +29,12 @@ export const FASHION_CATEGORIES = [
     { id: 'fetish', label: 'フェティッシュ (Fetish)' },
     { id: 'pop', label: 'ポップ (Pop)' },
     { id: 'dark', label: 'ダーク (Dark)' },
-    { id: 'anime', label: 'アニメ (Anime)' },
 ];
 
 export { ACCESSORIES_LIST, ACCESSORY_CATEGORIES, type AccessoryItem, ALL_BACKGROUNDS as BACKGROUND_SETTINGS, BACKGROUND_CATEGORIES, POSE_STANCES as POSE_SETTINGS };
 
 // Helper to filter items by tag or presence in specific lists
-export const ALL_ITEMS = [
+export const STANDARD_ITEMS = [
     ...CASUAL_ITEMS,
     ...UNIFORM_ITEMS,
     ...FANTASY_TRADITIONAL_ITEMS,
@@ -44,19 +43,23 @@ export const ALL_ITEMS = [
     ...VARIETY_ITEMS,
     ...BULK_ITEMS,
     ...MEGA_ITEMS,
+];
+
+export const ALL_ITEMS = [
+    ...STANDARD_ITEMS,
     ...ANIME_ITEMS,
 ];
 
 export const COSTUME_LIST: Record<string, CostumeItem[]> = {
-    cool: ALL_ITEMS.filter(item => item.tags.includes('cool') || item.tags.includes('sci-fi') || item.tags.includes('cyber') || item.tags.includes('future') || item.tags.includes('mecha')),
-    cute: ALL_ITEMS.filter(item => item.tags.includes('cute') || item.tags.includes('animal') || item.tags.includes('ears') || item.tags.includes('tail') || item.tags.includes('lovely')),
-    sexy: ALL_ITEMS.filter(item => item.tags.includes('sexy') || item.tags.includes('beach') || item.tags.includes('swim') || item.tags.includes('water') || item.tags.includes('lingerie')),
-    elegant: ALL_ITEMS.filter(item => item.tags.includes('elegant') || item.tags.includes('formal') || item.tags.includes('luxury') || item.tags.includes('party') || item.tags.includes('bridal')),
-    active: ALL_ITEMS.filter(item => item.tags.includes('active') || item.tags.includes('sporty') || item.tags.includes('sports') || item.tags.includes('athletic') || item.tags.includes('action')),
-    casual: ALL_ITEMS.filter(item => item.tags.includes('casual') || item.tags.includes('daily') || item.tags.includes('home') || item.tags.includes('pajamas') || item.tags.includes('relax')),
-    fantasy: ALL_ITEMS.filter(item => item.tags.includes('fantasy') || item.tags.includes('magic') || item.tags.includes('historical') || item.tags.includes('traditional') || item.tags.includes('japanese')),
-    fetish: ALL_ITEMS.filter(item => item.tags.includes('fetish') || item.tags.includes('maid') || item.tags.includes('nurse') || item.tags.includes('uniform') || item.tags.includes('tight')),
-    pop: ALL_ITEMS.filter(item => item.tags.includes('pop') || item.tags.includes('idol') || item.tags.includes('subculture') || item.tags.includes('vibrant') || item.tags.includes('trendy')),
-    dark: ALL_ITEMS.filter(item => item.tags.includes('dark') || item.tags.includes('gothic') || item.tags.includes('horror') || item.tags.includes('blood') || item.tags.includes('scary')),
-    anime: ALL_ITEMS.filter(item => item.tags.includes('anime')),
+    cool: STANDARD_ITEMS.filter(item => item.tags.includes('cool') || item.tags.includes('sci-fi') || item.tags.includes('cyber') || item.tags.includes('future') || item.tags.includes('mecha')),
+    cute: STANDARD_ITEMS.filter(item => item.tags.includes('cute') || item.tags.includes('animal') || item.tags.includes('ears') || item.tags.includes('tail') || item.tags.includes('lovely')),
+    sexy: STANDARD_ITEMS.filter(item => item.tags.includes('sexy') || item.tags.includes('beach') || item.tags.includes('swim') || item.tags.includes('water') || item.tags.includes('lingerie')),
+    elegant: STANDARD_ITEMS.filter(item => item.tags.includes('elegant') || item.tags.includes('formal') || item.tags.includes('luxury') || item.tags.includes('party') || item.tags.includes('bridal')),
+    active: STANDARD_ITEMS.filter(item => item.tags.includes('active') || item.tags.includes('sporty') || item.tags.includes('sports') || item.tags.includes('athletic') || item.tags.includes('action')),
+    casual: STANDARD_ITEMS.filter(item => item.tags.includes('casual') || item.tags.includes('daily') || item.tags.includes('home') || item.tags.includes('pajamas') || item.tags.includes('relax')),
+    fantasy: STANDARD_ITEMS.filter(item => item.tags.includes('fantasy') || item.tags.includes('magic') || item.tags.includes('historical') || item.tags.includes('traditional') || item.tags.includes('japanese')),
+    fetish: STANDARD_ITEMS.filter(item => item.tags.includes('fetish') || item.tags.includes('maid') || item.tags.includes('nurse') || item.tags.includes('uniform') || item.tags.includes('tight')),
+    pop: STANDARD_ITEMS.filter(item => item.tags.includes('pop') || item.tags.includes('idol') || item.tags.includes('subculture') || item.tags.includes('vibrant') || item.tags.includes('trendy')),
+    dark: STANDARD_ITEMS.filter(item => item.tags.includes('dark') || item.tags.includes('gothic') || item.tags.includes('horror') || item.tags.includes('blood') || item.tags.includes('scary')),
+    anime: ANIME_ITEMS,
 };

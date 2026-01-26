@@ -1,5 +1,5 @@
 import React from 'react';
-import { Settings as SettingsIcon, Terminal } from 'lucide-react';
+import { Settings as SettingsIcon, Terminal, HelpCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../../contexts/LanguageContext';
 
@@ -26,7 +26,25 @@ export const Header: React.FC<HeaderProps> = ({
                 </h1>
             </div>
 
-            <div className="flex gap-6 items-center">
+            <div className="flex gap-4 sm:gap-6 items-center">
+                {/* Usage Guide Quick Link */}
+                <button
+                    onClick={() => setShowSettings(true)}
+                    className="hidden sm:flex items-center gap-2 group transition-all duration-300"
+                    style={{
+                        padding: '8px 16px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '100px',
+                        cursor: 'pointer'
+                    }}
+                >
+                    <HelpCircle size={14} className="text-cyan-400" />
+                    <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)', fontWeight: 800, letterSpacing: '0.1em' }} className="group-hover:text-cyan-300 transition-colors">
+                        {t('common.usage').toUpperCase()}
+                    </span>
+                </button>
+
                 <div style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -34,7 +52,7 @@ export const Header: React.FC<HeaderProps> = ({
                     gap: '2px',
                     opacity: 0.6,
                     textAlign: 'right'
-                }} className="hidden md:flex">
+                }} className="hidden lg:flex">
                     <span style={{ fontSize: '9px', fontWeight: 900, color: '#fff', letterSpacing: '0.1em' }}>AI COSTUME DESIGN ATELIER</span>
                     <span style={{ fontSize: '8px', color: 'rgba(255,255,255,0.5)', fontWeight: 800, letterSpacing: '0.05em' }}>CHARACTER SYNTHESIS SYSTEM v0.8.2</span>
                 </div>

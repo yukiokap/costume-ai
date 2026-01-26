@@ -1,11 +1,10 @@
 import React from 'react';
-import { PenTool, Scissors, Hash, Search } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Scissors, Hash, Search } from 'lucide-react';
 import { FASHION_CATEGORIES, type CostumeItem } from '../../constants';
 import { SectionDivider } from '../ui/SectionDivider';
 
 interface CostumeSectionProps {
-    designImage: string;
-    setDesignImage: (val: string) => void;
     selectedCategory: string;
     setSelectedCategory: (val: string) => void;
     selectedCostume: CostumeItem | null;
@@ -16,8 +15,6 @@ interface CostumeSectionProps {
 }
 
 export const CostumeSection: React.FC<CostumeSectionProps> = ({
-    designImage,
-    setDesignImage,
     selectedCategory,
     setSelectedCategory,
     selectedCostume,
@@ -30,19 +27,8 @@ export const CostumeSection: React.FC<CostumeSectionProps> = ({
         <div className="space-y-8" style={{ '--section-color': '#00f2ff' } as React.CSSProperties}>
             <SectionDivider label="01: 衣装本体のデザイン" color="cyan" />
 
-            <section>
-                <div className="field-label">
-                    <PenTool size={12} /> デザインコンセプト
-                </div>
-                <textarea
-                    placeholder="あなたの衣装ビジョンを記述してください..."
-                    value={designImage}
-                    onChange={(e) => setDesignImage(e.target.value)}
-                    className="studio-input focus:border-cyan-400 focus:bg-cyan-400/5"
-                />
-            </section>
 
-            <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <section className="space-y-6">
                 <div>
                     <div className="field-label !text-cyan-400">
                         <Scissors size={12} className="text-cyan-400" /> スタイル・カテゴリー
@@ -55,23 +41,54 @@ export const CostumeSection: React.FC<CostumeSectionProps> = ({
                         {FASHION_CATEGORIES.map(cat => <option key={cat.id} value={cat.id}>{cat.label}</option>)}
                     </select>
                 </div>
+
                 <div>
-                    <div className="field-label !text-cyan-400">
-                        <Hash size={12} className="text-cyan-400" /> 基本となる衣装（ベース）
+                    <div className="field-label !text-cyan-400 mb-4">
+                        <Hash size={12} className="text-cyan-400" /> ベース衣装を選択（{filteredCostumes.length}点）
                     </div>
-                    <select
-                        value={selectedCostume?.jp || ''}
-                        onChange={(e) => {
-                            const item = filteredCostumes.find(i => i.jp === e.target.value);
-                            setSelectedCostume(item || null);
-                        }}
-                        className="studio-input cursor-pointer focus:border-cyan-400 focus:bg-cyan-400/5"
-                    >
-                        <option value="">{filteredCostumes.length} 点から選択</option>
-                        {filteredCostumes.map((item, idx) => (
-                            <option key={idx} value={item.jp}>{item.jp} ({item.en})</option>
-                        ))}
-                    </select>
+
+                    {selectedCategory === 'anime' ? (
+                        /* Anime Category: Visual Grid */
+                        <div className="premium-grid !flex-wrap !overflow-visible !max-h-[400px] !overflow-y-auto custom-scrollbar" style={{ gap: '10px', padding: '10px' }}>
+                            {/* 「おまかせ」ボタン */}
+                            <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={() => setSelectedCostume(null)}
+                                className={`theme-card !w-[calc(33.33%-7px)] !min-h-[60px] !p-2 ${selectedCostume === null ? 'selected' : ''}`}
+                            >
+                                <div className="premium-label !text-[10px]">おまかせ (Random)</div>
+                            </motion.button>
+
+                            {filteredCostumes.map((item, idx) => (
+                                <motion.button
+                                    key={idx}
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={() => setSelectedCostume(item)}
+                                    className={`theme-card !w-[calc(33.33%-7px)] !min-h-[60px] !p-2 ${selectedCostume?.jp === item.jp ? 'selected' : ''}`}
+                                >
+                                    <div className="premium-label !text-[10px] !leading-tight">{item.jp}</div>
+                                    <div className="premium-desc !text-[7px] !mt-1 opacity-40 line-clamp-1">{item.en}</div>
+                                </motion.button>
+                            ))}
+                        </div>
+                    ) : (
+                        /* Other Categories: Simple Dropdown */
+                        <select
+                            value={selectedCostume?.jp || ''}
+                            onChange={(e) => {
+                                const item = filteredCostumes.find(i => i.jp === e.target.value);
+                                setSelectedCostume(item || null);
+                            }}
+                            className="studio-input cursor-pointer focus:border-cyan-400 focus:bg-cyan-400/5"
+                        >
+                            <option value="">{filteredCostumes.length} 点から選択（おまかせ）</option>
+                            {filteredCostumes.map((item, idx) => (
+                                <option key={idx} value={item.jp}>{item.jp} ({item.en})</option>
+                            ))}
+                        </select>
+                    )}
                 </div>
             </section>
 
