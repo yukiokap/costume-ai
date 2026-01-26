@@ -11,7 +11,8 @@ import {
     Copy,
     AlertCircle,
     ShieldAlert,
-    ChevronRight
+    ChevronRight,
+    Eye
 } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useSettings } from '../../contexts/SettingsContext';
@@ -493,6 +494,42 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                         title={t('settings.usage_step_4')}
                                         desc={t('settings.usage_step_4_desc')}
                                     />
+
+                                    <div style={{ position: 'relative' }}>
+                                        <UsageStep
+                                            step="05"
+                                            icon={Eye}
+                                            title={t('settings.usage_step_5')}
+                                            desc={t('settings.usage_step_5_desc')}
+                                        />
+                                        <div style={{
+                                            marginTop: '12px',
+                                            display: 'grid',
+                                            gridTemplateColumns: 'repeat(4, 1fr)',
+                                            gap: '8px',
+                                            padding: '12px',
+                                            backgroundColor: 'rgba(0,0,0,0.3)',
+                                            borderRadius: '12px',
+                                            border: '1px solid rgba(255, 255, 255, 0.05)',
+                                            pointerEvents: 'none'
+                                        }}>
+                                            {[1, 2, 3, 4].map(i => (
+                                                <div key={i} style={{ aspectRatio: '3/4', borderRadius: '6px', overflow: 'hidden', position: 'relative' }}>
+                                                    <img
+                                                        src={`/samples/${i === 1 ? 'sexy_level_1.jpg' : i === 2 ? 'sexy_level_10.jpg' : i === 3 ? 'accessory_level_10_sexy_1.jpg' : 'sexy_10_accessory_10.jpg'}`}
+                                                        style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.6 }}
+                                                        alt="sample"
+                                                    />
+                                                    {i === 1 && (
+                                                        <div style={{ position: 'absolute', inset: 0, border: '2px solid var(--cyan)', borderRadius: '6px' }} />
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div style={{ fontSize: '10px', color: 'var(--cyan)', padding: '8px', textAlign: 'center', opacity: 0.8, fontWeight: 900 }}>
+                                            [ VISUAL_CATALOG_PREVIEW ]
+                                        </div>
+                                    </div>
                                 </motion.div>
                             )}
                         </AnimatePresence>

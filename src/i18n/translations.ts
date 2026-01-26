@@ -201,6 +201,11 @@ export const translations = {
             usage_step_3_desc: 'セクシー度や装飾密度、さらにはポーズや構図などの詳細設定を調整します。',
             usage_step_4: '生成してコピーする',
             usage_step_4_desc: '中央のボタンをタップしてプロンプトを生成。気に入ったものをコピーして画像生成AIで使用します。',
+            usage_step_5: 'サンプルビジュアルを活用する',
+            usage_step_5_desc: '「目」のアイコンからサンプル一覧を開き、直感的に設定を選べます。',
+            usage_step_5_detail_1: '1. セクシー度スライダー右上の「目」のアイコンをタップ。',
+            usage_step_5_detail_2: '2. 気に入ったサンプル画像を選択。',
+            usage_step_5_detail_3: '3. 「このスタイルを適用」を押すと、その画像の設定が自動的に反映されます。',
             api_required_notice: '※生成を開始するにはAPIキーの設定が必要です',
         },
         results: {
@@ -452,6 +457,11 @@ export const translations = {
             usage_step_3_desc: 'Adjust Sexy Level, Accessory Density, and advanced settings like pose or composition.',
             usage_step_4: 'Generate & Copy',
             usage_step_4_desc: 'Tap the center button to synthesize prompts. Copy your favorites to use with image generation AI.',
+            usage_step_5: 'Utilize Sample Visuals',
+            usage_step_5_desc: 'Open the visual catalog via the "Eye" icon to choose settings intuitively from reference images.',
+            usage_step_5_detail_1: '1. Tap the "Eye" icon above the Sexy Level slider.',
+            usage_step_5_detail_2: '2. Select a reference image you like.',
+            usage_step_5_detail_3: '3. Press "APPLY THIS STYLE" to automatically sync all parameters.',
             api_required_notice: '*API Key configuration is required to start generation.',
         },
         results: {
