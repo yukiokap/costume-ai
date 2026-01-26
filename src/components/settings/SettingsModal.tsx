@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Terminal,
@@ -149,7 +150,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         </div>
     );
 
-    return (
+    return createPortal(
         <AnimatePresence>
             {isOpen && (
                 <div
@@ -530,6 +531,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     </motion.div>
                 </div>
             )}
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body
     );
 };

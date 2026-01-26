@@ -1,4 +1,5 @@
 import React, { useEffect, useState, memo } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Clock, Heart, Trash2, Copy, Check, ChevronLeft } from 'lucide-react';
 import { type HistoryItem } from '../../types';
@@ -135,24 +136,15 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
         onClose();
     };
 
-    return (
+    return createPortal(
         <AnimatePresence>
             {isOpen && (
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 30 }}
+                    initial={{ x: '100%', opacity: 0.5 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: '100%', opacity: 0 }}
                     transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                    style={{
-                        position: 'fixed',
-                        inset: 0,
-                        zIndex: 10000,
-                        backgroundColor: 'rgba(2, 4, 6, 0.98)',
-                        backdropFilter: 'blur(40px)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        overflow: 'hidden'
-                    }}
+                    className="fixed inset-0 z-[100] flex flex-col md:flex-row bg-[#08080a]"
                 >
                     <div style={{
                         position: 'absolute',
@@ -756,6 +748,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                 </motion.div>
             )
             }
-        </AnimatePresence >
+        </AnimatePresence>,
+        document.body
     );
 };
