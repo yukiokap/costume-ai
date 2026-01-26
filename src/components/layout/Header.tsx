@@ -27,7 +27,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </h1>
             </div>
 
-            <div className="flex gap-10 sm:gap-12 items-center">
+            <div className="flex gap-16 sm:gap-24 items-center">
                 {/* Usage Guide Quick Link */}
 
 
