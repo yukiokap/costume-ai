@@ -118,10 +118,15 @@ export const OnboardingTour: React.FC = () => {
         if (top < 80) top = targetRect.bottom + gap; // if top flows offscreen, flip to bottom
         if (top > window.innerHeight - 200) top = targetRect.top - gap - 200; // if bottom flows offscreen
 
+        // Ensure within horizontal bounds with padding
+        if (left < 10) left = 10;
+        if (left + width > window.innerWidth - 10) left = window.innerWidth - width - 10;
+
         return {
             top: `${top}px`,
             left: `${left}px`,
-            width: `${width}px`
+            width: `${width}px`,
+            maxWidth: '90vw'
         };
     };
 
