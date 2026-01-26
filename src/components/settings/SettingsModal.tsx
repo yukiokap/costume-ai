@@ -12,8 +12,7 @@ import {
     Copy,
     AlertCircle,
     ShieldAlert,
-    ChevronRight,
-    ArrowRight
+    ChevronRight
 } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useSettings } from '../../contexts/SettingsContext';
