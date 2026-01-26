@@ -19,6 +19,9 @@ import { SectionDivider } from './components/ui/SectionDivider'
 import { SettingsModal } from './components/settings/SettingsModal';
 import { FooterControls } from './components/layout/FooterControls';
 import { HistoryOverlay } from './components/results/HistoryOverlay';
+import { OnboardingTour } from './components/guide/OnboardingTour';
+import { useSettings } from './contexts/SettingsContext';
+import { useEffect } from 'react';
 
 function App() {
   const {
@@ -54,6 +57,18 @@ function App() {
     remixBase
   } = useEditor();
 
+  const { hasSeenOnboarding, startTour } = useSettings();
+
+  useEffect(() => {
+    // Auto-start tour if not seen
+    if (!hasSeenOnboarding) {
+      // Small delay to ensure loading
+      setTimeout(() => {
+        startTour();
+      }, 1000);
+    }
+  }, [hasSeenOnboarding, startTour]);
+
   return (
     <div className="app-shell min-h-screen relative pb-32" style={{
       backgroundColor: remixBase ? 'rgba(40, 30, 0, 1)' : 'var(--deep-dark)',
@@ -82,6 +97,8 @@ function App() {
           />
         )}
       </AnimatePresence>
+
+      <OnboardingTour />
 
       <Header
         showSettings={showSettings}
@@ -112,12 +129,14 @@ function App() {
                 className="space-y-12"
               >
                 <ThemeSelector />
-                <ConceptInput />
+                <div id="tour-main-input">
+                  <ConceptInput />
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
 
-          <div className="pt-4 border-t border-white/5">
+          <div className="pt-4 border-t border-white/5" id="tour-sliders">
             <SexySlider />
           </div>
 
@@ -219,6 +238,7 @@ function App() {
             onViewHistory={() => setShowOverlay('history')}
             onViewFavorites={() => setShowOverlay('favorites')}
           />
+          <div id="tour-generate-btn" style={{ position: 'absolute', bottom: '0', left: '0', height: '10px', width: '100%', pointerEvents: 'none' }} />
         </div>
 
         <HistoryOverlay

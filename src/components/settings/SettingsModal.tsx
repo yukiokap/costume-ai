@@ -31,7 +31,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     hasError = false
 }) => {
     const { t, language, setLanguage } = useLanguage();
-    const { apiKey, saveApiKey } = useSettings();
+    const { apiKey, saveApiKey, startTour } = useSettings();
 
     const [localKey, setLocalKey] = useState(apiKey);
     const [isSaving, setIsSaving] = useState(false);
@@ -428,11 +428,35 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                                     transition={{ duration: 0.3 }}
                                     style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '40px' }}
                                 >
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                                        <HelpCircle size={20} color="var(--cyan)" />
-                                        <h3 style={{ fontSize: '16px', fontWeight: 900, color: '#fff', letterSpacing: '0.05em' }}>
-                                            {t('settings.usage_guide_title')}
-                                        </h3>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                            <HelpCircle size={20} color="var(--cyan)" />
+                                            <h3 style={{ fontSize: '16px', fontWeight: 900, color: '#fff', letterSpacing: '0.05em' }}>
+                                                {t('settings.usage_guide_title')}
+                                            </h3>
+                                        </div>
+                                        <button
+                                            onClick={() => {
+                                                onClose();
+                                                setTimeout(() => startTour(), 300);
+                                            }}
+                                            style={{
+                                                fontSize: '10px',
+                                                fontWeight: 900,
+                                                color: '#000',
+                                                background: 'var(--cyan)',
+                                                border: 'none',
+                                                padding: '8px 16px',
+                                                borderRadius: '6px',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '6px',
+                                                boxShadow: '0 0 15px rgba(0, 242, 255, 0.3)'
+                                            }}
+                                        >
+                                            <Zap size={12} fill="black" /> {t('results.start_tour')}
+                                        </button>
                                     </div>
 
                                     <UsageStep

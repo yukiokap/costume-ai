@@ -58,6 +58,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
 
                 <button
+                    id="tour-settings-btn"
                     onClick={() => setShowSettings(!showSettings)}
                     className="relative px-6 py-3 transition-all duration-300 group overflow-hidden"
                     style={{

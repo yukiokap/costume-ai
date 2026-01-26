@@ -18,6 +18,11 @@ interface SettingsContextType {
     setEnableLighting: (val: boolean) => void;
     useWhiteBackground: boolean;
     setUseWhiteBackground: (val: boolean) => void;
+    hasSeenOnboarding: boolean;
+    setHasSeenOnboarding: (val: boolean) => void;
+    isTourOpen: boolean;
+    setIsTourOpen: (val: boolean) => void;
+    startTour: () => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -38,6 +43,19 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
 
     const [enableLighting, setEnableLighting] = useState(false);
     const [useWhiteBackground, setUseWhiteBackground] = useState(false);
+    const [hasSeenOnboarding, setHasSeenOnboardingState] = useState(() => {
+        return localStorage.getItem('has_seen_onboarding') === 'true';
+    });
+    const [isTourOpen, setIsTourOpen] = useState(false);
+
+    const setHasSeenOnboarding = (val: boolean) => {
+        setHasSeenOnboardingState(val);
+        localStorage.setItem('has_seen_onboarding', val ? 'true' : 'false');
+    };
+
+    const startTour = () => {
+        setIsTourOpen(true);
+    };
 
     const saveApiKey = (key: string) => {
         setApiKey(key);
@@ -58,7 +76,12 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
             enableLighting,
             setEnableLighting,
             useWhiteBackground,
-            setUseWhiteBackground
+            setUseWhiteBackground,
+            hasSeenOnboarding,
+            setHasSeenOnboarding,
+            isTourOpen,
+            setIsTourOpen,
+            startTour
         }}>
             {children}
         </SettingsContext.Provider>
