@@ -622,6 +622,7 @@ export const SexySlider: React.FC = () => {
                 <div className="flex items-center gap-4" style={{ flex: '1 1 auto', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
                     {/* Visual Catalog Trigger Button */}
                     <motion.button
+                        id="tour-sample-visuals-btn"
                         whileHover={{
                             scale: 1.05,
                             backgroundColor: 'rgba(255,255,255,0.1)',
