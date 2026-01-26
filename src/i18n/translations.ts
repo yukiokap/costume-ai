@@ -162,7 +162,9 @@ export const translations = {
                 overdrive_styles: 'オーバードライブ (R18)',
                 locked_title: 'ロックされています',
                 locked_desc: 'OVERDRIVEモードを有効にすると表示されます',
-                close_hint: '外側をタップして閉じる'
+                close_hint: '外側をタップして閉じる',
+                apply_style: 'このスタイルを適用',
+                close: '閉じる'
             }
         },
         settings: {
@@ -385,7 +387,9 @@ export const translations = {
                 overdrive_styles: 'Overdrive Styles (R18)',
                 locked_title: 'Locked Content',
                 locked_desc: 'Activate OVERDRIVE_MODE to view',
-                close_hint: 'Tap anywhere outside to close'
+                close_hint: 'Tap anywhere outside to close',
+                apply_style: 'APPLY THIS STYLE',
+                close: 'CLOSE'
             }
         },
         settings: {

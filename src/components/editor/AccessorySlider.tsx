@@ -10,16 +10,16 @@ export const AccessorySlider: React.FC = () => {
 
     return (
         <div className="sexy-slider-container">
-            <div className="sexy-slider-header" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                <label className="sexy-slider-label" style={{ color: '#f59e0b', flex: 1, fontSize: '13px' }}>
+            <div className="sexy-slider-header" style={{ position: 'relative', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                <label className="sexy-slider-label" style={{ color: '#f59e0b', flex: '1 1 auto', fontSize: '13px', minWidth: '200px' }}>
                     <Gem size={16} className="icon-orange" style={{ color: '#f59e0b' }} />
                     DECORATIVE_LEVEL / {t('editor.accessory_level')}
                 </label>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4" style={{ flex: '1 1 auto', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
                     {/* Unified Preview has been moved to SexySlider or shared area per user request */}
 
-                    <div className="sexy-slider-value-group" style={{ minWidth: '280px', justifyContent: 'flex-end', marginRight: '0.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div className="sexy-slider-value-group" style={{ minWidth: 'auto', justifyContent: 'flex-end', marginRight: '0', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             {value === 10 && (
                                 <>

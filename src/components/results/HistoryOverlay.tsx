@@ -163,14 +163,19 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                     }} />
 
                     <header style={{
-                        padding: '2rem 4rem',
+                        padding: '1.5rem',
                         borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
                         position: 'relative',
                         zIndex: 10,
-                        backgroundColor: 'rgba(2, 4, 6, 0.5)'
+                        backgroundColor: 'rgba(2, 4, 6, 0.5)',
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: '1rem',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
                     }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', flexWrap: 'wrap', gap: '1rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
                                 <button
                                     onClick={onClose}
                                     style={{
@@ -271,17 +276,18 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                 </div>
                             )}
 
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                                 <div style={{
                                     display: 'flex',
                                     flexDirection: 'row',
                                     alignItems: 'center',
-                                    gap: '1.5rem',
-                                    padding: '0.75rem 1.5rem',
+                                    gap: '1rem',
+                                    padding: '0.75rem',
                                     backgroundColor: 'rgba(255, 255, 255, 0.03)',
                                     borderRadius: '14px',
                                     border: '1px solid rgba(255, 255, 255, 0.05)',
-                                    backdropFilter: 'blur(10px)'
+                                    backdropFilter: 'blur(10px)',
+                                    flexWrap: 'wrap'
                                 }}>
                                     <span style={{ fontSize: '0.65rem', fontWeight: 900, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', marginRight: '0.5rem' }}>{t('results.copy_settings_label')}</span>
 
