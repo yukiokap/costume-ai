@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    X,
     Terminal,
     ExternalLink,
     Check,
@@ -220,22 +219,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                             )}
                         </AnimatePresence>
 
-                        <div className="flex justify-between items-start mb-12">
+                        <div className="flex justify-between items-start mb-6">
                             <div>
                                 <div className="title-sub" style={{ fontSize: '10px' }}>
                                     <Terminal size={12} style={{ color: 'var(--cyan)' }} />
                                     SYSTEM ACCESS UNIT / CORE_v3
                                 </div>
-                                <h2 className="text-4xl font-black uppercase tracking-tighter" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                                    {t('common.settings').split(' ')[0]} <span style={{ color: 'var(--cyan)' }}>{t('common.settings').split(' ')[1] || ''}</span>
-                                </h2>
                             </div>
-                            <button
-                                onClick={onClose}
-                                className="p-2 hover:bg-white/10 rounded-full transition-colors"
-                            >
-                                <X size={28} style={{ color: 'rgba(255,255,255,0.3)' }} />
-                            </button>
                         </div>
 
                         <div style={{ display: 'flex', gap: '8px', marginBottom: '40px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', paddingBottom: '12px' }}>
