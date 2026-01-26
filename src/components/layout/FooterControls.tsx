@@ -209,6 +209,7 @@ export const FooterControls: React.FC<FooterControlsProps> = memo(({
                     </motion.button>
 
                     <motion.button
+                        id="tour-history-btn"
                         whileHover={{ scale: 1.02, backgroundColor: 'rgba(255, 255, 255, 0.05)' }}
                         whileTap={{ scale: 0.98 }}
                         onClick={onViewHistory}
@@ -235,6 +236,7 @@ export const FooterControls: React.FC<FooterControlsProps> = memo(({
                     </motion.button>
 
                     <motion.button
+                        id="tour-favorites-btn"
                         whileHover={{ scale: 1.02, backgroundColor: 'rgba(244, 63, 94, 0.05)', borderColor: 'rgba(244, 63, 94, 0.3)' }}
                         whileTap={{ scale: 0.98 }}
                         onClick={onViewFavorites}

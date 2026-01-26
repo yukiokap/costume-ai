@@ -615,6 +615,7 @@ export const SexySlider: React.FC = () => {
                     </div>
 
                     <button
+                        id="tour-overdrive-btn"
                         onClick={() => onR18Change(!isR18Mode)}
                         style={{
                             width: '44px',
