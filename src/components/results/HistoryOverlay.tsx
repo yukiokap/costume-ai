@@ -1,5 +1,4 @@
 import React, { useEffect, useState, memo } from 'react';
-import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Clock, Heart, Trash2, Copy, Check, ChevronLeft } from 'lucide-react';
 import { type HistoryItem } from '../../types';
@@ -136,7 +135,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
         onClose();
     };
 
-    return createPortal(
+    return (
         <AnimatePresence>
             {isOpen && (
                 <motion.div
@@ -748,7 +747,6 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                 </motion.div>
             )
             }
-        </AnimatePresence>,
-        document.body
+        </AnimatePresence>
     );
 };
