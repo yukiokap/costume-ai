@@ -59,6 +59,7 @@ export const FooterControls: React.FC<FooterControlsProps> = memo(({
                     >
                         {/* ダイヤルの中央に配置される生成ボタン */}
                         <motion.button
+                            id="tour-generate-btn"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={(e) => {

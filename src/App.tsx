@@ -238,7 +238,6 @@ function App() {
             onViewHistory={() => setShowOverlay('history')}
             onViewFavorites={() => setShowOverlay('favorites')}
           />
-          <div id="tour-generate-btn" style={{ position: 'absolute', bottom: '0', left: '0', height: '10px', width: '100%', pointerEvents: 'none' }} />
         </div>
 
         <HistoryOverlay
