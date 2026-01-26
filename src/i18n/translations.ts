@@ -143,7 +143,7 @@ export const translations = {
             },
             visual_presets: {
                 title: 'サンプルビジュアル',
-                subtitle: 'VISUAL_PRESETS_GALLERY',
+                subtitle: 'スタイルギャラリー',
                 current_asset: '現在の衣装アセット',
                 copy_prompt: 'プロンプトをコピー',
                 prompt_copied: 'コピーしました！',
@@ -368,7 +368,7 @@ export const translations = {
             },
             visual_presets: {
                 title: 'Sample Visuals',
-                subtitle: 'VISUAL_PRESETS_GALLERY',
+                subtitle: 'STYLE GALLERY',
                 current_asset: 'Current Costume Asset',
                 copy_prompt: 'Copy Prompt',
                 prompt_copied: 'Copied!',
