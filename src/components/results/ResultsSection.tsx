@@ -416,7 +416,7 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                                         minWidth: '38px',
                                                         backdropFilter: 'blur(4px)'
                                                     }}>
-                                                        <span style={{ fontSize: '0.4rem', color: '#eab308', fontWeight: 900, opacity: 0.8 }}>ACC</span>
+                                                        <span style={{ fontSize: '0.4rem', color: '#eab308', fontWeight: 900, opacity: 0.8 }}>JEWEL</span>
                                                         <span style={{ fontSize: '0.85rem', color: '#fff', fontWeight: 900, lineHeight: 1 }}>{item.accessoryLevel}</span>
                                                     </div>
                                                 )}

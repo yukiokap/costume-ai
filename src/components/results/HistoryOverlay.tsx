@@ -561,7 +561,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                                         alignItems: 'center',
                                                         minWidth: '38px'
                                                     }}>
-                                                        <span style={{ fontSize: '0.45rem', color: '#eab308', fontWeight: 900, textTransform: 'uppercase' }}>ACC</span>
+                                                        <span style={{ fontSize: '0.45rem', color: '#eab308', fontWeight: 900, textTransform: 'uppercase' }}>JEWEL</span>
                                                         <span style={{ fontSize: '0.9rem', color: '#fff', fontWeight: 900, lineHeight: 1 }}>{item.accessoryLevel}</span>
                                                     </div>
                                                 )}

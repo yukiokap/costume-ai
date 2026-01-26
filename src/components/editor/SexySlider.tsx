@@ -335,8 +335,9 @@ export const SexySlider: React.FC = () => {
                                                 <img src={sample.img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={sample.label} />
                                                 <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 40%, transparent 70%)` }} />
                                                 <div style={{ position: 'absolute', bottom: '0.8rem', width: '100%', textAlign: 'center', padding: '0 8px' }}>
-                                                    <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#fff', letterSpacing: '0.1em', display: 'block' }}>{sample.label}</span>
-                                                    <div style={{ fontSize: '0.55rem', fontWeight: 800, color: sample.color, marginTop: '2px' }}>S:{sample.sexy} / D:{sample.accessory}</div>
+                                                    <div style={{ fontSize: '0.65rem', fontWeight: 900, color: '#fff', backgroundColor: 'rgba(0,0,0,0.5)', padding: '4px 0', borderRadius: '8px', border: `1px solid ${sample.color}66` }}>
+                                                        SEXY: {sample.sexy} / JEWEL: {sample.accessory}
+                                                    </div>
                                                 </div>
                                             </motion.div>
                                         ))}
@@ -376,10 +377,10 @@ export const SexySlider: React.FC = () => {
                                                 <img src={sample.img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={sample.label} />
                                                 {isR18Mode && (
                                                     <>
-                                                        <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 40%, transparent 70%)` }} />
                                                         <div style={{ position: 'absolute', bottom: '0.8rem', width: '100%', textAlign: 'center', padding: '0 8px' }}>
-                                                            <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#fff', letterSpacing: '0.1em', display: 'block' }}>{sample.label}</span>
-                                                            <div style={{ fontSize: '0.55rem', fontWeight: 800, color: sample.color, marginTop: '2px' }}>S:{sample.sexy} / D:{sample.accessory}</div>
+                                                            <div style={{ fontSize: '0.65rem', fontWeight: 900, color: '#fff', backgroundColor: 'rgba(0,0,0,0.5)', padding: '4px 0', borderRadius: '8px', border: `1px solid ${sample.color}66` }}>
+                                                                SEXY: {sample.sexy} / JEWEL: {sample.accessory}
+                                                            </div>
                                                         </div>
                                                         <div style={{ position: 'absolute', top: '0.6rem', right: '0.6rem', backgroundColor: '#f43f5e', color: '#fff', fontSize: '0.6rem', fontWeight: 900, padding: '2px 6px', borderRadius: '4px' }}>
                                                             <Zap size={8} fill="currentColor" /> R18
@@ -483,9 +484,8 @@ export const SexySlider: React.FC = () => {
                                         padding: '30px 20px 20px',
                                         textAlign: 'center'
                                     }}>
-                                        <h2 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 900, letterSpacing: '0.1em', marginBottom: '4px' }}>{selectedSample.label}</h2>
-                                        <div style={{ color: selectedSample.color, fontWeight: 700, fontSize: '0.9rem' }}>
-                                            SEXY: {selectedSample.sexy} / DECO: {selectedSample.accessory}
+                                        <div style={{ color: selectedSample.color, fontWeight: 900, fontSize: '1rem', letterSpacing: '0.05em' }}>
+                                            SEXY: {selectedSample.sexy} / JEWEL: {selectedSample.accessory}
                                         </div>
                                     </div>
                                     {selectedSample.r18 && (

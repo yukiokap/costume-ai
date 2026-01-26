@@ -13,7 +13,7 @@ export const AccessorySlider: React.FC = () => {
             <div className="sexy-slider-header" style={{ position: 'relative', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
                 <label className="sexy-slider-label" style={{ color: '#f59e0b', flex: '1 1 auto', fontSize: '13px', minWidth: '200px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <Gem size={16} className="icon-orange" style={{ color: '#f59e0b' }} />
-                    <span>DECORATIVE_LEVEL / {t('editor.accessory_level')}</span>
+                    <span>JEWEL_LEVEL / {t('editor.accessory_level')}</span>
                     <div className="overdrive-tooltip-container" style={{
                         position: 'relative',
                         // @ts-ignore
