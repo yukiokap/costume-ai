@@ -16,7 +16,7 @@ export const Header: React.FC<HeaderProps> = ({
     const { startTour } = useSettings();
 
     return (
-        <header className="flex justify-between items-center mb-16 relative z-[60]">
+        <header className="flex justify-between items-center mb-16 relative z-[60] px-6">
             <div className="group cursor-default">
                 <div className="title-sub" style={{ marginBottom: '0px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <Terminal size={10} className="text-cyan-400" />
@@ -40,7 +40,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
             </div>
 
-            <div className="flex gap-16 sm:gap-24 items-center">
+            <div className="flex items-center flex-shrink-0">
                 {/* Usage Guide Quick Link */}
 
 
@@ -50,7 +50,8 @@ export const Header: React.FC<HeaderProps> = ({
                     alignItems: 'flex-end',
                     gap: '2px',
                     opacity: 0.6,
-                    textAlign: 'right'
+                    textAlign: 'right',
+                    marginRight: '20px'
                 }} className="hidden lg:flex">
                     <span style={{ fontSize: '9px', fontWeight: 900, color: '#fff', letterSpacing: '0.1em' }}>AI COSTUME DESIGN ATELIER</span>
                     <span style={{ fontSize: '8px', color: 'rgba(255,255,255,0.5)', fontWeight: 800, letterSpacing: '0.05em' }}>CHARACTER SYNTHESIS SYSTEM v0.8.2</span>
@@ -79,6 +80,7 @@ export const Header: React.FC<HeaderProps> = ({
                     onClick={() => setShowSettings(!showSettings)}
                     className="relative px-6 py-3 transition-all duration-300 group overflow-hidden"
                     style={{
+                        marginLeft: '60px',
                         background: showSettings ? 'rgba(0, 242, 255, 0.15)' : 'rgba(255, 255, 255, 0.05)',
                         border: showSettings ? '1px solid var(--cyan)' : '1px solid rgba(255, 255, 255, 0.2)',
                         borderRadius: '8px',
