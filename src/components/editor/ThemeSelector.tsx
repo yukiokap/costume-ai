@@ -6,9 +6,9 @@ import { useEditor } from '../../contexts/EditorContext';
 
 export const ThemeSelector = memo(() => {
     const { t } = useLanguage();
-    const { theme: selectedTheme, setTheme: onChange, remixBase } = useEditor();
+    const { theme: selectedTheme, setTheme: onChange, remixBase, lockCostume } = useEditor();
     const scrollRef = useRef<HTMLDivElement>(null);
-    const disabled = !!remixBase;
+    const disabled = !!remixBase && lockCostume;
 
     const scroll = (direction: 'left' | 'right') => {
         if (scrollRef.current) {
@@ -35,7 +35,7 @@ export const ThemeSelector = memo(() => {
         <div className="space-y-6 mb-12">
             <div className="flex items-center justify-between px-1">
                 <label className="text-[11px] font-black tracking-[0.3em] text-cyan-400/80 uppercase">
-                    THEME_ORIENTATION / {t('editor.theme_label')}
+                    {t('editor.theme_label')}
                 </label>
             </div>
 

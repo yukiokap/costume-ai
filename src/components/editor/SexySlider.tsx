@@ -527,7 +527,7 @@ export const SexySlider: React.FC = () => {
                                 letterSpacing: '0.15em',
                                 transition: 'color 0.3s'
                             }}>
-                                OVERDRIVE_MODE (R18)
+                                R18_MODE
                             </span>
                             <span style={{
                                 fontSize: '7px',
@@ -586,7 +586,7 @@ export const SexySlider: React.FC = () => {
             <div className="sexy-slider-header" style={{ position: 'relative', display: 'flex', alignItems: 'center', marginTop: '8px', flexWrap: 'wrap', gap: '8px' }}>
                 <label className="sexy-slider-label" style={{ flex: '1 1 auto', fontSize: '13px', minWidth: '200px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <Flame size={16} className="icon-orange" />
-                    <span>SEXY_LEVEL / {t('editor.sexy_level')}</span>
+                    <span>{t('common.language') === 'en' ? 'SEXY_LEVEL / ' : ''}{t('editor.sexy_level')}</span>
                     <div className="overdrive-tooltip-container" style={{
                         position: 'relative',
                         '--tooltip-accent': 'var(--magenta)',
@@ -706,7 +706,7 @@ export const SexySlider: React.FC = () => {
                                 {value === 10 ? 'ULTRA_SEXY' : value}
                             </span>
                         </div>
-                        <span className="sexy-slider-intensity" style={{ fontSize: '11px', whiteSpace: 'nowrap', opacity: 0.6 }}>INTENSITY {value * 10}%</span>
+                        <span className="sexy-slider-intensity" style={{ fontSize: '11px', whiteSpace: 'nowrap', opacity: 0.6 }}>{t('common.intensity')} {value * 10}%</span>
                     </div>
                 </div>
             </div>

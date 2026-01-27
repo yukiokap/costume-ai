@@ -449,12 +449,18 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                         <div style={{
                                             padding: '1rem 1.25rem 0',
                                             display: 'flex',
+                                            flexDirection: 'column',
                                             justifyContent: 'space-between',
-                                            alignItems: 'center',
-                                            gap: '0.75rem',
+                                            alignItems: 'stretch',
+                                            gap: '0',
                                             zIndex: 20
                                         }}>
-                                            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                            <div style={{
+                                                display: 'flex',
+                                                gap: '0.5rem',
+                                                alignItems: 'center',
+                                                marginBottom: '0.5rem'
+                                            }}>
                                                 <button
                                                     onClick={() => handleRemixAction(item)}
                                                     style={{
@@ -519,7 +525,11 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                                 </button>
                                             </div>
 
-                                            <div style={{ display: 'flex', gap: '0.4rem' }}>
+                                            <div style={{
+                                                display: 'flex',
+                                                gap: '0.4rem',
+                                                justifyContent: 'flex-end'
+                                            }}>
                                                 {item.isR18Mode && (
                                                     <div style={{
                                                         backgroundColor: 'rgba(255, 0, 255, 0.12)',
@@ -573,10 +583,7 @@ export const HistoryOverlay: React.FC<HistoryOverlayProps> = ({
                                                 {item.description.replace(/^[:\s\u30fb]+/, '')}
                                             </h3>
 
-                                            <div style={{ fontSize: '9px', fontWeight: 900, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.05em', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                <div style={{ width: '8px', height: '1px', backgroundColor: 'rgba(255,255,255,0.2)' }} />
-                                                {t('editor.visual_presets.recipe_title').toUpperCase()}
-                                            </div>
+
 
                                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
                                                 {item.isCharacterMode && item.character && (

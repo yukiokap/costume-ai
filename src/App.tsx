@@ -304,6 +304,7 @@ function App() {
               x: '-50%',
             }}
             exit={{ opacity: 0, scale: 0.9, y: 50, x: '-50%' }}
+            className="max-w-[92vw]"
             style={{
               position: 'fixed',
               bottom: '3rem',
@@ -322,26 +323,23 @@ function App() {
               cursor: 'default'
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div className="flex items-center gap-2.5 min-w-0 flex-1">
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
+                className="flex items-center justify-center flex-shrink-0"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" /></svg>
               </motion.div>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span style={{ fontSize: '9px', fontWeight: 900, letterSpacing: '0.2em', opacity: 0.8, lineHeight: 1 }}>{t('common.mixing_mode')}</span>
-                <span style={{ fontSize: '13px', fontWeight: 900, marginTop: '2px' }}>{remixBase.description}</span>
+              <div className="flex flex-col min-w-0">
+                <span className="whitespace-nowrap" style={{ fontSize: '9px', fontWeight: 900, letterSpacing: '0.2em', opacity: 0.8, lineHeight: 1 }}>{t('common.mixing_mode')}</span>
+                <span className="truncate" style={{ fontSize: '13px', fontWeight: 900, marginTop: '2px' }}>{remixBase.description}</span>
               </div>
             </div>
-            <div style={{ width: '1px', height: '24px', backgroundColor: 'rgba(0,0,0,0.15)' }} />
+            <div className="flex-shrink-0" style={{ width: '1px', height: '24px', backgroundColor: 'rgba(0,0,0,0.15)' }} />
             <button
               onClick={cancelRemix}
+              className="flex-shrink-0"
               style={{
                 fontSize: '11px',
                 fontWeight: 900,

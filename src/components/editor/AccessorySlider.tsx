@@ -13,7 +13,7 @@ export const AccessorySlider: React.FC = () => {
             <div className="sexy-slider-header" style={{ position: 'relative', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
                 <label className="sexy-slider-label" style={{ color: '#f59e0b', flex: '1 1 auto', fontSize: '13px', minWidth: '200px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <Gem size={16} className="icon-orange" style={{ color: '#f59e0b' }} />
-                    <span>JEWEL_LEVEL / {t('editor.accessory_level')}</span>
+                    <span>{t('common.language') === 'en' ? 'JEWEL_LEVEL / ' : ''}{t('editor.accessory_level')}</span>
                     <div className="overdrive-tooltip-container" style={{
                         position: 'relative',
                         // @ts-ignore
@@ -105,7 +105,7 @@ export const AccessorySlider: React.FC = () => {
                                 {value === 10 ? 'ULTRA_JEWEL' : value}
                             </span>
                         </div>
-                        <span className="sexy-slider-intensity" style={{ fontSize: '11px', whiteSpace: 'nowrap', opacity: 0.6 }}>INTENSITY {value * 10}%</span>
+                        <span className="sexy-slider-intensity" style={{ fontSize: '11px', whiteSpace: 'nowrap', opacity: 0.6 }}>{t('common.intensity')} {value * 10}%</span>
                     </div>
                 </div>
             </div>

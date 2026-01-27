@@ -12,19 +12,32 @@ export const Header: React.FC<HeaderProps> = ({
     showSettings,
     setShowSettings
 }) => {
-    const { t, language } = useLanguage();
+    const { t } = useLanguage();
     const { startTour } = useSettings();
 
     return (
         <header className="flex justify-between items-center mb-16 relative z-[60]">
             <div className="group cursor-default">
-                <div className="title-sub" style={{ marginBottom: '4px' }}>
+                <div className="title-sub" style={{ marginBottom: '0px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <Terminal size={10} className="text-cyan-400" />
-                    NEURAL PROTOCOL v0.8.2 [{language.toUpperCase()}]
+                    <span style={{ color: 'rgba(255,255,255,0.4)', fontWeight: 800, letterSpacing: '0.15em' }}>AI COSTUME SYNTHESIS</span>
                 </div>
-                <h1 className="title-main" style={{ fontSize: '3rem', lineHeight: '1', paddingBottom: '4px' }}>
-                    costume<span style={{ color: 'var(--cyan)', filter: 'drop-shadow(0 0 10px rgba(0, 242, 255, 0.5))' }}>AI</span>
+                <h1 className="title-main" style={{ fontSize: '3.8rem', lineHeight: '1.2', paddingBottom: '10px', letterSpacing: '-0.03em', display: 'flex', alignItems: 'baseline', gap: '2px' }}>
+                    <span style={{ fontWeight: 800, color: '#fff', textShadow: '0 0 10px rgba(255,255,255,0.1)' }}>costume</span>
+                    <span style={{
+                        fontWeight: 900,
+                        color: '#22d3ee',
+                        filter: 'drop-shadow(0 0 8px rgba(34, 211, 238, 0.8)) drop-shadow(0 0 15px rgba(34, 211, 238, 0.4))',
+                        fontStyle: 'italic',
+                        background: 'linear-gradient(to bottom, #22d3ee, #06b6d4)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        paddingRight: '10px'
+                    }}>AI</span>
                 </h1>
+                <div style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.4)', fontWeight: 900, letterSpacing: '0.4em', marginLeft: '4px', marginTop: '-10px', textTransform: 'uppercase' }}>
+                    こすちゃい
+                </div>
             </div>
 
             <div className="flex gap-16 sm:gap-24 items-center">

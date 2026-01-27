@@ -22,7 +22,6 @@ export const RotaryDial: React.FC<RotaryDialProps> = ({
 }) => {
     const dialRef = useRef<HTMLDivElement>(null);
     const [isDragging, setIsDragging] = useState(false);
-    const [dragStartPos, setDragStartPos] = useState({ x: 0, val: 0 });
 
     // Cyber Arc Settings - Adjusted for perfect 1-10 balance
     const START_ANGLE = -135; // Degrees (approx 7:30 o'clock)
@@ -39,15 +38,41 @@ export const RotaryDial: React.FC<RotaryDialProps> = ({
         }
     }, [max, min, value, onChange]);
 
-    // Calculate value based on horizontal movement (Good for mouse)
-    const handleDrag = useCallback((clientX: number) => {
-        if (!isDragging || disabled) return;
+    // Calculate value based on angular position (Rotary Interaction)
+    const handleDrag = useCallback((clientX: number, clientY: number) => {
+        if (!isDragging || disabled || !dialRef.current) return;
 
-        const deltaX = clientX - dragStartPos.x;
-        const sensitivity = 0.05; // Adjust this for feel
-        const nextVal = dragStartPos.val + deltaX * sensitivity;
+        const rect = dialRef.current.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        // Calculate angle from center to mouse
+        const deltaX = clientX - centerX;
+        const deltaY = clientY - centerY;
+
+        // atan2 returns angle in radians (0 is right, PI/2 is bottom)
+        const rad = Math.atan2(deltaY, deltaX);
+        let deg = rad * (180 / Math.PI);
+
+        // Adjust so 0 is Top (12 o'clock), matching the visual rendering logic
+        // Original: 0 is Right (3 o'clock)
+        // We add 90 to make 0 Top
+        deg += 90;
+
+        // Normalize to [-180, 180]
+        if (deg > 180) deg -= 360;
+
+        // Clamp to valid range [-135, 135]
+        // If user is in the "dead zone" (135 to 180 or -180 to -135), snap to nearest
+        if (deg > END_ANGLE) deg = END_ANGLE;
+        if (deg < START_ANGLE) deg = START_ANGLE;
+
+        // Map degrees to value
+        const progress = (deg - START_ANGLE) / (END_ANGLE - START_ANGLE);
+        const nextVal = min + progress * (max - min);
+
         handleValueChange(nextVal);
-    }, [isDragging, disabled, dragStartPos, handleValueChange]);
+    }, [isDragging, disabled, min, max, handleValueChange, END_ANGLE, START_ANGLE]);
 
     // Handle Wheel
     useEffect(() => {
@@ -66,8 +91,8 @@ export const RotaryDial: React.FC<RotaryDialProps> = ({
     }, [disabled, value, handleValueChange]);
 
     useEffect(() => {
-        const onMouseMove = (e: MouseEvent) => handleDrag(e.clientX);
-        const onTouchMove = (e: TouchEvent) => handleDrag(e.touches[0].clientX);
+        const onMouseMove = (e: MouseEvent) => handleDrag(e.clientX, e.clientY);
+        const onTouchMove = (e: TouchEvent) => handleDrag(e.touches[0].clientX, e.touches[0].clientY);
         const onEnd = () => setIsDragging(false);
 
         if (isDragging) {
@@ -259,21 +284,19 @@ export const RotaryDial: React.FC<RotaryDialProps> = ({
 
             {/* Draggable Active Handle */}
             <motion.div
-                onMouseDown={(e) => {
+                onMouseDown={() => {
                     if (disabled) return;
                     setIsDragging(true);
-                    setDragStartPos({ x: e.clientX, val: value });
                 }}
-                onTouchStart={(e) => {
+                onTouchStart={() => {
                     if (disabled) return;
                     setIsDragging(true);
-                    setDragStartPos({ x: e.touches[0].clientX, val: value });
                 }}
                 animate={{
                     rotate: currentAngle,
                     scale: isDragging ? 1.1 : 1
                 }}
-                transition={{ type: 'spring', damping: 20, stiffness: 200 }}
+                transition={isDragging ? { type: "tween", duration: 0 } : { type: 'spring', damping: 20, stiffness: 200 }}
                 style={{
                     position: 'absolute',
                     width: size,

@@ -23,6 +23,8 @@ interface EditorContextType {
     setCharacterInput: (input: string) => void;
     characterCostume: string;
     setCharacterCostume: (costume: string) => void;
+    lockCostume: boolean;
+    setLockCostume: (lock: boolean) => void;
 
     // Pose & Expression
     selectedPoseStance: string;
@@ -77,6 +79,7 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     const [isCharacterMode, setIsCharacterMode] = useState(false);
     const [characterInput, setCharacterInput] = useState('');
     const [characterCostume, setCharacterCostume] = useState('');
+    const [lockCostume, setLockCostume] = useState(false);
     const [remixBase, setRemixBase] = useState<HistoryItem | null>(null);
 
     const resetEditor = useCallback(() => {
@@ -95,6 +98,7 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         setSelectedScene('random');
         setSceneDescription('');
         setRemixBase(null);
+        setLockCostume(false);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
@@ -126,7 +130,16 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         }
 
         setRemixBase(item);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setLockCostume(true);
+
+        setTimeout(() => {
+            const element = document.getElementById('lock-costume-target');
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }, 100);
     }, []);
 
     return (
@@ -141,6 +154,7 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
             isCharacterMode, setIsCharacterMode,
             characterInput, setCharacterInput,
             characterCostume, setCharacterCostume,
+            lockCostume, setLockCostume,
             selectedPoseStance, setSelectedPoseStance,
             poseDescription, setPoseDescription,
             selectedExpression, setSelectedExpression,

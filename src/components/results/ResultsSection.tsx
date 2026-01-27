@@ -311,13 +311,20 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                         <div style={{
                                             padding: '1rem 1.25rem 0.5rem',
                                             display: 'flex',
+                                            flexDirection: 'column',
                                             flexWrap: 'wrap',
                                             justifyContent: 'space-between',
-                                            alignItems: 'flex-start',
-                                            gap: '0.75rem',
+                                            alignItems: 'stretch',
+                                            gap: '0',
                                             zIndex: 20
                                         }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                            <div style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '0.5rem',
+                                                flexWrap: 'wrap',
+                                                marginBottom: '0.5rem'
+                                            }}>
                                                 <button
                                                     id={index === 0 ? "tour-remix-btn" : undefined}
                                                     onClick={(e) => {
@@ -346,7 +353,7 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                                     }}
                                                 >
                                                     <Sparkles size={12} />
-                                                    <span>派生</span>
+                                                    <span>{t('common.remix')}</span>
                                                 </button>
                                                 <button
                                                     onClick={(e) => {
@@ -372,7 +379,12 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                                 </button>
                                             </div>
 
-                                            <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                                            <div style={{
+                                                display: 'flex',
+                                                gap: '0.4rem',
+                                                flexWrap: 'wrap',
+                                                justifyContent: 'flex-end'
+                                            }}>
                                                 {item.isR18Mode && (
                                                     <div style={{
                                                         backgroundColor: 'rgba(255, 0, 255, 0.1)',
@@ -430,10 +442,7 @@ export const ResultsSection: React.FC<ResultsSectionProps> = ({
                                                     {item.description.replace(/^[:\s\u30fb]+/, '')}
                                                 </h3>
 
-                                                <div style={{ fontSize: '9px', fontWeight: 900, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.05em', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                    <div style={{ width: '8px', height: '1px', backgroundColor: 'rgba(255,255,255,0.2)' }} />
-                                                    {t('editor.visual_presets.recipe_title').toUpperCase()}
-                                                </div>
+
 
                                                 {item.isCharacterMode && item.character && (
                                                     <div className="tag-container" style={{ marginBottom: '0.5rem' }}>
