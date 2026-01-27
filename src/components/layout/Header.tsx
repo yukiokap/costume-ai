@@ -41,6 +41,20 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
 
             <div className="flex items-center flex-shrink-0">
+                {/* Usage Guide Quick Link */}
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
+                    gap: '2px',
+                    opacity: 0.6,
+                    textAlign: 'right',
+                    marginRight: '20px'
+                }} className="hidden lg:flex">
+                    <span style={{ fontSize: '9px', fontWeight: 900, color: '#fff', letterSpacing: '0.1em' }}>AI COSTUME DESIGN ATELIER</span>
+                    <span style={{ fontSize: '8px', color: 'rgba(255,255,255,0.5)', fontWeight: 800, letterSpacing: '0.05em' }}>CHARACTER SYNTHESIS SYSTEM v0.8.2</span>
+                </div>
+
                 <button
                     id="tour-settings-btn"
                     onClick={() => setShowSettings(!showSettings)}
@@ -91,20 +105,6 @@ export const Header: React.FC<HeaderProps> = ({
                     <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-cyan-400/30 group-hover:border-cyan-400 transition-colors" />
                     <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-cyan-400/30 group-hover:border-cyan-400 transition-colors" />
                 </button>
-
-                {/* Usage Guide Quick Link */}
-                <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-end',
-                    gap: '2px',
-                    opacity: 0.6,
-                    textAlign: 'right',
-                    marginRight: '20px'
-                }} className="hidden lg:flex">
-                    <span style={{ fontSize: '9px', fontWeight: 900, color: '#fff', letterSpacing: '0.1em' }}>AI COSTUME DESIGN ATELIER</span>
-                    <span style={{ fontSize: '8px', color: 'rgba(255,255,255,0.5)', fontWeight: 800, letterSpacing: '0.05em' }}>CHARACTER SYNTHESIS SYSTEM v0.8.2</span>
-                </div>
 
                 <button
                     onClick={() => startTour()}
