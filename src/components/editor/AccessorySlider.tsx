@@ -37,11 +37,11 @@ export const AccessorySlider: React.FC = () => {
                             width: 'min(300px, 80vw)',
                             whiteSpace: 'normal',
                             bottom: 'calc(100% + 15px)',
-                            right: '0',
-                            left: 'auto',
+                            left: '0',
+                            right: 'auto',
                             transform: 'none'
                         }}>
-                            <div className="tooltip-glitch-line" style={{ left: 'auto', right: '10px' }} />
+                            <div className="tooltip-glitch-line" style={{ left: '10px', right: 'auto' }} />
                             {t('editor.accessory_tip')}
                         </div>
                     </div>

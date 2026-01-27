@@ -608,12 +608,12 @@ export const SexySlider: React.FC = () => {
                             width: 'min(300px, 80vw)',
                             whiteSpace: 'normal',
                             bottom: 'calc(100% + 15px)',
-                            right: '0',
-                            left: 'auto',
+                            left: '0',
+                            right: 'auto',
                             transform: 'none',
                             pointerEvents: 'none'
                         }}>
-                            <div className="tooltip-glitch-line" style={{ left: 'auto', right: '10px' }} />
+                            <div className="tooltip-glitch-line" style={{ left: '10px', right: 'auto' }} />
                             {t('editor.sexy_tip')}
                         </div>
                     </div>

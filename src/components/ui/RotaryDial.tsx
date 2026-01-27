@@ -254,7 +254,7 @@ export const RotaryDial: React.FC<RotaryDialProps> = ({
                                 scale: isActive ? 1.4 : 1,
                                 opacity: isActive ? 1 : 0.5,
                                 color: isActive ? '#fff' : 'rgba(255, 255, 255, 0.7)',
-                                backgroundColor: isActive ? `${activeColor}33` : 'transparent',
+                                backgroundColor: 'transparent',
                             }}
                             whileHover={{ opacity: 1, scale: 1.15 }}
                             style={{
@@ -307,7 +307,7 @@ export const RotaryDial: React.FC<RotaryDialProps> = ({
             >
                 <div style={{
                     position: 'absolute',
-                    top: '25px',
+                    top: '32px',
                     left: '50%',
                     transform: 'translateX(-50%)',
                     width: '36px',
