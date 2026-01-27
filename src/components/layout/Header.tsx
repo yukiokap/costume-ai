@@ -23,7 +23,7 @@ export const Header: React.FC<HeaderProps> = ({
                     <span style={{ color: 'rgba(255,255,255,0.4)', fontWeight: 800, letterSpacing: '0.15em' }}>AI COSTUME SYNTHESIS</span>
                 </div>
                 <h1 className="title-main" style={{ fontSize: '3.8rem', lineHeight: '1.2', paddingBottom: '10px', letterSpacing: '-0.03em', display: 'flex', alignItems: 'baseline', gap: '2px' }}>
-                    <span style={{ fontWeight: 800, color: '#fff', textShadow: '0 0 10px rgba(255,255,255,0.1)' }}>costume</span>
+                    <span style={{ fontWeight: 800, color: '#fff', textShadow: '0 0 10px rgba(255,255,255,0.1)' }}><span style={{ fontStyle: 'italic', marginRight: '3px' }}>#</span>costume</span>
                     <span style={{
                         fontWeight: 900,
                         color: '#22d3ee',
@@ -41,51 +41,17 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
 
             <div className="flex items-center flex-shrink-0">
-                {/* Usage Guide Quick Link */}
-
-
-                <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-end',
-                    gap: '2px',
-                    opacity: 0.6,
-                    textAlign: 'right',
-                    marginRight: '20px'
-                }} className="hidden lg:flex">
-                    <span style={{ fontSize: '9px', fontWeight: 900, color: '#fff', letterSpacing: '0.1em' }}>AI COSTUME DESIGN ATELIER</span>
-                    <span style={{ fontSize: '8px', color: 'rgba(255,255,255,0.5)', fontWeight: 800, letterSpacing: '0.05em' }}>CHARACTER SYNTHESIS SYSTEM v0.8.2</span>
-                </div>
-
-                <button
-                    onClick={() => startTour()}
-                    className="relative px-6 py-3 transition-all duration-300 group overflow-hidden"
-                    style={{
-                        background: 'rgba(234, 179, 8, 0.1)',
-                        border: '1px solid rgba(234, 179, 8, 0.3)',
-                        borderRadius: '8px',
-                        backdropFilter: 'blur(10px)',
-                    }}
-                >
-                    <div className="flex items-center gap-3 relative z-10">
-                        <Zap size={16} style={{ color: '#eab308' }} fill="#eab308" />
-                        <span style={{ color: '#fff' }} className="text-[11px] font-black uppercase tracking-[0.3em] group-hover:text-yellow-300 transition-colors">
-                            {t('results.start_tour')}
-                        </span>
-                    </div>
-                </button>
-
                 <button
                     id="tour-settings-btn"
                     onClick={() => setShowSettings(!showSettings)}
                     className="relative px-6 py-3 transition-all duration-300 group overflow-hidden"
                     style={{
-                        marginLeft: '60px',
                         background: showSettings ? 'rgba(0, 242, 255, 0.15)' : 'rgba(255, 255, 255, 0.05)',
                         border: showSettings ? '1px solid var(--cyan)' : '1px solid rgba(255, 255, 255, 0.2)',
                         borderRadius: '8px',
                         backdropFilter: 'blur(10px)',
-                        boxShadow: showSettings ? '0 0 20px rgba(0, 242, 255, 0.2)' : 'none'
+                        boxShadow: showSettings ? '0 0 20px rgba(0, 242, 255, 0.2)' : 'none',
+                        marginRight: '20px'
                     }}
                 >
                     {/* Top Glow Edge */}
@@ -124,6 +90,39 @@ export const Header: React.FC<HeaderProps> = ({
                     {/* Corner Accents */}
                     <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-cyan-400/30 group-hover:border-cyan-400 transition-colors" />
                     <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-cyan-400/30 group-hover:border-cyan-400 transition-colors" />
+                </button>
+
+                {/* Usage Guide Quick Link */}
+                <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
+                    gap: '2px',
+                    opacity: 0.6,
+                    textAlign: 'right',
+                    marginRight: '20px'
+                }} className="hidden lg:flex">
+                    <span style={{ fontSize: '9px', fontWeight: 900, color: '#fff', letterSpacing: '0.1em' }}>AI COSTUME DESIGN ATELIER</span>
+                    <span style={{ fontSize: '8px', color: 'rgba(255,255,255,0.5)', fontWeight: 800, letterSpacing: '0.05em' }}>CHARACTER SYNTHESIS SYSTEM v0.8.2</span>
+                </div>
+
+                <button
+                    onClick={() => startTour()}
+                    className="relative px-6 py-3 transition-all duration-300 group overflow-hidden"
+                    style={{
+                        background: 'rgba(234, 179, 8, 0.1)',
+                        border: '1px solid rgba(234, 179, 8, 0.3)',
+                        borderRadius: '8px',
+                        backdropFilter: 'blur(10px)',
+                        marginLeft: '20px'
+                    }}
+                >
+                    <div className="flex items-center gap-3 relative z-10">
+                        <Zap size={16} style={{ color: '#eab308' }} fill="#eab308" />
+                        <span style={{ color: '#fff' }} className="text-[11px] font-black uppercase tracking-[0.3em] group-hover:text-yellow-300 transition-colors">
+                            {t('results.start_tour')}
+                        </span>
+                    </div>
                 </button>
             </div>
         </header>
